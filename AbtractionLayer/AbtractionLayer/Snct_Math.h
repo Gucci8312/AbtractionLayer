@@ -449,10 +449,10 @@ struct FLOAT4 {
 	}
 };
 
-struct VERTEX
+struct Vertex
 {
-	VERTEX() {}
-	VERTEX(FLOAT4 position, FLOAT4 normal, FLOAT4 color, FLOAT2 texCoord)
+	Vertex() {}
+	Vertex(FLOAT4 position, FLOAT4 normal, FLOAT4 color, FLOAT2 texCoord)
 	{
 		this->position	= position;
 		this->normal	= normal;
@@ -466,18 +466,18 @@ struct VERTEX
 	FLOAT2 texCoord{};
 };
 
-struct  TRANSFORM
+struct  Transform
 {
-	TRANSFORM() {}
+	Transform() {}
 
 	FLOAT4 position{ 0.0f, 0.0f, 0.0f, 1.0f };
 	FLOAT4 rotation{ 0.0f, 0.0f, 0.0f, 0.0f };
 	FLOAT4 scale{ 1.0f, 1.0f, 1.0f, 1.0f };
 };
 
-struct  CAMRA
+struct  Camera
 {
-	CAMRA() {}
+	Camera() {}
 
 	FLOAT3 position{ 0.0f, 0.0f, 0.0f };
 	FLOAT3 at{ 0.0f, 0.0f, 0.0f };
