@@ -7,9 +7,7 @@
 
 #include "Snct_Application.h"
 
-constexpr const char*	NAME			= "APIPractice";
-constexpr const char*	TITLE			= "Renderer";
-constexpr int			TIMER_ID		= 1;
-constexpr float			FRAME_RATE		= (1000 / 60);
-constexpr int			SCREEN_WIDTH	= 1200;
-constexpr int			SCREEN_HEIGHT	= 800;
+constexpr const char*	g_name			= "APIPractice";
+constexpr const char*	g_title			= "Renderer";
+constexpr int			g_screenWidth	= 1200;
+constexpr int			g_screenHeight	= 800;

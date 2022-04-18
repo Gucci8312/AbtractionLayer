@@ -34,7 +34,7 @@ LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 /// \param[in]      Screen height
 /// \param[in]      Window name
 //------------------------------------------------------------------------------
-Snct_Application::Snct_Application(uint32_t Width, uint32_t Height,
+SnctApplication::SnctApplication(uint32_t Width, uint32_t Height,
 	const char* WindowName) :m_width(Width), m_height(Height), 
 	m_windowName(WindowName)
 {
@@ -46,7 +46,7 @@ Snct_Application::Snct_Application(uint32_t Width, uint32_t Height,
 /// Destructor
 /// \param		none
 //------------------------------------------------------------------------------
-Snct_Application::~Snct_Application()
+SnctApplication::~SnctApplication()
 {
 	// Nothing //
 }
@@ -57,7 +57,7 @@ Snct_Application::~Snct_Application()
 /// \param		none
 /// \return		True on success
 //------------------------------------------------------------------------------
-bool Snct_Application::Initialize()
+bool SnctApplication::Initialize()
 {
 	if (InitWnd()) return false;
 
@@ -73,7 +73,7 @@ bool Snct_Application::Initialize()
 /// param		none
 /// \return		True on success
 //------------------------------------------------------------------------------
-void Snct_Application::Finalize()
+void SnctApplication::Finalize()
 {
 }
 
@@ -83,7 +83,7 @@ void Snct_Application::Finalize()
 /// \param		none
 /// \return		True on success
 //------------------------------------------------------------------------------
-bool Snct_Application::InitWnd()
+bool SnctApplication::InitWnd()
 {
 	// Get instance handle
 	auto hInst = GetModuleHandle(nullptr);
@@ -150,7 +150,7 @@ bool Snct_Application::InitWnd()
 /// \param		none
 /// \return		none
 //------------------------------------------------------------------------------
-void Snct_Application::Run()
+void SnctApplication::Run()
 {
 	if (Initialize())		return;
 
@@ -165,7 +165,7 @@ void Snct_Application::Run()
 /// \param		none
 /// \return		none
 //------------------------------------------------------------------------------
-void Snct_Application::MainLoop()
+void SnctApplication::MainLoop()
 {
 	// To receive a message param
 	MSG msg = {};

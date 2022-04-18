@@ -8,7 +8,7 @@
 constexpr const char*		g_className	= "AbtractionLayer";
 
 // Clases that manage applications
-class Snct_Application
+class SnctApplication
 {
 private:
 	HINSTANCE   m_hInst = nullptr;
@@ -18,8 +18,8 @@ private:
 	const char* m_windowName;
 
 public:
-	Snct_Application(uint32_t Width, uint32_t Height,const char* WindowName);
-	~Snct_Application();
+	SnctApplication(uint32_t Width, uint32_t Height,const char* WindowName);
+	~SnctApplication();
 
 	bool Initialize();
 	void Finalize();
