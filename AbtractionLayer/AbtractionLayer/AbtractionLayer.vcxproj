@@ -26,7 +26,6 @@
     <ClCompile Include="Snct_DXRender.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h" />
     <ClInclude Include="Snct_Application.h" />
     <ClInclude Include="Snct_DX11.h" />
     <ClInclude Include="Snct_DX11Render.h" />
@@ -39,6 +38,7 @@
     <ClInclude Include="Snct_ResouceLibary.h" />
     <ClInclude Include="Snct_Scene.h" />
     <ClInclude Include="Snct_Utility.h" />
+    <ClInclude Include="Snct_Windows.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

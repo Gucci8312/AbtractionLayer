@@ -1,9 +1,5 @@
 #pragma once
-#include <iostream>
-#include <cstdint>
-#include <memory>
-#include <thread>
-#include <Windows.h>
+#include "Snct_Windows.h"
 
 constexpr const char*	g_className	= "AbtractionLayer";
 
@@ -11,7 +7,7 @@ constexpr const char*	g_className	= "AbtractionLayer";
 class SnctApplication
 {
 public:
-	SnctApplication(uint32_t Width, uint32_t Height,const char* WindowName);
+	SnctApplication();
 	~SnctApplication();
 
 	// Method

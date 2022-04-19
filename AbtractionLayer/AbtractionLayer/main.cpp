@@ -1,11 +1,12 @@
-#include "main.h"
+#include "Snct_Application.h"
+#include "Snct_Utility.h"
 
 //------------------------------------------------------------------------------
 /// Main function
 //------------------------------------------------------------------------------
 int main()
 {
-	SnctApplication app(g_screenWidth, g_screenHeight, "AbtractionLayer");
+	SnctApplication app;
 
 	//execution
 	app.Run();

@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <iostream>
 #include <stdexcept>
 #include <unordered_map>
 
@@ -13,4 +14,10 @@
 
 using HashKey = std::string;
 
-void SnctRuntimeError();
+constexpr int g_screenWidth  = 1200;
+constexpr int g_screenHeight = 800;
+
+inline void SnctRuntimeError(std::runtime_error& e) 
+{
+	_ASSERT(e.what());
+}

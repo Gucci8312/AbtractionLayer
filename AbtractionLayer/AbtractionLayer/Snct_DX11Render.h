@@ -7,14 +7,15 @@ class SnctDX11Render : public SnctDXRender
 
 public:
 	// render override
-	void Build()		override;
-	void RenderBegin()	override;
-	void RenderEnd()	override;
+	void Build(HWND* hWnd)	override;
+	void RenderBegin()		override;
+	void RenderEnd()		override;
 
 	void Draw(HashKey key, SNCT_DRAW_FLAG drawFlag) override;
 
 	void CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices) override;
 protected:
+	ComPtr<ID3D11Device> pDevice;
 
 private:
 

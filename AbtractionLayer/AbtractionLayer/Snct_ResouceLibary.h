@@ -1,6 +1,5 @@
 #pragma once
-#include <unordered_map>
-#include <string>
+#include "Snct_Utility.h"
 
 // Classes that manage Resources
 class SnctResouceLibary

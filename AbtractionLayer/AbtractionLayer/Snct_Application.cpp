@@ -1,3 +1,4 @@
+#include "Snct_Utility.h"
 #include "Snct_Application.h"
 
 //------------------------------------------------------------------------------
@@ -30,13 +31,9 @@ LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 //------------------------------------------------------------------------------
 /// Contructor
-/// \param[in]      Screen width
-/// \param[in]      Screen height
-/// \param[in]      Window name
+/// \param		none
 //------------------------------------------------------------------------------
-SnctApplication::SnctApplication(uint32_t Width, uint32_t Height,
-	const char* WindowName) :m_width(Width), m_height(Height), 
-	m_windowName(WindowName)
+SnctApplication::SnctApplication() :m_width(g_screenWidth), m_height(g_screenHeight), m_windowName("App")
 {
 	// Nothing //
 }
@@ -92,9 +89,6 @@ bool SnctApplication::InitWnd()
 		return false;
 	}
 
-	// Check memory leak
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-
 	// Window class param
 	WNDCLASSEX		wcex;
 	wcex.hInstance = m_hInst;
@@ -118,7 +112,7 @@ bool SnctApplication::InitWnd()
 
 	// Set window size
 	RECT rc = {};
-	rc.right = static_cast<LONG>(m_width);
+	rc.right  = static_cast<LONG>(m_width);
 	rc.bottom = static_cast<LONG>(m_height);
 
 	// Adjust window size
