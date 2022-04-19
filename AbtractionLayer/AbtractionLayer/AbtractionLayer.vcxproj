@@ -18,6 +18,28 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Snct_Application.cpp" />
+    <ClCompile Include="Snct_DX11Render.cpp" />
+    <ClCompile Include="Snct_DX12Render.cpp" />
+    <ClCompile Include="Snct_DXRender.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h" />
+    <ClInclude Include="Snct_Application.h" />
+    <ClInclude Include="Snct_DX11.h" />
+    <ClInclude Include="Snct_DX11Render.h" />
+    <ClInclude Include="Snct_DX12Render.h" />
+    <ClInclude Include="Snct_DXConstantParameter.h" />
+    <ClInclude Include="Snct_DXRender.h" />
+    <ClInclude Include="Snct_Math.h" />
+    <ClInclude Include="Snct_Object.h" />
+    <ClInclude Include="Snct_Render.h" />
+    <ClInclude Include="Snct_ResouceLibary.h" />
+    <ClInclude Include="Snct_Scene.h" />
+    <ClInclude Include="Snct_Utility.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -140,23 +162,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Snct_Application.cpp" />
-    <ClCompile Include="Snct_DXRender.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="dx11.h" />
-    <ClInclude Include="main.h" />
-    <ClInclude Include="Snct_DXConstantParameter.h" />
-    <ClInclude Include="Snct_DXRender.h" />
-    <ClInclude Include="Snct_Application.h" />
-    <ClInclude Include="Snct_Math.h" />
-    <ClInclude Include="Snct_Object.h" />
-    <ClInclude Include="Snct_Render.h" />
-    <ClInclude Include="Snct_Scene.h" />
-    <ClInclude Include="Snct_Utility.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
