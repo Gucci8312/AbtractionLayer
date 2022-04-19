@@ -28,14 +28,17 @@
     <Filter Include="ヘッダー ファイル\directX">
       <UniqueIdentifier>{d24e1c40-035e-421c-8ed2-8496f5c1e99b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="ヘッダー ファイル\directX\dx11">
-      <UniqueIdentifier>{b53f344f-3def-40ca-81a7-db0e69b89e26}</UniqueIdentifier>
-    </Filter>
     <Filter Include="ソース ファイル\directX">
       <UniqueIdentifier>{22830ef3-adcd-4f85-ad5a-a3a504963720}</UniqueIdentifier>
     </Filter>
     <Filter Include="ヘッダー ファイル\utility">
       <UniqueIdentifier>{99573f3c-5da6-4719-a2a4-62be3ab0507d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\directX\directX11">
+      <UniqueIdentifier>{48898970-ba15-4968-89b2-00ec75c92394}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\directX\directX11">
+      <UniqueIdentifier>{b53f344f-3def-40ca-81a7-db0e69b89e26}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -47,6 +50,9 @@
     </ClCompile>
     <ClCompile Include="Snct_DXRender.cpp">
       <Filter>ソース ファイル\directX</Filter>
+    </ClCompile>
+    <ClCompile Include="Snct_DX11Render.cpp">
+      <Filter>ソース ファイル\directX\directX11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -68,8 +74,8 @@
     <ClInclude Include="Snct_DXRender.h">
       <Filter>ヘッダー ファイル\directX</Filter>
     </ClInclude>
-    <ClInclude Include="dx11.h">
-      <Filter>ヘッダー ファイル\directX\dx11</Filter>
+    <ClInclude Include="Snct_DX11.h">
+      <Filter>ヘッダー ファイル\directX\directX11</Filter>
     </ClInclude>
     <ClInclude Include="Snct_DXConstantParameter.h">
       <Filter>ヘッダー ファイル\directX</Filter>
@@ -79,6 +85,9 @@
     </ClInclude>
     <ClInclude Include="Snct_Utility.h">
       <Filter>ヘッダー ファイル\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_DX11Render.h">
+      <Filter>ヘッダー ファイル\directX\directX11</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

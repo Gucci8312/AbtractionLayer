@@ -6,8 +6,11 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <stdexcept>
 #include <unordered_map>
 
 #include "Snct_Math.h"
 
 using HashKey = std::string;
+
+void SnctRuntimeError();

@@ -143,11 +143,13 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Snct_Application.cpp" />
+    <ClCompile Include="Snct_DX11Render.cpp" />
     <ClCompile Include="Snct_DXRender.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dx11.h" />
+    <ClInclude Include="Snct_DX11.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="Snct_DX11Render.h" />
     <ClInclude Include="Snct_DXConstantParameter.h" />
     <ClInclude Include="Snct_DXRender.h" />
     <ClInclude Include="Snct_Application.h" />

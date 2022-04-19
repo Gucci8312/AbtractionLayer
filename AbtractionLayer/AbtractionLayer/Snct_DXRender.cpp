@@ -1,4 +1,3 @@
-#include "Snct_DXConstantParameter.h"
 #include "Snct_DXRender.h"
 
 void SnctDXRender::SetObject(Transform* pTransform)
