@@ -11,6 +11,7 @@ public:
 
 	void Initialize()
 	{
+		SceneObjects();
 		for (const auto& object : m_pObjects) object.second->Initialize();
 	}
 	void Update() 

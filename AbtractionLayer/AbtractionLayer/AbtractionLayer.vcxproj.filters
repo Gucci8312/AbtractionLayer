@@ -13,6 +13,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="ヘッダー ファイル\independent">
+      <UniqueIdentifier>{3c432427-5fe9-4aa8-b858-962e0f1c7671}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\independent\Interface">
+      <UniqueIdentifier>{90e0493d-ea65-4e06-b4f8-da47503fb67c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\object">
+      <UniqueIdentifier>{0f599d5c-4ba5-49b9-9f7a-5df248fd8d51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="リソース ファイル\scene">
+      <UniqueIdentifier>{cc9dfcf0-7406-430b-8010-9de438f25d2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\directX">
+      <UniqueIdentifier>{d24e1c40-035e-421c-8ed2-8496f5c1e99b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\directX\dx11">
+      <UniqueIdentifier>{b53f344f-3def-40ca-81a7-db0e69b89e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ソース ファイル\directX">
+      <UniqueIdentifier>{22830ef3-adcd-4f85-ad5a-a3a504963720}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ヘッダー ファイル\utility">
+      <UniqueIdentifier>{99573f3c-5da6-4719-a2a4-62be3ab0507d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -21,8 +45,8 @@
     <ClCompile Include="Snct_Application.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
-    <ClCompile Include="Snct_ResouceLibary.cpp">
-      <Filter>ソース ファイル</Filter>
+    <ClCompile Include="Snct_DXRender.cpp">
+      <Filter>ソース ファイル\directX</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -32,8 +56,29 @@
     <ClInclude Include="Snct_Application.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="Snct_ResouceLibary.h">
-      <Filter>ヘッダー ファイル</Filter>
+    <ClInclude Include="Snct_Scene.h">
+      <Filter>ヘッダー ファイル\independent\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Render.h">
+      <Filter>ヘッダー ファイル\independent\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Object.h">
+      <Filter>ヘッダー ファイル\independent\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_DXRender.h">
+      <Filter>ヘッダー ファイル\directX</Filter>
+    </ClInclude>
+    <ClInclude Include="dx11.h">
+      <Filter>ヘッダー ファイル\directX\dx11</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_DXConstantParameter.h">
+      <Filter>ヘッダー ファイル\directX</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Math.h">
+      <Filter>ヘッダー ファイル\utility</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Utility.h">
+      <Filter>ヘッダー ファイル\utility</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
