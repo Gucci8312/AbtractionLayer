@@ -5,10 +5,9 @@
 //------------------------------------------------------------------------------
 int main()
 {
-	// Application instance
 	SnctApplication app(g_screenWidth, g_screenHeight, "AbtractionLayer");
 
-	// execution
+	//execution
 	app.Run();
 
 	return 0;

@@ -59,7 +59,7 @@ SnctApplication::~SnctApplication()
 //------------------------------------------------------------------------------
 bool SnctApplication::Initialize()
 {
-	if (InitWnd()) return false;
+	if (!InitWnd()) return false;
 
 	// Console window destroy
 	FreeConsole();
@@ -152,7 +152,7 @@ bool SnctApplication::InitWnd()
 //------------------------------------------------------------------------------
 void SnctApplication::Run()
 {
-	if (Initialize())		return;
+	if (!Initialize())	return;
 
 	MainLoop();
 
