@@ -449,6 +449,14 @@ struct FLOAT4 {
 	}
 };
 
+struct Matrix 
+{
+	float m00, m01, m02, m03;
+	float m10, m11, m12, m13;
+	float m20, m21, m22, m23;
+	float m30, m31, m32, m33;
+};
+
 struct Vertex
 {
 	Vertex() {}
@@ -487,3 +495,6 @@ struct  Camera
 	float fNear = 0.1f;
 	float fFar = 1000.0f;
 };
+
+using Vertices = std::vector<Vertex>;
+using Indices = std::vector<unsigned int>;
