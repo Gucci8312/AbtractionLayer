@@ -20,5 +20,6 @@ protected:
 	Vertices	m_vertices;
 	Indices		m_indices;
 
+private:
 
 };
