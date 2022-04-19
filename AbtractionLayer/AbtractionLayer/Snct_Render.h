@@ -14,11 +14,15 @@ public:
 	virtual void Begin() = 0;
 	virtual void End() = 0;
 
-	virtual void CreateObject() = 0;
-	virtual void Draw(std::string szKey, SNCT_DRAW_FLAG drawFlag) = 0;
+	virtual void Draw(HashKey key, SNCT_DRAW_FLAG drawFlag) = 0;
 
-	virtual void SetObject() = 0;
-	virtual void SetCamera() = 0;
+	/// <summary>
+	/// create object vertex & index buffer 
+	/// </summary>
+	virtual void CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices) = 0;
+
+	virtual void SetObject(Transform* pTransform) = 0;
+	virtual void SetCamera(Camera* pCamera) = 0;
 
 protected:
 

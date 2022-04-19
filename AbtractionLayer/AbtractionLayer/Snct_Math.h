@@ -495,3 +495,6 @@ struct  Camera
 	float fNear = 0.1f;
 	float fFar = 1000.0f;
 };
+
+using Vertices = std::vector<Vertex>;
+using Indices = std::vector<unsigned int>;

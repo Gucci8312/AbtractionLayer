@@ -9,3 +9,5 @@
 #include <unordered_map>
 
 #include "Snct_Math.h"
+
+using HashKey = std::string;

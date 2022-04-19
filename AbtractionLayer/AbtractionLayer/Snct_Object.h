@@ -1,9 +1,6 @@
 #pragma once
 #include "Snct_Utility.h"
 
-using Vertices	= std::vector<FLOAT4>;
-using Indices	= std::vector<unsigned int>;
-
 class ISnctObject {
 
 public:
@@ -16,9 +13,9 @@ public:
 	virtual void Finalize()		= 0;
 
 protected:
-	Transform	m_transform;
-	Vertices	m_vertices;
-	Indices		m_indices;
+	Transform	m_Transform;
+	Vertices	m_Vertices;
+	Indices		m_Indices;
 
 private:
 
