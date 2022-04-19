@@ -7,9 +7,9 @@ class SnctDX11Render : public SnctDXRender
 
 public:
 	// render override
-	void Build()	override;
-	void Begin()	override;
-	void End()		override;
+	void Build()		override;
+	void RenderBegin()	override;
+	void RenderEnd()	override;
 
 	void Draw(HashKey key, SNCT_DRAW_FLAG drawFlag) override;
 

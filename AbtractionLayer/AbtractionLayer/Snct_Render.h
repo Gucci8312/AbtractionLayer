@@ -11,8 +11,8 @@ class ISnctRender
 {
 public:
 	virtual void Build() = 0;
-	virtual void Begin() = 0;
-	virtual void End() = 0;
+	virtual void RenderBegin() = 0;
+	virtual void RenderEnd() = 0;
 
 	virtual void Draw(HashKey key, SNCT_DRAW_FLAG drawFlag) = 0;
 
