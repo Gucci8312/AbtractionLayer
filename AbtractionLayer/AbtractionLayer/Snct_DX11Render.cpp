@@ -194,7 +194,9 @@ void SnctDX11Render::Build(HWND* hWnd)
 		m_pDeviceContext->RSSetViewports(1, &m_viewport);
 	}
 
-
+	m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
+	m_pShaderLibrary->CreateShaderFromFile("n_vertex", L"n_vertex.hlsl", DX_SHADER_TYPE::VS);
+	m_pShaderLibrary->CreateShaderFromFile("n_pixel", L"n_pixel.hlsl", DX_SHADER_TYPE::PS);
 }
 
 void SnctDX11Render::RenderBegin()
@@ -208,8 +210,6 @@ void SnctDX11Render::RenderBegin()
 
 	m_pDeviceContext->OMSetRenderTargets(1, m_pBackBufferView.GetAddressOf(), m_pDepthStencileView.Get());
 	m_pDeviceContext->RSSetViewports(1, &m_viewport);
-	//m_pDeferredContext->Set
-
 }
 
 void SnctDX11Render::RenderEnd()
