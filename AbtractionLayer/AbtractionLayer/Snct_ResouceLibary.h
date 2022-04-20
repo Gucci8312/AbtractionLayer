@@ -1,3 +1,4 @@
+// Resources Management file...
 #pragma once
 #include "Snct_Utility.h"
 
@@ -5,7 +6,9 @@
 class SnctResouceLibary
 {
 public:
-	// Method	
+	//---------------------------------------------------------------------------
+	// public methods
+	//---------------------------------------------------------------------------	
 
 	//------------------------------------------------------------------------------
 	/// Create resource
@@ -41,7 +44,9 @@ public:
 	}
 
 private:
-	// Member
+	//---------------------------------------------------------------------------
+	// private variables.
+	//---------------------------------------------------------------------------	
 	// Key.String  Value.Template(Resource)
 	std::unordered_map<std::string, void*> m_resource;
 };

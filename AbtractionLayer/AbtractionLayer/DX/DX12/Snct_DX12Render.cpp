@@ -6,6 +6,10 @@
 //------------------------------------------------------------------------------
 SnctDX12Render::SnctDX12Render()
 {
+	Factory* Factory = new RenderTargetViewFactory();
+	Dx11RTV* aa;
+	Product* GraphDev = Factory->Create(aa);
+	GraphDev->Use<ID3D12DescriptorHeap>();
 }
 
 //------------------------------------------------------------------------------
