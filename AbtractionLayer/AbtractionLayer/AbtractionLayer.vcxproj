@@ -26,9 +26,11 @@
     <ClCompile Include="Snct_DXRender.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ISnct_DxCmdList.h" />
     <ClInclude Include="Snct_Application.h" />
     <ClInclude Include="Snct_DX11.h" />
     <ClInclude Include="Snct_DX11Render.h" />
+    <ClInclude Include="Snct_DX12.h" />
     <ClInclude Include="Snct_DX12Render.h" />
     <ClInclude Include="Snct_DXConstantParameter.h" />
     <ClInclude Include="Snct_DXRender.h" />

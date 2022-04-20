@@ -41,7 +41,6 @@ SnctApplication::SnctApplication() :m_width(g_screenWidth), m_height(g_screenHei
 
 //------------------------------------------------------------------------------
 /// Destructor
-/// \param		none
 //------------------------------------------------------------------------------
 SnctApplication::~SnctApplication()
 {
@@ -52,7 +51,7 @@ SnctApplication::~SnctApplication()
 //------------------------------------------------------------------------------
 /// Initialization process
 /// \param		none
-/// \return		True on success
+/// \return		none
 //------------------------------------------------------------------------------
 bool SnctApplication::Initialize()
 {
@@ -68,7 +67,7 @@ bool SnctApplication::Initialize()
 //------------------------------------------------------------------------------
 /// Application end processing
 /// param		none
-/// \return		True on success
+/// \return		none
 //------------------------------------------------------------------------------
 void SnctApplication::Finalize()
 {
@@ -112,7 +111,7 @@ bool SnctApplication::InitWnd()
 
 	// Set window size
 	RECT rc = {};
-	rc.right  = static_cast<LONG>(m_width);
+	rc.right = static_cast<LONG>(m_width);
 	rc.bottom = static_cast<LONG>(m_height);
 
 	// Adjust window size
