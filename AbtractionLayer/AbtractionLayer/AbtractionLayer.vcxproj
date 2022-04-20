@@ -24,6 +24,7 @@
     <ClCompile Include="Snct_DX11Render.cpp" />
     <ClCompile Include="Snct_DX12Render.cpp" />
     <ClCompile Include="Snct_DXRender.cpp" />
+    <ClCompile Include="Snct_ShaderLibrary.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Snct_Application.h" />
@@ -37,6 +38,7 @@
     <ClInclude Include="Snct_Render.h" />
     <ClInclude Include="Snct_ResouceLibary.h" />
     <ClInclude Include="Snct_Scene.h" />
+    <ClInclude Include="Snct_ShaderLibrary.h" />
     <ClInclude Include="Snct_Utility.h" />
     <ClInclude Include="Snct_Windows.h" />
   </ItemGroup>

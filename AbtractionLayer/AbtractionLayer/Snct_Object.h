@@ -13,9 +13,9 @@ public:
 	virtual void Finalize()		= 0;
 
 protected:
-	Transform	m_Transform;
-	Vertices	m_Vertices;
-	Indices		m_Indices;
+	Transform	m_transform;
+	Vertices	m_vertices;
+	Indices		m_indices;
 
 private:
 

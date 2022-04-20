@@ -17,10 +17,10 @@ struct XMConstantCamera
 
 	XMFLOAT4X4	view;
 	XMFLOAT4X4	projection;
-	XMFLOAT4X4	VP;
-	XMFLOAT4X4	InversView;
-	XMFLOAT4X4	InversProjection;
-	XMFLOAT4X4	InversVP;
+	XMFLOAT4X4	vp;
+	XMFLOAT4X4	inversView;
+	XMFLOAT4X4	inversProjection;
+	XMFLOAT4X4	inversVp;
 };
 
 struct XMConstantObject

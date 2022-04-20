@@ -27,24 +27,23 @@ public:
 		for (const auto& object : m_pObjects) object.second->Finalize();
 	}
 
-protected:
-	/// <summary>
+protected:	
+	//------------------------------------------------------------------------------
 	/// set start scene objects
-	/// </summary>
+	//------------------------------------------------------------------------------
 	virtual void SceneObjects() = 0;
 
-	/// <summary>
-	/// add scene object instance
-	/// </summary>
-	/// <typeparam name="T"> object type </typeparam>
-	/// <param name="key"> regist hash key </param>
+	//------------------------------------------------------------------------------
+	/// Add scene object instance
+	/// \param[in]      Hash key
+	//------------------------------------------------------------------------------
 	template<class T>
 	void AddObject(HashKey key);
 	
-	/// <summary>
-	/// release object instance
-	/// </summary>
-	/// <param name="key"> regist hash key </param>
+	//------------------------------------------------------------------------------
+	/// Release object instance
+	/// \param[in]      Hash key
+	//------------------------------------------------------------------------------
 	void ReleaseObject(HashKey key);
 
 private:
