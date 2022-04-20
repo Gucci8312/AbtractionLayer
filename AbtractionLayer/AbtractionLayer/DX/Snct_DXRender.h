@@ -1,5 +1,5 @@
 #pragma once
-#include "Snct_Render.h"
+#include "../Snct_Render.h"
 #include "Snct_DXConstantParameter.h"
 
 class SnctDXRender : public ISnctRender 

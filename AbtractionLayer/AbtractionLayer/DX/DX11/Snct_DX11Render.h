@@ -1,6 +1,6 @@
 #pragma once
 #include "Snct_DX11.h"
-#include "Snct_DXRender.h"
+#include "../Snct_DXRender.h"
 
 class SnctDX11Render : public SnctDXRender
 {

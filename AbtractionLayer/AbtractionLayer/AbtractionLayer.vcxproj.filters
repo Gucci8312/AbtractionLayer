@@ -1,101 +1,29 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="ソース ファイル">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="ヘッダー ファイル">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="リソース ファイル">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClInclude Include="Snct_Application.h" />
+    <ClInclude Include="Snct_Math.h" />
+    <ClInclude Include="Snct_Object.h" />
+    <ClInclude Include="Snct_Render.h" />
+    <ClInclude Include="Snct_ResouceLibary.h" />
+    <ClInclude Include="Snct_Scene.h" />
+    <ClInclude Include="Snct_ShaderLibrary.h" />
+    <ClInclude Include="Snct_Utility.h" />
+    <ClInclude Include="Snct_Windows.h" />
+    <ClInclude Include="DX\ISnct_DxCmdList.h" />
+    <ClInclude Include="DX\Snct_DXConstantParameter.h" />
+    <ClInclude Include="DX\Snct_DXRender.h" />
+    <ClInclude Include="DX\DX12\Snct_DX12.h" />
+    <ClInclude Include="DX\DX12\Snct_DX12Render.h" />
+    <ClInclude Include="DX\DX11\Snct_DX11.h" />
+    <ClInclude Include="DX\DX11\Snct_DX11Render.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Snct_Application.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Snct_DX11Render.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Snct_DXRender.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Snct_DX12Render.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-    <ClCompile Include="Snct_ShaderLibrary.cpp">
-      <Filter>ソース ファイル</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Snct_Application.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_DX11.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_DX11Render.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_DXConstantParameter.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_DXRender.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_Math.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_Object.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_Render.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_ResouceLibary.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_Scene.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_Utility.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_DX12Render.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_Windows.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="Snct_ShaderLibrary.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="Snct_Resource.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="n_pixel.hlsl">
-      <Filter>リソース ファイル</Filter>
-    </FxCompile>
-    <FxCompile Include="n_vertex.hlsl">
-      <Filter>リソース ファイル</Filter>
-    </FxCompile>
-=======
-    <ClInclude Include="Snct_DX12.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
-    <ClInclude Include="ISnct_DxCmdList.h">
-      <Filter>ヘッダー ファイル</Filter>
-    </ClInclude>
->>>>>>> develop
+    <ClCompile Include="Snct_ShaderLibrary.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Snct_Application.cpp" />
+    <ClCompile Include="DX\Snct_DXRender.cpp" />
+    <ClCompile Include="DX\DX12\Snct_DX12Render.cpp" />
+    <ClCompile Include="DX\DX11\Snct_DX11Render.cpp" />
   </ItemGroup>
 </Project>

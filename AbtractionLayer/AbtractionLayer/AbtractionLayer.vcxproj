@@ -19,53 +19,30 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Snct_Application.cpp" />
-    <ClCompile Include="Snct_DX11Render.cpp" />
-    <ClCompile Include="Snct_DX12Render.cpp" />
-    <ClCompile Include="Snct_DXRender.cpp" />
-    <ClCompile Include="Snct_ShaderLibrary.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="ISnct_DxCmdList.h" />
+    <ClInclude Include="DX\DX11\Snct_DX11.h" />
+    <ClInclude Include="DX\DX11\Snct_DX11Render.h" />
+    <ClInclude Include="DX\DX12\Snct_DX12.h" />
+    <ClInclude Include="DX\DX12\Snct_DX12Render.h" />
+    <ClInclude Include="DX\ISnct_DxCmdList.h" />
+    <ClInclude Include="DX\Snct_DXConstantParameter.h" />
+    <ClInclude Include="DX\Snct_DXRender.h" />
     <ClInclude Include="Snct_Application.h" />
-    <ClInclude Include="Snct_DX11.h" />
-    <ClInclude Include="Snct_DX11Render.h" />
-    <ClInclude Include="Snct_DX12.h" />
-    <ClInclude Include="Snct_DX12Render.h" />
-    <ClInclude Include="Snct_DXConstantParameter.h" />
-    <ClInclude Include="Snct_DXRender.h" />
     <ClInclude Include="Snct_Math.h" />
     <ClInclude Include="Snct_Object.h" />
     <ClInclude Include="Snct_Render.h" />
     <ClInclude Include="Snct_ResouceLibary.h" />
-    <ClInclude Include="Snct_Resource.h" />
     <ClInclude Include="Snct_Scene.h" />
     <ClInclude Include="Snct_ShaderLibrary.h" />
     <ClInclude Include="Snct_Utility.h" />
     <ClInclude Include="Snct_Windows.h" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="n_pixel.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-    </FxCompile>
-    <FxCompile Include="n_vertex.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
+    <ClCompile Include="DX\DX11\Snct_DX11Render.cpp" />
+    <ClCompile Include="DX\DX12\Snct_DX12Render.cpp" />
+    <ClCompile Include="DX\Snct_DXRender.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="Snct_Application.cpp" />
+    <ClCompile Include="Snct_ShaderLibrary.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

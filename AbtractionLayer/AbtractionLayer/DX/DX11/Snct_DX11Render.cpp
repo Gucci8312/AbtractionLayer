@@ -1,5 +1,5 @@
-#include "Snct_Utility.h"
-#include "Snct_ShaderLibrary.h"
+#include "../../Snct_Utility.h"
+#include "../../Snct_ShaderLibrary.h"
 #include "Snct_DX11Render.h"
 
 void SnctDX11Render::Build(HWND* hWnd)
