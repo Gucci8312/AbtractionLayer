@@ -1,3 +1,4 @@
+// DirectX12 Management file...
 #pragma once
 #include "Snct_DXRender.h"
 #include "Snct_DX12.h"

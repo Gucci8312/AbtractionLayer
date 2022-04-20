@@ -1,7 +1,7 @@
 #include "Snct_Utility.h"
 #include "Snct_Application.h"
 
-// debug用プッシュ時消す
+// debug用マージ時消す
 #include "Snct_DX12Render.h"
 SnctDX12Render dx12;
 //--------------------
@@ -187,7 +187,7 @@ void SnctApplication::MainLoop()
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 
-				// 後で消す
+				// マージ時消す
 				//dx12.RenderBegin();
 				//dx12.RenderEnd();
 			//--------------------

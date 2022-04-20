@@ -1,7 +1,6 @@
+// Application Manegiment file...
 #pragma once
 #include "Snct_Windows.h"
-
-constexpr const char*	g_className	= "AbtractionLayer";
 
 // Classes that manage applications
 class SnctApplication
@@ -19,10 +18,11 @@ public:
 
 private:
 	// Member
-	HINSTANCE   m_hInst = nullptr;
-	HWND        m_hwnd = nullptr;
+	const char* m_windowName;
+	const char* g_className	= "AbtractionLayer";
+	HINSTANCE   m_hInst		= nullptr;
+	HWND        m_hwnd		= nullptr;
 	LONG		m_width;
 	LONG		m_height;
-	const char* m_windowName;
 };
 
