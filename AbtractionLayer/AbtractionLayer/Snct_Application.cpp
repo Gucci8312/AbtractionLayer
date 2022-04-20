@@ -57,7 +57,7 @@ SnctApplication::~SnctApplication()
 //------------------------------------------------------------------------------
 /// Initialization process
 /// \param		none
-/// \return		True on success
+/// \return		none
 //------------------------------------------------------------------------------
 bool SnctApplication::Initialize()
 {
@@ -77,7 +77,7 @@ bool SnctApplication::Initialize()
 //------------------------------------------------------------------------------
 /// Application end processing
 /// param		none
-/// \return		True on success
+/// \return		none
 //------------------------------------------------------------------------------
 void SnctApplication::Finalize()
 {
@@ -87,7 +87,7 @@ void SnctApplication::Finalize()
 //------------------------------------------------------------------------------
 /// Window	initlize
 /// \param		none
-/// \return		True on success
+/// \return		none
 //------------------------------------------------------------------------------
 bool SnctApplication::InitWnd()
 {
