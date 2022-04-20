@@ -74,6 +74,7 @@
     <ClInclude Include="Snct_Windows.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="Snct_ShaderLibrary.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
@@ -88,5 +89,13 @@
     <FxCompile Include="n_vertex.hlsl">
       <Filter>リソース ファイル</Filter>
     </FxCompile>
+=======
+    <ClInclude Include="Snct_DX12.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="ISnct_DxCmdList.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+>>>>>>> develop
   </ItemGroup>
 </Project>
