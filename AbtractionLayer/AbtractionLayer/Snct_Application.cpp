@@ -1,6 +1,11 @@
 #include "Snct_Utility.h"
 #include "Snct_Application.h"
 
+// debug用プッシュ時消す
+#include "Snct_DX12Render.h"
+SnctDX12Render dx12;
+//--------------------
+
 //------------------------------------------------------------------------------
 /// Window Procedure
 /// \param[in]      Window handle
@@ -61,6 +66,10 @@ bool SnctApplication::Initialize()
 	// Console window destroy
 	FreeConsole();
 
+	// 後で消す
+	dx12.Build(&m_hwnd);
+	//-----------
+
 	return true;
 }
 
@@ -112,7 +121,7 @@ bool SnctApplication::InitWnd()
 
 	// Set window size
 	RECT rc = {};
-	rc.right  = static_cast<LONG>(m_width);
+	rc.right = static_cast<LONG>(m_width);
 	rc.bottom = static_cast<LONG>(m_height);
 
 	// Adjust window size
@@ -177,6 +186,11 @@ void SnctApplication::MainLoop()
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
+
+				// 後で消す
+				//dx12.RenderBegin();
+				//dx12.RenderEnd();
+			//--------------------
 			}
 		}
 		else
