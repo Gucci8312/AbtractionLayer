@@ -77,7 +77,7 @@ void SnctApplication::Finalize()
 //------------------------------------------------------------------------------
 /// Window	initlize
 /// \param		none
-/// \return		True on success
+/// \return		none
 //------------------------------------------------------------------------------
 bool SnctApplication::InitWnd()
 {
