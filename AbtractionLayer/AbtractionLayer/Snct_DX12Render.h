@@ -7,16 +7,22 @@
 class SnctDX12Render : public SnctDXRender
 {
 public:
-	// Method
+	//---------------------------------------------------------------------------
+	// public methods
+	//---------------------------------------------------------------------------	
+	SnctDX12Render();
+	~SnctDX12Render();
 	void Build(HWND* hWnd)	override final;
 	void RenderBegin()		override final;
 	void RenderEnd()		override final;
 	void Draw(HashKey key, SNCT_DRAW_FLAG drawFlag) override final;
 	void CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices) override final;
 	void SetResourceBarrier(ID3D12Resource* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After);
-
+	void WaitGPU();
 private:
-	// Member
+	//---------------------------------------------------------------------------
+	// private variables.
+	//---------------------------------------------------------------------------	
 	static const uint32_t				   m_frameCount = 2;
 	ComPtr<ID3D12Device>                   m_device;
 	ComPtr<ID3D12CommandQueue>             m_cmdQueue;

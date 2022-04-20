@@ -1,6 +1,47 @@
 #include "Snct_DX12Render.h"
 
 //------------------------------------------------------------------------------
+/// Contructor
+/// \param		none
+//------------------------------------------------------------------------------
+SnctDX12Render::SnctDX12Render()
+{
+}
+
+//------------------------------------------------------------------------------
+/// Destructor
+/// \param		none
+//------------------------------------------------------------------------------
+SnctDX12Render::~SnctDX12Render()
+{
+	// Fence
+	WaitGPU();
+
+	// Release
+	m_device.Reset();
+	m_cmdQueue.Reset();
+	m_swapChain.Reset();
+	m_cmdList.Reset();
+	m_heapRTV.Reset();
+	m_heapDSV.Reset();
+	m_fence.Reset();
+	m_depthBuffer.Reset();
+
+	for (auto Idx = 0; Idx < m_frameCount; ++Idx)
+	{
+		m_cmdAllocator[Idx].Reset();
+		m_colorBuffer[Idx].Reset();
+	}
+
+	// Event destroy
+	if (m_fenceEvent != nullptr)
+	{
+		CloseHandle(m_fenceEvent);
+		m_fenceEvent = nullptr;
+	}
+}
+
+//------------------------------------------------------------------------------
 /// Initial setting of DirectX12
 /// \param[in]		Window handle pointer
 /// \return			none
@@ -72,10 +113,6 @@ void SnctDX12Render::Build(HWND* hWnd)
 
 		// Get buckbuffer idx
 		m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
-
-		// Release
-		Factory.Reset();
-		pSwapChain.Reset();
 
 		// Create commandallocator
 		for (auto i = 0; i < m_frameCount; ++i)
@@ -291,11 +328,7 @@ void SnctDX12Render::RenderEnd()
 	m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
 
 	// Fence processing
-	if (m_fence->GetCompletedValue() < m_fenceCounter[m_frameIndex])
-	{
-		m_fence->SetEventOnCompletion(m_fenceCounter[m_frameIndex], m_fenceEvent);
-		WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
-	}
+	WaitGPU();
 
 	// Increased frame counter
 	m_fenceCounter[m_frameIndex] = currentValue + 1;
@@ -345,4 +378,24 @@ void SnctDX12Render::SetResourceBarrier(ID3D12Resource* Resource, D3D12_RESOURCE
 
 	// Set resource barrier
 	m_cmdList->ResourceBarrier(1, &BarrierDesc);
+}
+
+
+//------------------------------------------------------------------------------
+/// Wait until GPU processing is finished
+/// \param			none
+/// \return			none
+//------------------------------------------------------------------------------
+void SnctDX12Render::WaitGPU()
+{
+	m_cmdQueue->Signal(m_fence.Get(), m_fenceCounter[m_frameIndex]);
+
+	// When GPU procesing is completed
+	m_fence->SetEventOnCompletion(m_fenceCounter[m_frameIndex], m_fenceEvent);
+
+	// Wait procesing
+	WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
+
+	// Counter increase
+	m_fenceCounter[m_frameIndex]++;
 }

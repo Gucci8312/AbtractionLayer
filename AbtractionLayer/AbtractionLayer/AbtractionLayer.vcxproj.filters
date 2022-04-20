@@ -74,5 +74,8 @@
     <ClInclude Include="Snct_DX12.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="ISnct_DxCmdList.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

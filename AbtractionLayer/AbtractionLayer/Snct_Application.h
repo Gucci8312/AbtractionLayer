@@ -6,6 +6,9 @@
 class SnctApplication
 {
 public:
+	//---------------------------------------------------------------------------
+	// public methods
+	//---------------------------------------------------------------------------	
 	SnctApplication();
 	~SnctApplication();
 
@@ -17,7 +20,9 @@ public:
 	void MainLoop();
 
 private:
-	// Member
+	//---------------------------------------------------------------------------
+	// private variables.
+	//---------------------------------------------------------------------------
 	const char* m_windowName;
 	const char* g_className	= "AbtractionLayer";
 	HINSTANCE   m_hInst		= nullptr;

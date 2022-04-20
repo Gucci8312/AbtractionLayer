@@ -1,11 +1,6 @@
 #include "Snct_Utility.h"
 #include "Snct_Application.h"
 
-// debug用マージ時消す
-#include "Snct_DX12Render.h"
-SnctDX12Render dx12;
-//--------------------
-
 //------------------------------------------------------------------------------
 /// Window Procedure
 /// \param[in]      Window handle
@@ -46,7 +41,6 @@ SnctApplication::SnctApplication() :m_width(g_screenWidth), m_height(g_screenHei
 
 //------------------------------------------------------------------------------
 /// Destructor
-/// \param		none
 //------------------------------------------------------------------------------
 SnctApplication::~SnctApplication()
 {
@@ -57,7 +51,7 @@ SnctApplication::~SnctApplication()
 //------------------------------------------------------------------------------
 /// Initialization process
 /// \param		none
-/// \return		True on success
+/// \return		none
 //------------------------------------------------------------------------------
 bool SnctApplication::Initialize()
 {
@@ -66,10 +60,6 @@ bool SnctApplication::Initialize()
 	// Console window destroy
 	FreeConsole();
 
-	// 後で消す
-	dx12.Build(&m_hwnd);
-	//-----------
-
 	return true;
 }
 
@@ -77,7 +67,7 @@ bool SnctApplication::Initialize()
 //------------------------------------------------------------------------------
 /// Application end processing
 /// param		none
-/// \return		True on success
+/// \return		none
 //------------------------------------------------------------------------------
 void SnctApplication::Finalize()
 {
@@ -186,11 +176,6 @@ void SnctApplication::MainLoop()
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
-
-				// マージ時消す
-				//dx12.RenderBegin();
-				//dx12.RenderEnd();
-			//--------------------
 			}
 		}
 		else
