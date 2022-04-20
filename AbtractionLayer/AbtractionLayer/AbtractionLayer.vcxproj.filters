@@ -30,6 +30,9 @@
     <ClCompile Include="Snct_DX12Render.cpp">
       <Filter>ソース ファイル</Filter>
     </ClCompile>
+    <ClCompile Include="Snct_ShaderLibrary.cpp">
+      <Filter>ソース ファイル</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Snct_Application.h">
@@ -71,11 +74,28 @@
     <ClInclude Include="Snct_Windows.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+<<<<<<< HEAD
+    <ClInclude Include="Snct_ShaderLibrary.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Resource.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="n_pixel.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+    <FxCompile Include="n_vertex.hlsl">
+      <Filter>リソース ファイル</Filter>
+    </FxCompile>
+=======
     <ClInclude Include="Snct_DX12.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
     <ClInclude Include="ISnct_DxCmdList.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+>>>>>>> develop
   </ItemGroup>
 </Project>
