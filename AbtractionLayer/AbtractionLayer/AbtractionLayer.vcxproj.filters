@@ -46,9 +46,6 @@
     <ClInclude Include="Snct_Windows.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="ResourceConstants.h">
-      <Filter>Header</Filter>
-    </ClInclude>
     <ClInclude Include="DX\Snct_DXResource.h">
       <Filter>Header</Filter>
     </ClInclude>
@@ -89,6 +86,9 @@
     </ClCompile>
     <ClCompile Include="DX\DX12\Snct_Dx12Device.cpp">
       <Filter>Header\RenderCore</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\Snct_DXResource.cpp">
+      <Filter>Sorce</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

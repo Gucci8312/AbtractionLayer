@@ -32,6 +32,9 @@ public:
 		return static_cast<T*>(m_CmdList);
 	}
 
+	virtual void SetViewPort(float Width, float Height, float MinDepth, float MaxDepth) = 0;
+	virtual void SetScissorRects(float Width, float Height) = 0;
+	virtual void Close() = 0;
 	// CmdList for DirectX11
 	//template <> void Get<ID3D11RenderTargetView>(ID3D11RenderTargetView* ReturnRtv)
 	//{

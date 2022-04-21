@@ -17,7 +17,7 @@ public:
 	// public methods
 	//---------------------------------------------------------------------------	
 	virtual ~IDevice() {};
-	virtual IDevice* GetDvice() = 0;
+	//virtual IDevice* GetDevice() = 0;
 };
 
 // Device management interface class
@@ -27,7 +27,7 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	template <class T> void Get(T* ReturnRTV)
+	template <class T> void Get(T* ReturnDevice)
 	{
 		return reinterpret_cast<T*>(m_device);
 	}

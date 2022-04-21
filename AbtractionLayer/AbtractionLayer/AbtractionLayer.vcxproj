@@ -30,7 +30,6 @@
     <ClInclude Include="DX\Snct_DXConstantParameter.h" />
     <ClInclude Include="DX\Snct_DXRender.h" />
     <ClInclude Include="DX\Snct_DXResource.h" />
-    <ClInclude Include="ResourceConstants.h" />
     <ClInclude Include="Snct_Application.h" />
     <ClInclude Include="Snct_Math.h" />
     <ClInclude Include="Snct_Object.h" />
@@ -47,6 +46,7 @@
     <ClCompile Include="DX\DX12\Snct_Dx12Device.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12Render.cpp" />
     <ClCompile Include="DX\Snct_DXRender.cpp" />
+    <ClCompile Include="DX\Snct_DXResource.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Snct_Application.cpp" />
     <ClCompile Include="Snct_ShaderLibrary.cpp" />

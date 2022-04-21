@@ -4,8 +4,9 @@
 #include "Snct_DX12.h"
 #include "Snct_Dx12CmdList.h"
 #include "Snct_Dx12Device.h"
+#include "../Snct_DXResource.h"
 
-// Classes that manage DirectX12
+// Classes that manage DirectX12 core
 class SnctDX12Render : public SnctDXRender
 {
 public:
@@ -19,7 +20,6 @@ public:
 	void RenderEnd()		override final;
 	void Draw(HashKey key, SNCT_DRAW_FLAG drawFlag) override final;
 	void CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices) override final;
-	void SetResourceBarrier(ID3D12Resource* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After);
 	void WaitGPU();
 private:
 	//---------------------------------------------------------------------------
@@ -39,7 +39,8 @@ private:
 	HANDLE								   m_fenceEvent = {};
 	uint64_t							   m_fenceCounter[m_frameCount];
 	uint32_t                               m_frameIndex = 0;
-	D3D12_CPU_DESCRIPTOR_HANDLE            m_handleRTV[m_frameCount];
+	//D3D12_CPU_DESCRIPTOR_HANDLE            m_handleRTV[m_frameCount];
+	SnctDx12RTV							   m_rtv;
 	D3D12_CPU_DESCRIPTOR_HANDLE            m_handleDSV = {};
 	D3D12_VIEWPORT                         m_viewPort = {};
 	D3D12_RECT                             m_scissor = {};

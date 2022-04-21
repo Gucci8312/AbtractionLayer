@@ -14,26 +14,8 @@ class ISnctView
 {
 public:
 	virtual ~ISnctView() {};
-	virtual ISnctView* GetView() = 0;
-};
-
-// Dx11用レンダーターゲットビュー
-class Dx11RTV :public ISnctView
-{
-private:
-	ID3D11RenderTargetView* m_RenderTargetView;
-public:
-	ISnctView* GetView() { return (ISnctView*)m_RenderTargetView; }
-};
-
-// Dx12用レンダーターゲットビュー
-class Dx12RTV :public ISnctView
-{
-private:
-	ID3D12DescriptorHeap* m_RenderTargetView;
-public:
-	//D3D12_CPU_DESCRIPTOR_HANDLE	m_handleRTV[2];
-	ISnctView* GetView() { return (ISnctView*)m_RenderTargetView; }
+	virtual void Get(void* ReceiveData) = 0;
+	//virtual ISnctView* GetView() = 0;
 };
 
 // 生成していくRTVの元
@@ -41,38 +23,41 @@ class ISnctRTV
 {
 public:
 	// Return as areturn value
-	template <class T> T* Get() { return static_cast<T*>(RenderTargetView); }
-
-	// Return as an argument
 	template <class T> void Get(T* ReturnRTV)
 	{
-		ReturnRTV = nullptr;
+		
 	}
 
 	// RTV for DirectX11
 	template <> void Get<ID3D11RenderTargetView>(ID3D11RenderTargetView* ReturnRtv)
 	{
-		ReturnRtv = reinterpret_cast<ID3D11RenderTargetView*>(RenderTargetView);
+		ReturnRtv = reinterpret_cast<ID3D11RenderTargetView*>(m_RenderTargetView);
 	}
 
 	// RTV for DirectX12
-	template <> void Get<ID3D12DescriptorHeap>(ID3D12DescriptorHeap* ReturnRtv)
+	template <> void Get<D3D12_CPU_DESCRIPTOR_HANDLE>(D3D12_CPU_DESCRIPTOR_HANDLE* ReturnRtv)
 	{
-		ReturnRtv = reinterpret_cast<ID3D12DescriptorHeap*>(RenderTargetView);
+		ReturnRtv = reinterpret_cast<D3D12_CPU_DESCRIPTOR_HANDLE*>(m_RenderTargetView);
 	}
 
+
 protected:
-	ISnctView* RenderTargetView;
+	//---------------------------------------------------------------------------
+	// protected variables.
+	//---------------------------------------------------------------------------	
+	ISnctView* m_RenderTargetView;
 };
 
 class RTV :public ISnctRTV
 {
 public:
-	template<class T> RTV(T* RTVResource) { RenderTargetView = new T; }
+	//---------------------------------------------------------------------------
+	// public methods
+	//---------------------------------------------------------------------------	
+	template<class T> RTV(T* RTVResource) { m_RenderTargetView = reinterpret_cast<ISnctView*>(RTVResource); }
 	~RTV() {}
 private:
 };
-
 
 // RTV
 class ISnctCreateRTV 
@@ -85,6 +70,34 @@ public:
 		ISnctRTV* p = new RTV(rtv);
 		return p;
 	}
+};
+
+// Dx11用レンダーターゲットビュー
+class SnctDx11RTV :public ISnctView
+{
+private:
+	ID3D11RenderTargetView* m_RenderTargetView;
+public:
+	ISnctView* Get() { return (ISnctView*)m_RenderTargetView; }
+	//void Get(void* ReceiveData) { ReceiveData = m_RenderTargetView; }
+	void Create(ID3D11Device* Device, ID3D11Texture2D* BackBuffer);
+};
+
+// Dx12用レンダーターゲットビュー
+class SnctDx12RTV :public ISnctView
+{
+public:
+	//---------------------------------------------------------------------------
+	// public methods
+	//---------------------------------------------------------------------------	
+	D3D12_CPU_DESCRIPTOR_HANDLE* Get() { return m_handle; }
+	void Get(void* ReceiveData) { ReceiveData = m_handle; }
+	void Create(ID3D12Device* device, D3D12_RENDER_TARGET_VIEW_DESC RTVDesc, D3D12_CPU_DESCRIPTOR_HANDLE startHandle, int BackBufferNum, ID3D12Resource** Buffer);
+private:
+	//---------------------------------------------------------------------------
+	// private variables.
+	//---------------------------------------------------------------------------	
+	D3D12_CPU_DESCRIPTOR_HANDLE* m_handle;
 };
 
 #pragma endregion

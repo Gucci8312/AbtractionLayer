@@ -1,12 +1,15 @@
 #include "Snct_DX12Render.h"
 
 //------------------------------------------------------------------------------
-/// Contructor
+/// Constructor
 /// \param		none
 //------------------------------------------------------------------------------
 SnctDX12Render::SnctDX12Render()
 {
-	
+	/*ISnctCreateDevice CreateDevice;
+	SnctDx12Device* Dx12Device;
+	ISnctDevice* aa = CreateDevice.Convert(Dx12Device);*/
+
 }
 
 //------------------------------------------------------------------------------
@@ -150,19 +153,27 @@ void SnctDX12Render::Build(HWND* hWnd)
 			hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(m_colorBuffer[i].ReleaseAndGetAddressOf()));
 			if (FAILED(hr)) throw "DirectX12 color buffer create error";
 
-			// Render target view settings
-			D3D12_RENDER_TARGET_VIEW_DESC viewDesc = {};
-			viewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-			viewDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-			viewDesc.Texture2D.MipSlice = 0;
-			viewDesc.Texture2D.PlaneSlice = 0;
+			//// Render target view settings
+			//D3D12_RENDER_TARGET_VIEW_DESC viewDesc = {};
+			//viewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+			//viewDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+			//viewDesc.Texture2D.MipSlice = 0;
+			//viewDesc.Texture2D.PlaneSlice = 0;
 
-			// Create render target view
-			m_device.Get()->CreateRenderTargetView(m_colorBuffer[i].Get(), &viewDesc, handle);
+			//// Create render target view
+			//m_device.Get()->CreateRenderTargetView(m_colorBuffer[i].Get(), &viewDesc, handle);
 
-			m_handleRTV[i] = handle;
-			handle.ptr += incrementSize;
+			//m_handleRTV[i] = handle;
+			//handle.ptr += incrementSize;
 		}
+		// Render target view settings
+		D3D12_RENDER_TARGET_VIEW_DESC viewDesc = {};
+		viewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+		viewDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+		viewDesc.Texture2D.MipSlice = 0;
+		viewDesc.Texture2D.PlaneSlice = 0;
+
+		m_rtv.Create(m_device.Get(), viewDesc, handle, m_frameCount, m_colorBuffer->GetAddressOf());
 
 		// Reset fence counter
 		for (auto i = 0u; i < m_frameCount; ++i)
@@ -247,20 +258,6 @@ void SnctDX12Render::Build(HWND* hWnd)
 
 		// Set the size of the descriptor heap for depth
 		m_handleDSV = handle;
-
-		// View port settings
-		m_viewPort.TopLeftX = 0;
-		m_viewPort.TopLeftY = 0;
-		m_viewPort.Width = static_cast<float>(g_screenWidth);
-		m_viewPort.Height = static_cast<float>(g_screenHeight);
-		m_viewPort.MinDepth = 0.0f;
-		m_viewPort.MaxDepth = 1.0f;
-
-		// Scissor rectangle settings
-		m_scissor.left = 0;
-		m_scissor.right = g_screenWidth;
-		m_scissor.top = 0;
-		m_scissor.bottom = g_screenHeight;
 	}
 	catch (std::runtime_error& e) {
 		SnctRuntimeError(e);
@@ -275,27 +272,28 @@ void SnctDX12Render::Build(HWND* hWnd)
 //------------------------------------------------------------------------------
 void SnctDX12Render::RenderBegin()
 {
-	// コマンド入力開始
+	// Start command input
 	m_cmdAllocator[m_frameIndex]->Reset();
-	m_cmdList.Get()->Reset(m_cmdAllocator[m_frameIndex].Get(), nullptr);
+	m_cmdList.Reset(m_cmdAllocator[m_frameIndex].Get(), nullptr);
 
-	SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
+	m_cmdList.SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	auto RTVHandle = m_rtv.Get();
 	// Render target setting
-	m_cmdList.Get()->OMSetRenderTargets(1, &m_handleRTV[m_frameIndex], false, &m_handleDSV);
 
-	// Clear color settings
-	float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	ISnctCreateRTV CreateDevice;
+	ISnctRTV* sendRTV = CreateDevice.Convert(&m_rtv);
+	m_cmdList.SetRTV(1, sendRTV, false, &m_handleDSV);
+	//m_cmdList.SetRTV(1, &RTVHandle[m_frameIndex], false, &m_handleDSV);
 
 	// Clear render targt view
-	m_cmdList.Get()->ClearRenderTargetView(m_handleRTV[m_frameIndex], clearColor, 0, nullptr);
+	m_cmdList.ClearRTV(RTVHandle[m_frameIndex], 0, nullptr);
 
 	// Clear depth stencil view
-	m_cmdList.Get()->ClearDepthStencilView(m_handleDSV, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	m_cmdList.ClearDSV(m_handleDSV, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// Set screen parameter
-	m_cmdList.Get()->RSSetViewports(1, &m_viewPort);
-	m_cmdList.Get()->RSSetScissorRects(1, &m_scissor);
+	m_cmdList.SetViewPort(g_screenWidth, g_screenHeight, 0.0f, 1.0f);
+	m_cmdList.SetScissorRects(g_screenWidth, g_screenHeight);
 }
 
 
@@ -306,15 +304,14 @@ void SnctDX12Render::RenderBegin()
 //------------------------------------------------------------------------------
 void SnctDX12Render::RenderEnd()
 {
-	SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	m_cmdList.SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	// End command recording
-	m_cmdList.Get()->Close();
+	m_cmdList.Close();
 
 	// Execute command
 	ID3D12CommandList* ppCmdLists[] = { m_cmdList.Get() };
 	m_cmdQueue->ExecuteCommandLists(1, ppCmdLists);
-
 
 	// Display on screen
 	m_swapChain->Present(1, 0);
@@ -355,30 +352,6 @@ void SnctDX12Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 void SnctDX12Render::CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices)
 {
 }
-
-
-//------------------------------------------------------------------------------
-/// Used after setting the barrier
-/// \param[in]		Resource
-/// \param[in]		Before
-/// \param[in]		After
-/// \return			none
-//------------------------------------------------------------------------------
-void SnctDX12Render::SetResourceBarrier(ID3D12Resource* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After)
-{
-	// Resource barrier settings
-	D3D12_RESOURCE_BARRIER BarrierDesc;
-	ZeroMemory(&BarrierDesc, sizeof(BarrierDesc));
-	BarrierDesc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	BarrierDesc.Transition.pResource = Resource;
-	BarrierDesc.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	BarrierDesc.Transition.StateBefore = Before;
-	BarrierDesc.Transition.StateAfter = After;
-
-	// Set resource barrier
-	m_cmdList.Get()->ResourceBarrier(1, &BarrierDesc);
-}
-
 
 //------------------------------------------------------------------------------
 /// Wait until GPU processing is finished
