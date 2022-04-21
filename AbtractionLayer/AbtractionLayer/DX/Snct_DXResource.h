@@ -8,7 +8,7 @@
 #pragma comment(lib, "d3d12.lib")
 #pragma comment(lib, "dxgi.lib")
 
-
+#pragma region Render target view
 // View management interface class
 class ISnctView
 {
@@ -17,6 +17,7 @@ public:
 	virtual ISnctView* GetView() = 0;
 };
 
+// Dx11用レンダーターゲットビュー
 class Dx11RTV :public ISnctView
 {
 private:
@@ -25,6 +26,7 @@ public:
 	ISnctView* GetView() { return (ISnctView*)m_RenderTargetView; }
 };
 
+// Dx12用レンダーターゲットビュー
 class Dx12RTV :public ISnctView
 {
 private:
@@ -33,51 +35,55 @@ public:
 	ISnctView* GetView() { return (ISnctView*)m_RenderTargetView; }
 };
 
-class Product
+// 生成していくRTVの元
+class RTVProduct
 {
 public:
-	template <class T> T* Use() { return static_cast<T*>(RenderTargetView); };
+	// Return as areturn value
+	template <class T> T* Get() { return static_cast<T*>(RenderTargetView); }
+
+	// Return as an argument
+	template <class T> void Get(T* ReturnRTV)
+	{
+		ReturnRTV = nullptr;
+	}
+
+	// RTV for DirectX11
+	template <> void Get<ID3D11RenderTargetView>(ID3D11RenderTargetView* ReturnRtv)
+	{
+		ReturnRtv = reinterpret_cast<ID3D11RenderTargetView*>(RenderTargetView);
+	}
+
+	// RTV for DirectX12
+	template <> void Get<ID3D12DescriptorHeap>(ID3D12DescriptorHeap* ReturnRtv)
+	{
+		ReturnRtv = reinterpret_cast<ID3D12DescriptorHeap*>(RenderTargetView);
+	}
+
 protected:
 	ISnctView* RenderTargetView;
 };
 
-class Factory
-{
-public:
-	template<class T>  Product* Create(T* Object)
-	{
-		Product* p = CreateProduct(Object);
-		//RegisterProduct(p);
-		return p;
-	}
-
-	virtual Product* CreateProduct(Dx11RTV* Dev) = 0;
-	virtual Product* CreateProduct(Dx12RTV* Dev) = 0;
-};
-
-
-class RTV :public Product
+class RTV :public RTVProduct
 {
 public:
 	template<class T> RTV(T* RTVResource) { RenderTargetView = new T; }
 	~RTV() {}
-	////ISnctView* Use()  { return RenderTargetView; };
-	//ISnctView* Use() final;
 private:
 };
 
 
-
-class RenderTargetViewFactory :public Factory
+// RTV
+class RenderTargetViewFactory 
 {
-private:
-	std::list<std::string> Devices;
-
 public:
 	RenderTargetViewFactory() {}
 	~RenderTargetViewFactory() {}
-	Product* CreateProduct(Dx11RTV* rtv) { return new RTV(rtv); }
-	Product* CreateProduct(Dx12RTV* rtv) { return new RTV(rtv); }
-	//void RegisterProduct(Product* Product);
+	template<class T>  RTVProduct* Convert(T* rtv)
+	{
+		RTVProduct* p = new RTV(rtv);
+		return p;
+	}
 };
 
+#pragma endregion

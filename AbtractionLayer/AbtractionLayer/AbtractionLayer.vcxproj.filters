@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="DX\ISnct_DxCmdList.h">
-      <Filter>Header</Filter>
-    </ClInclude>
     <ClInclude Include="Snct_Application.h">
       <Filter>Header</Filter>
     </ClInclude>
@@ -52,11 +49,20 @@
     <ClInclude Include="ResourceConstants.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="Snct_DXResource.h">
+    <ClInclude Include="DX\Snct_DXResource.h">
       <Filter>Header</Filter>
     </ClInclude>
+    <ClInclude Include="DX\ISnct_CmdList.h">
+      <Filter>Header\RenderCore</Filter>
+    </ClInclude>
     <ClInclude Include="DX\DX12\Snct_Dx12CmdList.h">
-      <Filter>Header</Filter>
+      <Filter>Header\RenderCore</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX12\Snct_Dx12Device.h">
+      <Filter>Header\RenderCore</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\ISnct_Device.h">
+      <Filter>Header\RenderCore</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -79,7 +85,10 @@
       <Filter>Sorce</Filter>
     </ClCompile>
     <ClCompile Include="DX\DX12\Snct_Dx12CmdList.cpp">
-      <Filter>Sorce</Filter>
+      <Filter>Header\RenderCore</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX12\Snct_Dx12Device.cpp">
+      <Filter>Header\RenderCore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -88,6 +97,9 @@
     </Filter>
     <Filter Include="Sorce">
       <UniqueIdentifier>{fc0a396d-9432-4370-aa32-614867ae4cda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\RenderCore">
+      <UniqueIdentifier>{41989333-e5c8-4b11-aec1-49ddcc45bf86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

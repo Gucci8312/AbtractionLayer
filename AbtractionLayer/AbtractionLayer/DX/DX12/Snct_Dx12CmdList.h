@@ -1,9 +1,13 @@
 #pragma once
-#include "../ISnct_DxCmdList.h"
+#include "../ISnct_CmdList.h"
+#include "../Snct_DXResource.h"
 class SnctDx12CmdList :
-    public ISnctDxCmdList
+    public ISnctCmdList
 {
 public:
-    void ClearRTV(Product* RTV) ;
+    void Create();
+    void ClearRTV(RTVProduct* RTV) ;
+private:
+    ID3D12GraphicsCommandList* m_cmdList;
 };
 

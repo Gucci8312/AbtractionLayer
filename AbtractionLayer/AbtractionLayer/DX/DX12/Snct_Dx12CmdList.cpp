@@ -1,7 +1,9 @@
 #include "Snct_Dx12CmdList.h"
 
-void SnctDx12CmdList::ClearRTV(Product* RTV)
+void SnctDx12CmdList::ClearRTV(RTVProduct* RTV)
 {
-	RTV->Use<ID3D12DescriptorHeap>();
-	//m_cmdList->ClearRenderTargetView(m_handleRTV[m_frameIndex], clearColor, 0, nullptr);
+	D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle;
+	RTV->Get(&rtvHandle);
+	float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	m_cmdList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
 }

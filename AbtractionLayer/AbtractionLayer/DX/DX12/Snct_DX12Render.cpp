@@ -6,10 +6,9 @@
 //------------------------------------------------------------------------------
 SnctDX12Render::SnctDX12Render()
 {
-	Factory* Factory = new RenderTargetViewFactory();
-	Dx11RTV* aa;
-	Product* GraphDev = Factory->Create(aa);
-	GraphDev->Use<ID3D12DescriptorHeap>();
+	ISnctCreateDevice CreateDevice;
+	SnctDx12Device* Dx12Device;
+	ISnctDevice* aa = CreateDevice.Convert(Dx12Device);
 }
 
 //------------------------------------------------------------------------------
@@ -22,7 +21,7 @@ SnctDX12Render::~SnctDX12Render()
 	WaitGPU();
 
 	// Release
-	m_device.Reset();
+	//m_device.Reset();
 	m_cmdQueue.Reset();
 	m_swapChain.Reset();
 	m_cmdList.Reset();
@@ -69,18 +68,18 @@ void SnctDX12Render::Build(HWND* hWnd)
 	try
 	{
 		// Device 
-		auto hr = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(m_device.ReleaseAndGetAddressOf()));
-		if(FAILED(hr)) throw "DirectX12 device creation error ";
-
+		//auto hr = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(m_device.ReleaseAndGetAddressOf()));
+		//if(FAILED(hr)) throw "DirectX12 device creation error ";
+		testdevice.Create(D3D_FEATURE_LEVEL_11_0);
 		// Command queue Setteings
 		D3D12_COMMAND_QUEUE_DESC QueueDesc = {};
 		QueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
 		QueueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_NORMAL;
 		QueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 		QueueDesc.NodeMask = 0;
-
+		auto m_device = testdevice.Get();
 		// Create commnd queue
-		hr = m_device->CreateCommandQueue(&QueueDesc, IID_PPV_ARGS(m_cmdQueue.ReleaseAndGetAddressOf()));
+		auto hr = m_device->CreateCommandQueue(&QueueDesc, IID_PPV_ARGS(m_cmdQueue.ReleaseAndGetAddressOf()));
 		if (FAILED(hr)) throw "DirectX12 command queue create error";
 
 		// Create DXGI factoy
