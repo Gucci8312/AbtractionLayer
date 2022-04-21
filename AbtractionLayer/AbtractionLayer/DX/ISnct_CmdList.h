@@ -72,9 +72,9 @@ public:
 	//---------------------------------------------------------------------------	
 	ISnctCreateCmdList() {}
 	~ISnctCreateCmdList() {}
-	template<class T>  ISnctCmdList* Convert(T* rtv)
+	template<class T>  ISnctCmdList* Convert(T* returnCmdList)
 	{
-		ISnctCmdList* p = new CmdList(rtv);
+		ISnctCmdList* p = new CmdList(returnCmdList);
 		return p;
 	}
 };

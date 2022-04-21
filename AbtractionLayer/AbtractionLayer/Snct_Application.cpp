@@ -181,6 +181,8 @@ void SnctApplication::MainLoop()
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
+
+				//-----------------
 				Dx12.RenderBegin();
 				Dx12.RenderEnd();
 			}

@@ -29,14 +29,14 @@ public:
 	//---------------------------------------------------------------------------	
 	template <class T> void Get(T* ReturnRTV)
 	{
-		return static_cast<T*>(m_device);
+		return reinterpret_cast<T*>(m_device);
 	}
 
-	// CmdList for DirectX11
-	//template <> void Get<ID3D11RenderTargetView>(ID3D11RenderTargetView* ReturnRtv)
-	//{
-	//	ReturnRtv = reinterpret_cast<ID3D11RenderTargetView*>(CmdList);
-	//}
+	 //CmdList for DirectX11
+	template <> void Get<ID3D11Device>(ID3D11Device* ReturnDevice)
+	{
+		ReturnDevice = reinterpret_cast<ID3D11Device*>(m_device);
+	}
 
 	// Dx12Device for DirectX12
 	template <> void Get<ID3D12Device>(ID3D12Device* ReturnCmdList)
@@ -58,11 +58,10 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	template<class T> Device(T* RTVResource) { m_device = new T; }
+	template<class T> Device(T* DeviceResource) { m_device = reinterpret_cast<IDevice*>(DeviceResource); }
 	~Device() {}
 private:
 };
-
 
 // Create DirectX command list
 class ISnctCreateDevice
@@ -73,9 +72,9 @@ public:
 	//---------------------------------------------------------------------------	
 	ISnctCreateDevice() {}
 	~ISnctCreateDevice() {}
-	template<class T>  ISnctDevice* Convert(T* rtv)
+	template<class T>  ISnctDevice* Convert(T* returnDevice)
 	{
-		ISnctDevice* p = new Device(rtv);
+		ISnctDevice* p = new Device(returnDevice);
 		return p;
 	}
 };

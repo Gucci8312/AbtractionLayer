@@ -32,11 +32,12 @@ class Dx12RTV :public ISnctView
 private:
 	ID3D12DescriptorHeap* m_RenderTargetView;
 public:
+	//D3D12_CPU_DESCRIPTOR_HANDLE	m_handleRTV[2];
 	ISnctView* GetView() { return (ISnctView*)m_RenderTargetView; }
 };
 
 // ê∂ê¨ÇµÇƒÇ¢Ç≠RTVÇÃå≥
-class RTVProduct
+class ISnctRTV
 {
 public:
 	// Return as areturn value
@@ -64,7 +65,7 @@ protected:
 	ISnctView* RenderTargetView;
 };
 
-class RTV :public RTVProduct
+class RTV :public ISnctRTV
 {
 public:
 	template<class T> RTV(T* RTVResource) { RenderTargetView = new T; }
@@ -74,14 +75,14 @@ private:
 
 
 // RTV
-class RenderTargetViewFactory 
+class ISnctCreateRTV 
 {
 public:
-	RenderTargetViewFactory() {}
-	~RenderTargetViewFactory() {}
-	template<class T>  RTVProduct* Convert(T* rtv)
+	ISnctCreateRTV() {}
+	~ISnctCreateRTV() {}
+	template<class T>  ISnctRTV* Convert(T* rtv)
 	{
-		RTVProduct* p = new RTV(rtv);
+		ISnctRTV* p = new RTV(rtv);
 		return p;
 	}
 };
