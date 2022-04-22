@@ -22,34 +22,56 @@
     <ClInclude Include="DX\DX11\Snct_DX11.h" />
     <ClInclude Include="DX\DX11\Snct_DX11Render.h" />
     <ClInclude Include="DX\DX12\Snct_DX12.h" />
-    <ClInclude Include="DX\DX12\Snct_Dx12CmdList.h" />
-    <ClInclude Include="DX\DX12\Snct_Dx12Device.h" />
+    <ClInclude Include="DX\DX12\Snct_DX12CmdList.h" />
+    <ClInclude Include="DX\DX12\Snct_DX12Device.h" />
     <ClInclude Include="DX\DX12\Snct_DX12Render.h" />
-    <ClInclude Include="DX\ISnct_DxCmdList.h" />
-    <ClInclude Include="DX\ISnct_DxDevice.h" />
+    <ClInclude Include="DX\ISnct_DXCmdList.h" />
+    <ClInclude Include="DX\ISnct_DXDevice.h" />
     <ClInclude Include="DX\Snct_DXConstantParameter.h" />
     <ClInclude Include="DX\Snct_DXRender.h" />
     <ClInclude Include="DX\Snct_DXResource.h" />
+    <ClInclude Include="DX\Snct_DXShaderLibrary.h" />
     <ClInclude Include="Snct_Application.h" />
     <ClInclude Include="Snct_Math.h" />
     <ClInclude Include="Snct_Object.h" />
     <ClInclude Include="Snct_Render.h" />
     <ClInclude Include="Snct_ResouceLibary.h" />
     <ClInclude Include="Snct_Scene.h" />
-    <ClInclude Include="Snct_ShaderLibrary.h" />
     <ClInclude Include="Snct_Utility.h" />
     <ClInclude Include="Snct_Windows.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX\DX11\Snct_DX11Render.cpp" />
-    <ClCompile Include="DX\DX12\Snct_Dx12CmdList.cpp" />
-    <ClCompile Include="DX\DX12\Snct_Dx12Device.cpp" />
+    <ClCompile Include="DX\DX12\Snct_DX12CmdList.cpp" />
+    <ClCompile Include="DX\DX12\Snct_DX12Device.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12Render.cpp" />
     <ClCompile Include="DX\Snct_DXRender.cpp" />
     <ClCompile Include="DX\Snct_DXResource.cpp" />
+    <ClCompile Include="DX\Snct_DXShaderLibrary.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Snct_Application.cpp" />
-    <ClCompile Include="Snct_ShaderLibrary.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="DX\Shader\n_pixel.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="DX\Shader\n_vertex.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+    </FxCompile>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

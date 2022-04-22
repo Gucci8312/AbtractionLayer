@@ -1,9 +1,9 @@
 // DirectX12 command list management file...
 #pragma once
-#include "../ISnct_DxCmdList.h"
+#include "../ISnct_DXCmdList.h"
 
 // Classes that manage DirectX12 command list
-class SnctDx12CmdList : public ISnctDxCommandList
+class SnctDX12CmdList : public ISnctDXCommandList
 {
 public:
 	//---------------------------------------------------------------------------

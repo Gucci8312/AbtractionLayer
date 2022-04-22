@@ -7,7 +7,7 @@
 /// \param[in]		CommndAllocator
 /// \return			HRESULT
 //------------------------------------------------------------------------------
-HRESULT SnctDx12CmdList::Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Device, ID3D12CommandAllocator* CmdAllocator)
+HRESULT SnctDX12CmdList::Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Device, ID3D12CommandAllocator* CmdAllocator)
 {
 	return Device->CreateCommandList(0, Type,
 		CmdAllocator, nullptr, IID_PPV_ARGS(m_pCmdList.ReleaseAndGetAddressOf()));
@@ -21,7 +21,7 @@ HRESULT SnctDx12CmdList::Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Devi
 /// \param[in]		Rect
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDx12CmdList::ClearRTV(ISnctDxRTV* DescriptorHandle, UINT NumRects, D3D12_RECT* pRects)
+void SnctDX12CmdList::ClearRTV(ISnctDxRTV* DescriptorHandle, UINT NumRects, D3D12_RECT* pRects)
 {
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	SnctDx12RTV* TempRTV = static_cast<SnctDx12RTV*>(DescriptorHandle);
@@ -39,7 +39,7 @@ void SnctDx12CmdList::ClearRTV(ISnctDxRTV* DescriptorHandle, UINT NumRects, D3D1
 /// \param[in]		Rects
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDx12CmdList::ClearDSV(ISnctDxDSV* DescriptorHandle, D3D12_CLEAR_FLAGS Flag, float Depth, UINT8 Stencil, UINT NumRects, D3D12_RECT* pRects)
+void SnctDX12CmdList::ClearDSV(ISnctDxDSV* DescriptorHandle, D3D12_CLEAR_FLAGS Flag, float Depth, UINT8 Stencil, UINT NumRects, D3D12_RECT* pRects)
 {
 	SnctDx12DSV* TempDSV = static_cast<SnctDx12DSV*>(DescriptorHandle);
 	m_pCmdList.Get()->ClearDepthStencilView(*TempDSV->GetpHandle(), Flag, Depth, Stencil, NumRects, pRects);
@@ -52,7 +52,7 @@ void SnctDx12CmdList::ClearDSV(ISnctDxDSV* DescriptorHandle, D3D12_CLEAR_FLAGS F
 /// \param[in]		Pipeline state
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDx12CmdList::Reset(ID3D12CommandAllocator* CmdAllocator, ID3D12PipelineState* PipelineState)
+void SnctDX12CmdList::Reset(ID3D12CommandAllocator* CmdAllocator, ID3D12PipelineState* PipelineState)
 {
 	m_pCmdList->Reset(CmdAllocator, PipelineState);
 }
@@ -64,7 +64,7 @@ void SnctDx12CmdList::Reset(ID3D12CommandAllocator* CmdAllocator, ID3D12Pipeline
 /// \param[in]		Descriptor handle
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDx12CmdList::SetRTV(UINT NumDescriptors, ISnctDxRTV* DescriptorHandle, bool SingleHandleToDescriptorRange, ISnctDxDSV* DSHandle)
+void SnctDX12CmdList::SetRTV(UINT NumDescriptors, ISnctDxRTV* DescriptorHandle, bool SingleHandleToDescriptorRange, ISnctDxDSV* DSHandle)
 {
 	SnctDx12RTV* TempRTV = static_cast<SnctDx12RTV*>(DescriptorHandle);
 	SnctDx12DSV* TempDSV = static_cast<SnctDx12DSV*>(DSHandle);
@@ -80,7 +80,7 @@ void SnctDx12CmdList::SetRTV(UINT NumDescriptors, ISnctDxRTV* DescriptorHandle, 
 /// \param[in]		Max depth
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDx12CmdList::SetViewPort(float Width, float Height, float MinDepth, float MaxDepth)
+void SnctDX12CmdList::SetViewPort(float Width, float Height, float MinDepth, float MaxDepth)
 {
 	// View port settings
 	D3D12_VIEWPORT	viewPort = {};
@@ -101,7 +101,7 @@ void SnctDx12CmdList::SetViewPort(float Width, float Height, float MinDepth, flo
 /// \param[in]		Screen height
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDx12CmdList::SetScissorRects(float Width, float Height)
+void SnctDX12CmdList::SetScissorRects(float Width, float Height)
 {
 	// Scissor rectangle settings
 	D3D12_RECT	scissor = {};
@@ -118,7 +118,7 @@ void SnctDx12CmdList::SetScissorRects(float Width, float Height)
 /// \param			none
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDx12CmdList::Close()
+void SnctDX12CmdList::Close()
 {
 	m_pCmdList->Close();
 }
@@ -132,7 +132,7 @@ void SnctDx12CmdList::Close()
 /// \param[in]		After state
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDx12CmdList::SetResourceBarrier(ID3D12Resource* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After)
+void SnctDX12CmdList::SetResourceBarrier(ID3D12Resource* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After)
 {
 	// Resource barrier settings
 	D3D12_RESOURCE_BARRIER BarrierDesc;

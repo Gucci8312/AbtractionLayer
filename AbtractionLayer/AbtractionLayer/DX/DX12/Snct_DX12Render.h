@@ -26,11 +26,11 @@ private:
 	// private variables.
 	//---------------------------------------------------------------------------	
 	static const uint32_t				   m_frameCount = 2;
-	SnctDx12Device						   m_device;
+	SnctDX12Device						   m_device;
 	ComPtr<ID3D12CommandQueue>             m_cmdQueue;
 	ComPtr<IDXGISwapChain3>                m_swapChain;
 	ComPtr<ID3D12CommandAllocator>         m_cmdAllocator[m_frameCount];
-	SnctDx12CmdList						   m_cmdList;
+	SnctDX12CmdList						   m_cmdList;
 	ComPtr<ID3D12DescriptorHeap>           m_heapRTV;
 	ComPtr<ID3D12DescriptorHeap>           m_heapDSV;
 	ComPtr<ID3D12Resource>                 m_colorBuffer[m_frameCount];

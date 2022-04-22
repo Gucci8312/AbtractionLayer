@@ -3,7 +3,7 @@
 #include "../../Snct_Windows.h"
 #include "../Snct_DXResource.h"
 
-class ISnctDxCommandList
+class ISnctDXCommandList
 {
 public:
 	virtual void SetViewPort(float Width, float Height, float MinDepth, float MaxDepth) = 0;

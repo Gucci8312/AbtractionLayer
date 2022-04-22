@@ -1,5 +1,5 @@
-#include "Snct_Utility.h"
-#include "Snct_ShaderLibrary.h"
+#include "../Snct_Utility.h"
+#include "Snct_DXShaderLibrary.h"
 
 #include <d3dcompiler.h>
 #pragma comment(lib, "d3dcompiler.lib")
