@@ -10,7 +10,7 @@
 HRESULT SnctDx12CmdList::Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Device, ID3D12CommandAllocator* CmdAllocator)
 {
 	return Device->CreateCommandList(0, Type,
-		CmdAllocator, nullptr, IID_PPV_ARGS(m_cmdList.ReleaseAndGetAddressOf()));
+		CmdAllocator, nullptr, IID_PPV_ARGS(m_pCmdList.ReleaseAndGetAddressOf()));
 }
 
 
@@ -25,7 +25,7 @@ void SnctDx12CmdList::ClearRTV(ISnctDxRTV* DescriptorHandle, UINT NumRects, D3D1
 {
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	SnctDx12RTV* TempRTV = static_cast<SnctDx12RTV*>(DescriptorHandle);
-	m_cmdList->ClearRenderTargetView(TempRTV->GetRTV(), clearColor, 0, pRects);
+	m_pCmdList->ClearRenderTargetView(TempRTV->GetRTV(), clearColor, 0, pRects);
 }
 
 
@@ -42,7 +42,7 @@ void SnctDx12CmdList::ClearRTV(ISnctDxRTV* DescriptorHandle, UINT NumRects, D3D1
 void SnctDx12CmdList::ClearDSV(ISnctDxDSV* DescriptorHandle, D3D12_CLEAR_FLAGS Flag, float Depth, UINT8 Stencil, UINT NumRects, D3D12_RECT* pRects)
 {
 	SnctDx12DSV* TempDSV = static_cast<SnctDx12DSV*>(DescriptorHandle);
-	m_cmdList.Get()->ClearDepthStencilView(*TempDSV->GetpHandle(), Flag, Depth, Stencil, NumRects, pRects);
+	m_pCmdList.Get()->ClearDepthStencilView(*TempDSV->GetpHandle(), Flag, Depth, Stencil, NumRects, pRects);
 }
 
 
@@ -54,7 +54,7 @@ void SnctDx12CmdList::ClearDSV(ISnctDxDSV* DescriptorHandle, D3D12_CLEAR_FLAGS F
 //------------------------------------------------------------------------------
 void SnctDx12CmdList::Reset(ID3D12CommandAllocator* CmdAllocator, ID3D12PipelineState* PipelineState)
 {
-	m_cmdList->Reset(CmdAllocator, PipelineState);
+	m_pCmdList->Reset(CmdAllocator, PipelineState);
 }
 
 
@@ -68,7 +68,7 @@ void SnctDx12CmdList::SetRTV(UINT NumDescriptors, ISnctDxRTV* DescriptorHandle, 
 {
 	SnctDx12RTV* TempRTV = static_cast<SnctDx12RTV*>(DescriptorHandle);
 	SnctDx12DSV* TempDSV = static_cast<SnctDx12DSV*>(DSHandle);
-	m_cmdList.Get()->OMSetRenderTargets(NumDescriptors, TempRTV->GetpHandle(), SingleHandleToDescriptorRange, TempDSV->GetpHandle());
+	m_pCmdList.Get()->OMSetRenderTargets(NumDescriptors, TempRTV->GetpHandle(), SingleHandleToDescriptorRange, TempDSV->GetpHandle());
 }
 
 
@@ -91,7 +91,7 @@ void SnctDx12CmdList::SetViewPort(float Width, float Height, float MinDepth, flo
 	viewPort.MinDepth = MinDepth;
 	viewPort.MaxDepth = MaxDepth;
 
-	m_cmdList->RSSetViewports(1, &viewPort);
+	m_pCmdList->RSSetViewports(1, &viewPort);
 }
 
 
@@ -109,7 +109,7 @@ void SnctDx12CmdList::SetScissorRects(float Width, float Height)
 	scissor.right = (LONG)Width;
 	scissor.top = 0;
 	scissor.bottom = (LONG)Height;
-	m_cmdList->RSSetScissorRects(1, &scissor);
+	m_pCmdList->RSSetScissorRects(1, &scissor);
 }
 
 
@@ -120,7 +120,7 @@ void SnctDx12CmdList::SetScissorRects(float Width, float Height)
 //------------------------------------------------------------------------------
 void SnctDx12CmdList::Close()
 {
-	m_cmdList->Close();
+	m_pCmdList->Close();
 }
 
 
@@ -144,5 +144,5 @@ void SnctDx12CmdList::SetResourceBarrier(ID3D12Resource* Resource, D3D12_RESOURC
 	BarrierDesc.Transition.StateAfter = After;
 
 	// Set resource barrier
-	m_cmdList->ResourceBarrier(1, &BarrierDesc);
+	m_pCmdList->ResourceBarrier(1, &BarrierDesc);
 }

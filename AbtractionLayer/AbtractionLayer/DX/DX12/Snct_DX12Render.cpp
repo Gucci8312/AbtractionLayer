@@ -6,10 +6,7 @@
 //------------------------------------------------------------------------------
 SnctDX12Render::SnctDX12Render()
 {
-	/*ISnctCreateDevice CreateDevice;
-	SnctDx12Device* Dx12Device;
-	ISnctDevice* aa = CreateDevice.Convert(Dx12Device);*/
-
+	// Nothing //
 }
 
 //------------------------------------------------------------------------------
@@ -22,10 +19,8 @@ SnctDX12Render::~SnctDX12Render()
 	WaitGPU();
 
 	// Release
-	//m_device.Reset();
 	m_cmdQueue.Reset();
 	m_swapChain.Reset();
-	//m_cmdList.Reset();
 	m_heapRTV.Reset();
 	m_heapDSV.Reset();
 	m_fence.Reset();
@@ -79,7 +74,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		QueueDesc.NodeMask = 0;
 
 		// Create commnd queue
-		auto hr = m_device.GetDevice()->CreateCommandQueue(&QueueDesc, IID_PPV_ARGS(m_cmdQueue.ReleaseAndGetAddressOf()));
+		auto hr = m_device.CreateCommandQueue(QueueDesc, m_cmdQueue.ReleaseAndGetAddressOf());
 		if (FAILED(hr)) throw std::runtime_error("DirectX12 command queue create error");
 
 		// Create DXGI factoy
@@ -120,8 +115,8 @@ void SnctDX12Render::Build(HWND* hWnd)
 		// Create commandallocator
 		for (auto i = 0; i < m_frameCount; ++i)
 		{
-			hr = m_device.GetDevice()->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-				IID_PPV_ARGS(m_cmdAllocator[i].ReleaseAndGetAddressOf()));
+			hr = m_device.CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+				m_cmdAllocator[i].ReleaseAndGetAddressOf());
 			if (FAILED(hr)) throw std::runtime_error("DirectX12 command allocator create error");
 		}
 
@@ -144,7 +139,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		auto handle = m_heapRTV->GetCPUDescriptorHandleForHeapStart();
 
 		// Get the size of render target view
-		auto incrementSize = m_device.GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		auto incrementSize = m_device.GetIncrementHandleSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 		// Turn the buffer for a few minutes
 		for (auto i = 0u; i < m_frameCount; ++i)
@@ -161,7 +156,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 			viewDesc.Texture2D.PlaneSlice = 0;
 
 			// Create render target view
-			m_device.GetDevice()->CreateRenderTargetView(m_colorBuffer[i].Get(), &viewDesc, handle);
+			m_device.CreateRTV(m_colorBuffer[i].Get(), viewDesc, handle);
 
 			m_handleRTV[i].SetHandle(handle);
 			handle.ptr += incrementSize;

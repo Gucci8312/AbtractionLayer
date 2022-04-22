@@ -9,7 +9,7 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	ID3D12GraphicsCommandList* Get() { return m_cmdList.Get(); }
+	ID3D12GraphicsCommandList* Get() { return m_pCmdList.Get(); }
 	HRESULT Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Device, ID3D12CommandAllocator* CmdAllocator);
 	void ClearRTV(ISnctDxRTV* Descriptors, UINT NumRects, D3D12_RECT* pRects);
 	void ClearDSV(ISnctDxDSV* Descriptors, D3D12_CLEAR_FLAGS Flag, float Depth,
@@ -28,6 +28,6 @@ private:
 	//---------------------------------------------------------------------------
 	// private variables.
 	//---------------------------------------------------------------------------	
-	ComPtr<ID3D12GraphicsCommandList> m_cmdList;
+	ComPtr<ID3D12GraphicsCommandList> m_pCmdList;
 };
 
