@@ -1,6 +1,11 @@
 #include "Snct_Utility.h"
 #include "Snct_Application.h"
 
+//----å„Ç≈è¡Ç∑--------
+#include "DX/DX12/Snct_DX12Render.h"
+SnctDX12Render Dx12;
+//------------------------
+
 //------------------------------------------------------------------------------
 /// Window Procedure
 /// \param[in]      Window handle
@@ -59,7 +64,7 @@ bool SnctApplication::Initialize()
 
 	// Console window destroy
 	FreeConsole();
-
+	Dx12.Build(&m_hwnd);
 	return true;
 }
 
@@ -176,6 +181,10 @@ void SnctApplication::MainLoop()
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
+
+				//-----------------
+				Dx12.RenderBegin();
+				Dx12.RenderEnd();
 			}
 		}
 		else

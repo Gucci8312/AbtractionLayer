@@ -22,10 +22,14 @@
     <ClInclude Include="DX\DX11\Snct_DX11.h" />
     <ClInclude Include="DX\DX11\Snct_DX11Render.h" />
     <ClInclude Include="DX\DX12\Snct_DX12.h" />
+    <ClInclude Include="DX\DX12\Snct_Dx12CmdList.h" />
+    <ClInclude Include="DX\DX12\Snct_Dx12Device.h" />
     <ClInclude Include="DX\DX12\Snct_DX12Render.h" />
     <ClInclude Include="DX\ISnct_DxCmdList.h" />
+    <ClInclude Include="DX\ISnct_DxDevice.h" />
     <ClInclude Include="DX\Snct_DXConstantParameter.h" />
     <ClInclude Include="DX\Snct_DXRender.h" />
+    <ClInclude Include="DX\Snct_DXResource.h" />
     <ClInclude Include="Snct_Application.h" />
     <ClInclude Include="Snct_Math.h" />
     <ClInclude Include="Snct_Object.h" />
@@ -38,8 +42,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX\DX11\Snct_DX11Render.cpp" />
+    <ClCompile Include="DX\DX12\Snct_Dx12CmdList.cpp" />
+    <ClCompile Include="DX\DX12\Snct_Dx12Device.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12Render.cpp" />
     <ClCompile Include="DX\Snct_DXRender.cpp" />
+    <ClCompile Include="DX\Snct_DXResource.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Snct_Application.cpp" />
     <ClCompile Include="Snct_ShaderLibrary.cpp" />

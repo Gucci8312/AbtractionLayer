@@ -1,11 +1,15 @@
 #include "Snct_DX12Render.h"
 
 //------------------------------------------------------------------------------
-/// Contructor
+/// Constructor
 /// \param		none
 //------------------------------------------------------------------------------
 SnctDX12Render::SnctDX12Render()
 {
+	/*ISnctCreateDevice CreateDevice;
+	SnctDx12Device* Dx12Device;
+	ISnctDevice* aa = CreateDevice.Convert(Dx12Device);*/
+
 }
 
 //------------------------------------------------------------------------------
@@ -18,10 +22,10 @@ SnctDX12Render::~SnctDX12Render()
 	WaitGPU();
 
 	// Release
-	m_device.Reset();
+	//m_device.Reset();
 	m_cmdQueue.Reset();
 	m_swapChain.Reset();
-	m_cmdList.Reset();
+	//m_cmdList.Reset();
 	m_heapRTV.Reset();
 	m_heapDSV.Reset();
 	m_fence.Reset();
@@ -65,8 +69,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 	try
 	{
 		// Device 
-		auto hr = D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(m_device.ReleaseAndGetAddressOf()));
-		if(FAILED(hr)) throw "DirectX12 device creation error ";
+		m_device.Create(D3D_FEATURE_LEVEL_11_0);
 
 		// Command queue Setteings
 		D3D12_COMMAND_QUEUE_DESC QueueDesc = {};
@@ -76,7 +79,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		QueueDesc.NodeMask = 0;
 
 		// Create commnd queue
-		hr = m_device->CreateCommandQueue(&QueueDesc, IID_PPV_ARGS(m_cmdQueue.ReleaseAndGetAddressOf()));
+		auto hr = m_device.GetDevice()->CreateCommandQueue(&QueueDesc, IID_PPV_ARGS(m_cmdQueue.ReleaseAndGetAddressOf()));
 		if (FAILED(hr)) throw "DirectX12 command queue create error";
 
 		// Create DXGI factoy
@@ -117,14 +120,13 @@ void SnctDX12Render::Build(HWND* hWnd)
 		// Create commandallocator
 		for (auto i = 0; i < m_frameCount; ++i)
 		{
-			hr = m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+			hr = m_device.GetDevice()->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
 				IID_PPV_ARGS(m_cmdAllocator[i].ReleaseAndGetAddressOf()));
 			if (FAILED(hr)) throw "DirectX12 command allocator create error";
 		}
 
 		// Create commandlist
-		hr = m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-			m_cmdAllocator[m_frameIndex].Get(), nullptr, IID_PPV_ARGS(m_cmdList.ReleaseAndGetAddressOf()));
+		hr = m_cmdList.Create(D3D12_COMMAND_LIST_TYPE_DIRECT, m_device.GetDevice(), m_cmdAllocator[m_frameIndex].Get());
 		if (FAILED(hr)) throw "DirectX12 command list create error";
 
 		// Render target view settings
@@ -135,14 +137,14 @@ void SnctDX12Render::Build(HWND* hWnd)
 		RTVHeapDesc.NodeMask = 0;
 
 		// Create descriptor heap
-		hr = m_device->CreateDescriptorHeap(&RTVHeapDesc, IID_PPV_ARGS(m_heapRTV.ReleaseAndGetAddressOf()));
+		hr = m_device.GetDevice()->CreateDescriptorHeap(&RTVHeapDesc, IID_PPV_ARGS(m_heapRTV.ReleaseAndGetAddressOf()));
 		if (FAILED(hr)) throw "DirectX12 render target descriptor heap creation error";
 
 		// Descriptor handle
 		auto handle = m_heapRTV->GetCPUDescriptorHandleForHeapStart();
 
 		// Get the size of render target view
-		auto incrementSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+		auto incrementSize = m_device.GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 		// Turn the buffer for a few minutes
 		for (auto i = 0u; i < m_frameCount; ++i)
@@ -159,9 +161,9 @@ void SnctDX12Render::Build(HWND* hWnd)
 			viewDesc.Texture2D.PlaneSlice = 0;
 
 			// Create render target view
-			m_device->CreateRenderTargetView(m_colorBuffer[i].Get(), &viewDesc, handle);
+			m_device.GetDevice()->CreateRenderTargetView(m_colorBuffer[i].Get(), &viewDesc, handle);
 
-			m_handleRTV[i] = handle;
+			m_handleRTV[i].SetHandle(handle);
 			handle.ptr += incrementSize;
 		}
 
@@ -172,7 +174,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		}
 
 		// Create fence
-		hr = m_device->CreateFence(m_fenceCounter[m_frameIndex],
+		hr = m_device.GetDevice()->CreateFence(m_fenceCounter[m_frameIndex],
 			D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_fence.ReleaseAndGetAddressOf()));
 		if (FAILED(hr)) throw "DirectX12 fence create error";
 
@@ -183,7 +185,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		if (m_fenceEvent == nullptr) return;
 
 		// End command recording
-		m_cmdList->Close();
+		m_cmdList.Close();
 
 		// Depth stencil buffer settings
 		D3D12_HEAP_PROPERTIES DepthHeapProp = {};
@@ -214,7 +216,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		ClearValue.DepthStencil.Stencil = 0;
 
 		// Create depth buffer
-		hr = m_device->CreateCommittedResource(&DepthHeapProp, D3D12_HEAP_FLAG_NONE,
+		hr = m_device.GetDevice()->CreateCommittedResource(&DepthHeapProp, D3D12_HEAP_FLAG_NONE,
 			&DepthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &ClearValue,
 			IID_PPV_ARGS(m_depthBuffer.ReleaseAndGetAddressOf()));
 		if (FAILED(hr)) throw "DirectX12 depth buffer create error";
@@ -227,14 +229,14 @@ void SnctDX12Render::Build(HWND* hWnd)
 		DepthHeapDesc.NodeMask = 0;
 
 		// Create descriptor heap for depth
-		hr = m_device->CreateDescriptorHeap(&DepthHeapDesc, IID_PPV_ARGS(m_heapDSV.ReleaseAndGetAddressOf()));
+		hr = m_device.GetDevice()->CreateDescriptorHeap(&DepthHeapDesc, IID_PPV_ARGS(m_heapDSV.ReleaseAndGetAddressOf()));
 		if (FAILED(hr)) throw "DirectX12 depth stencil view descriptor heap creation error";
 
 		// Get the handle of the descriptor heap for depth
 		handle = m_heapDSV->GetCPUDescriptorHandleForHeapStart();
 
 		// Get the size of the depth stencil view
-		incrementSize = m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+		incrementSize = m_device.GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
 		// Depth stencil view settings
 		D3D12_DEPTH_STENCIL_VIEW_DESC DepthViewDesc = {};
@@ -244,24 +246,10 @@ void SnctDX12Render::Build(HWND* hWnd)
 		DepthViewDesc.Flags = D3D12_DSV_FLAG_NONE;
 
 		// Create depth stencil view
-		m_device->CreateDepthStencilView(m_depthBuffer.Get(), &DepthViewDesc, handle);
+		m_device.GetDevice()->CreateDepthStencilView(m_depthBuffer.Get(), &DepthViewDesc, handle);
 
 		// Set the size of the descriptor heap for depth
-		m_handleDSV = handle;
-
-		// View port settings
-		m_viewPort.TopLeftX = 0;
-		m_viewPort.TopLeftY = 0;
-		m_viewPort.Width = static_cast<float>(g_screenWidth);
-		m_viewPort.Height = static_cast<float>(g_screenHeight);
-		m_viewPort.MinDepth = 0.0f;
-		m_viewPort.MaxDepth = 1.0f;
-
-		// Scissor rectangle settings
-		m_scissor.left = 0;
-		m_scissor.right = g_screenWidth;
-		m_scissor.top = 0;
-		m_scissor.bottom = g_screenHeight;
+		m_handleDSV.SetHandle(handle);
 	}
 	catch (std::runtime_error& e) {
 		SnctRuntimeError(e);
@@ -276,27 +264,24 @@ void SnctDX12Render::Build(HWND* hWnd)
 //------------------------------------------------------------------------------
 void SnctDX12Render::RenderBegin()
 {
-	// コマンド入力開始
+	// Start command input
 	m_cmdAllocator[m_frameIndex]->Reset();
-	m_cmdList->Reset(m_cmdAllocator[m_frameIndex].Get(), nullptr);
+	m_cmdList.Reset(m_cmdAllocator[m_frameIndex].Get(), nullptr);
 
-	SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-
+	m_cmdList.SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	
 	// Render target setting
-	m_cmdList->OMSetRenderTargets(1, &m_handleRTV[m_frameIndex], false, &m_handleDSV);
-
-	// Clear color settings
-	float clearColor[] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	m_cmdList.SetRTV(1, &m_handleRTV[m_frameIndex], false, &m_handleDSV);
 
 	// Clear render targt view
-	m_cmdList->ClearRenderTargetView(m_handleRTV[m_frameIndex], clearColor, 0, nullptr);
+	m_cmdList.ClearRTV(&m_handleRTV[m_frameIndex], 0, nullptr);
 
 	// Clear depth stencil view
-	m_cmdList->ClearDepthStencilView(m_handleDSV, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	m_cmdList.ClearDSV(&m_handleDSV, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// Set screen parameter
-	m_cmdList->RSSetViewports(1, &m_viewPort);
-	m_cmdList->RSSetScissorRects(1, &m_scissor);
+	m_cmdList.SetViewPort(g_screenWidth, g_screenHeight, 0.0f, 1.0f);
+	m_cmdList.SetScissorRects(g_screenWidth, g_screenHeight);
 }
 
 
@@ -307,15 +292,14 @@ void SnctDX12Render::RenderBegin()
 //------------------------------------------------------------------------------
 void SnctDX12Render::RenderEnd()
 {
-	SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	m_cmdList.SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	// End command recording
-	m_cmdList->Close();
+	m_cmdList.Close();
 
 	// Execute command
 	ID3D12CommandList* ppCmdLists[] = { m_cmdList.Get() };
 	m_cmdQueue->ExecuteCommandLists(1, ppCmdLists);
-
 
 	// Display on screen
 	m_swapChain->Present(1, 0);
@@ -356,30 +340,6 @@ void SnctDX12Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 void SnctDX12Render::CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices)
 {
 }
-
-
-//------------------------------------------------------------------------------
-/// Used after setting the barrier
-/// \param[in]		Resource
-/// \param[in]		Before
-/// \param[in]		After
-/// \return			none
-//------------------------------------------------------------------------------
-void SnctDX12Render::SetResourceBarrier(ID3D12Resource* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After)
-{
-	// Resource barrier settings
-	D3D12_RESOURCE_BARRIER BarrierDesc;
-	ZeroMemory(&BarrierDesc, sizeof(BarrierDesc));
-	BarrierDesc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	BarrierDesc.Transition.pResource = Resource;
-	BarrierDesc.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-	BarrierDesc.Transition.StateBefore = Before;
-	BarrierDesc.Transition.StateAfter = After;
-
-	// Set resource barrier
-	m_cmdList->ResourceBarrier(1, &BarrierDesc);
-}
-
 
 //------------------------------------------------------------------------------
 /// Wait until GPU processing is finished
