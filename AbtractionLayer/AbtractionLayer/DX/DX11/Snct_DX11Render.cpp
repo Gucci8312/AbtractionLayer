@@ -63,6 +63,13 @@ void SnctDX11Render::Build(HWND* hWnd)
 		}
 
 		{
+			// デファードコンテクストの作成
+			m_pDevice->CreateDeferredContext	(0, m_pDeferredContext.GetAddressOf());
+
+			// 型自体も　Immadiateと変わらないので　同じ設定ができる。もしくは、する必要がある。
+		}
+
+		{
 			ComPtr<ID3D11Texture2D> pBackBuffer = nullptr;
 
 			if (FAILED(m_pSwapChain->GetBuffer(
@@ -152,7 +159,8 @@ void SnctDX11Render::Build(HWND* hWnd)
 				throw std::runtime_error("!Failed to Create Rasterizer State");
 			}
 
-			m_pDeviceContext->RSSetState(rasterizerState.Get());
+			m_pDeviceContext	->RSSetState(rasterizerState.Get());
+			m_pDeferredContext	->RSSetState(rasterizerState.Get());
 		}
 
 		{
@@ -178,6 +186,7 @@ void SnctDX11Render::Build(HWND* hWnd)
 		
 			m_pDeviceContext->PSSetSamplers(0, 1, samplerState.GetAddressOf());
 		}
+
 	}
 	catch (std::runtime_error& e) {
 		SnctRuntimeError(e);
@@ -191,7 +200,8 @@ void SnctDX11Render::Build(HWND* hWnd)
 		m_viewport.TopLeftX = 0.0f;
 		m_viewport.TopLeftY = 0.0f;
 
-		m_pDeviceContext->RSSetViewports(1, &m_viewport);
+		m_pDeviceContext	->RSSetViewports(1, &m_viewport);
+		m_pDeferredContext	->RSSetViewports(1, &m_viewport);
 	}
 
 	m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
@@ -202,23 +212,38 @@ void SnctDX11Render::Build(HWND* hWnd)
 void SnctDX11Render::RenderBegin()
 {
 	float clearColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
-	m_pDeviceContext	->ClearRenderTargetView(m_pBackBufferView.Get(), clearColor);
-	m_pDeviceContext	->ClearDepthStencilView(m_pDepthStencileView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	m_pDeferredContext	->ClearRenderTargetView(m_pBackBufferView.Get(), clearColor);
-	m_pDeferredContext	->ClearDepthStencilView(m_pDepthStencileView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	//　Immadiate　と deferred　の双方をクリア
 
-	m_pDeviceContext->OMSetRenderTargets(1, m_pBackBufferView.GetAddressOf(), m_pDepthStencileView.Get());
-	m_pDeviceContext->RSSetViewports(1, &m_viewport);
+	m_pDeviceContext	->ClearRenderTargetView	(m_pBackBufferView.Get(), clearColor);
+	m_pDeviceContext	->ClearDepthStencilView	(m_pDepthStencileView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pDeviceContext	->OMSetRenderTargets	(1, m_pBackBufferView.GetAddressOf(), m_pDepthStencileView.Get());
+	m_pDeviceContext	->RSSetViewports		(1, &m_viewport);
+
+	m_pDeferredContext	->ClearRenderTargetView	(m_pBackBufferView.Get(), clearColor);
+	m_pDeferredContext	->ClearDepthStencilView	(m_pDepthStencileView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pDeferredContext	->OMSetRenderTargets	(1, m_pBackBufferView.GetAddressOf(), m_pDepthStencileView.Get());
+	m_pDeferredContext	->RSSetViewports		(1, &m_viewport);
 }
 
 void SnctDX11Render::RenderEnd()
 {
 	try
 	{
-		m_pDeferredContext->FinishCommandList(true, m_pCommandList.GetAddressOf());
+		ComPtr<ID3D11CommandList> pCommandList;
 
-		m_pDeviceContext->ExecuteCommandList(m_pCommandList.Get(), false);
+		// !　ここでDeferred contextで設定したものをCommandListとして登録
+		m_pDeferredContext->FinishCommandList(true, pCommandList.GetAddressOf());
+
+		// Immadiate context で　実行命令
+		m_pDeviceContext->ExecuteCommandList(pCommandList.Get(), false);
+
+		//　実質的に運用方法は、Immadiate と変わらない
+		//　commandList も存在するが
+		//
+		//  Deferred から FinishCommandList で受け渡し
+		//　Immadiate で Execute する
+		//  そのため CommandListは一時オブジェクトで問題ないかも?
 
 		if (FAILED(m_pSwapChain->Present(1, 0)))
 			throw "!Failed to swap chain present";
@@ -228,4 +253,26 @@ void SnctDX11Render::RenderEnd()
 	}
 
 
+}
+
+void SnctDX11Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
+{
+	// 仮作成　（移動予定）
+
+	UINT stride = sizeof(Vertex);
+	UINT offset = 0;
+
+	//　型は Immadiateと変わらないので直前の設定が可能　
+	m_pDeferredContext->VSSetShader				(nullptr/*頂点シェーダー*/, nullptr, 0);
+	m_pDeferredContext->PSSetShader				(nullptr/*ピクセルシェーダー*/, nullptr, 0);
+
+	m_pDeferredContext->VSSetConstantBuffers	(0, 1, nullptr/*コンスタントバッファー*/);
+	m_pDeferredContext->PSSetConstantBuffers	(0, 1, nullptr/*コンスタントバッファー*/);
+
+	m_pDeferredContext->IASetVertexBuffers		(0, 1, nullptr/*vertex buffer*/, &stride, &offset);
+	m_pDeferredContext->IASetInputLayout		(nullptr/*layout*/);
+	m_pDeferredContext->IASetPrimitiveTopology	(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// 12と共通化のため　DrawIndexedInstanced　を使用　Drawなども使用可
+	m_pDeferredContext->DrawIndexedInstanced(0/*IndexNum*/, 1, 0, 0, 0);
 }

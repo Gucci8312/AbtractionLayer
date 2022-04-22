@@ -12,10 +12,10 @@ public:
 	void RenderEnd()		override;
 
 	void Draw(HashKey key, SNCT_DRAW_FLAG drawFlag) override;
-
 	void CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices) override;
 protected:
 
+private:
 	ComPtr<IDXGISwapChain>			m_pSwapChain;
 
 	ComPtr<ID3D11Device>			m_pDevice;
@@ -35,6 +35,5 @@ protected:
 	//std::unique_ptr<SnctResorceLibrary>	m_pResourceLibrary;
 
 
-private:
 
 };
