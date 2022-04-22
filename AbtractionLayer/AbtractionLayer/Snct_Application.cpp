@@ -2,7 +2,15 @@
 #include "Snct_Application.h"
 
 //----å„Ç≈è¡Ç∑--------
+#include "Snct_Render.h"
+#include "Snct_Scene.h"
 #include "DX/DX12/Snct_DX12Render.h"
+
+#include "../resource/scene01.h"
+
+std::unique_ptr<ISnctRender>	pRender;
+std::unique_ptr<ISnctScene>		pScene;
+
 SnctDX12Render Dx12;
 //------------------------
 
@@ -64,7 +72,16 @@ bool SnctApplication::Initialize()
 
 	// Console window destroy
 	FreeConsole();
-	Dx12.Build(&m_hwnd);
+
+
+
+	pRender = std::make_unique<SnctDX12Render>();
+	pScene	= std::make_unique<Scene01>();
+	pScene->SetRender(pRender.get());
+	
+	pRender->Build(&m_hwnd);
+	pScene->Initialize();
+
 	return true;
 }
 
@@ -183,8 +200,11 @@ void SnctApplication::MainLoop()
 				DispatchMessage(&msg);
 
 				//-----------------
-				Dx12.RenderBegin();
-				Dx12.RenderEnd();
+				pScene	->Update();
+
+				pRender	->RenderBegin();
+				pScene	->Draw();
+				pRender	->RenderEnd();
 			}
 		}
 		else

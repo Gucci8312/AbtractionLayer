@@ -6,6 +6,11 @@ class SnctDXRender : public ISnctRender
 {
 
 public:
+	SnctDXRender() {
+		m_pConstantObject = std::make_unique<XMConstantObject>();
+		m_pConstantCamera = std::make_unique<XMConstantCamera>();
+	}
+
 	void SetObject(Transform* pTransform) override;
 	void SetCamera(Camera* pCamera) override;
 

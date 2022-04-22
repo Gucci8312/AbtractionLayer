@@ -1,13 +1,13 @@
 #pragma once
 #include "Snct_Utility.h"
-#include "Snct_Object.h"
 
 class ISnctRender;
+#include "Snct_Object.h"
 
 class ISnctScene {
 
 public:
-	ISnctScene(ISnctRender* pRender) : m_pRender(pRender) {}
+	void SetRender(ISnctRender* pRender) { m_pRender = pRender; };
 
 	void Initialize()
 	{
@@ -55,6 +55,7 @@ template<class T>
 inline void ISnctScene::AddObject(HashKey key)
 {
 	m_pObjects.emplace(key, std::make_unique<T>());
+	m_pObjects.at(key)->SetRender(m_pRender);
 }
 
 inline void ISnctScene::ReleaseObject(HashKey  key)

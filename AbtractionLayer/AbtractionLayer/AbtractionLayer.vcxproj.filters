@@ -67,6 +67,18 @@
     <ClInclude Include="DX\DX12\Snct_DX12CmdQueue.h">
       <Filter>RenderCore</Filter>
     </ClInclude>
+    <ClInclude Include="Snct_DX12Objects.h">
+      <Filter>DX\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\resource\box.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\resource\scene01.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="..\resource\camera.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX\DX12\Snct_DX12CmdList.cpp">
@@ -98,6 +110,9 @@
     </ClCompile>
     <ClCompile Include="DX\DX12\Snct_DX12CmdQueue.cpp">
       <Filter>RenderCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Snct_DX12Objects.cpp">
+      <Filter>DX\DX12</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

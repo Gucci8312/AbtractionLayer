@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\resource\box.h" />
+    <ClInclude Include="..\resource\camera.h" />
+    <ClInclude Include="..\resource\scene01.h" />
     <ClInclude Include="DX\DX11\Snct_DX11.h" />
     <ClInclude Include="DX\DX11\Snct_DX11Render.h" />
     <ClInclude Include="DX\DX12\Snct_DX12.h" />
@@ -34,6 +37,7 @@
     <ClInclude Include="DX\Snct_DXResource.h" />
     <ClInclude Include="DX\Snct_DXShaderLibrary.h" />
     <ClInclude Include="Snct_Application.h" />
+    <ClInclude Include="Snct_DX12Objects.h" />
     <ClInclude Include="Snct_Math.h" />
     <ClInclude Include="Snct_Object.h" />
     <ClInclude Include="Snct_Render.h" />
@@ -53,6 +57,7 @@
     <ClCompile Include="DX\Snct_DXShaderLibrary.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Snct_Application.cpp" />
+    <ClCompile Include="Snct_DX12Objects.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="DX\Shader\n_pixel.hlsl">
