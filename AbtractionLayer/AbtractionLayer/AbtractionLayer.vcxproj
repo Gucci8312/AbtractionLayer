@@ -23,8 +23,10 @@
     <ClInclude Include="DX\DX11\Snct_DX11Render.h" />
     <ClInclude Include="DX\DX12\Snct_DX12.h" />
     <ClInclude Include="DX\DX12\Snct_DX12CmdList.h" />
+    <ClInclude Include="DX\DX12\Snct_DX12CmdQueue.h" />
     <ClInclude Include="DX\DX12\Snct_DX12Device.h" />
     <ClInclude Include="DX\DX12\Snct_DX12Render.h" />
+    <ClInclude Include="DX\Interface\ISnct_DXCmdQueue.h" />
     <ClInclude Include="DX\ISnct_DXCmdList.h" />
     <ClInclude Include="DX\ISnct_DXDevice.h" />
     <ClInclude Include="DX\Snct_DXConstantParameter.h" />
@@ -43,6 +45,7 @@
   <ItemGroup>
     <ClCompile Include="DX\DX11\Snct_DX11Render.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12CmdList.cpp" />
+    <ClCompile Include="DX\DX12\Snct_DX12CmdQueue.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12Device.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12Render.cpp" />
     <ClCompile Include="DX\Snct_DXRender.cpp" />

@@ -21,10 +21,10 @@ HRESULT SnctDX12CmdList::Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Devi
 /// \param[in]		Rect
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::ClearRTV(ISnctDxRTV* DescriptorHandle, UINT NumRects, D3D12_RECT* pRects)
+void SnctDX12CmdList::ClearRTV(ISnctDXRTV* DescriptorHandle, UINT NumRects, RECT* pRects )
 {
 	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	SnctDx12RTV* TempRTV = static_cast<SnctDx12RTV*>(DescriptorHandle);
+	SnctDX12RTV* TempRTV = static_cast<SnctDX12RTV*>(DescriptorHandle);
 	m_pCmdList->ClearRenderTargetView(TempRTV->GetRTV(), clearColor, 0, pRects);
 }
 
@@ -39,10 +39,10 @@ void SnctDX12CmdList::ClearRTV(ISnctDxRTV* DescriptorHandle, UINT NumRects, D3D1
 /// \param[in]		Rects
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::ClearDSV(ISnctDxDSV* DescriptorHandle, D3D12_CLEAR_FLAGS Flag, float Depth, UINT8 Stencil, UINT NumRects, D3D12_RECT* pRects)
+void SnctDX12CmdList::ClearDSV(ISnctDXDSV* DescriptorHandle, DEPTH_CLEAR_FLAGS Flag, float Depth, UINT8 Stencil, UINT NumRects, RECT* pRects )
 {
-	SnctDx12DSV* TempDSV = static_cast<SnctDx12DSV*>(DescriptorHandle);
-	m_pCmdList.Get()->ClearDepthStencilView(*TempDSV->GetpHandle(), Flag, Depth, Stencil, NumRects, pRects);
+	SnctDX12DSV* TempDSV = static_cast<SnctDX12DSV*>(DescriptorHandle);
+	m_pCmdList.Get()->ClearDepthStencilView(*TempDSV->GetpHandle(), static_cast<D3D12_CLEAR_FLAGS>(Flag), Depth, Stencil, NumRects, pRects);
 }
 
 
@@ -64,10 +64,10 @@ void SnctDX12CmdList::Reset(ID3D12CommandAllocator* CmdAllocator, ID3D12Pipeline
 /// \param[in]		Descriptor handle
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::SetRTV(UINT NumDescriptors, ISnctDxRTV* DescriptorHandle, bool SingleHandleToDescriptorRange, ISnctDxDSV* DSHandle)
+void SnctDX12CmdList::SetRTV(UINT NumDescriptors, ISnctDXRTV* DescriptorHandle, bool SingleHandleToDescriptorRange, ISnctDXDSV* DSHandle)
 {
-	SnctDx12RTV* TempRTV = static_cast<SnctDx12RTV*>(DescriptorHandle);
-	SnctDx12DSV* TempDSV = static_cast<SnctDx12DSV*>(DSHandle);
+	SnctDX12RTV* TempRTV = static_cast<SnctDX12RTV*>(DescriptorHandle);
+	SnctDX12DSV* TempDSV = static_cast<SnctDX12DSV*>(DSHandle);
 	m_pCmdList.Get()->OMSetRenderTargets(NumDescriptors, TempRTV->GetpHandle(), SingleHandleToDescriptorRange, TempDSV->GetpHandle());
 }
 
@@ -132,13 +132,15 @@ void SnctDX12CmdList::Close()
 /// \param[in]		After state
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::SetResourceBarrier(ID3D12Resource* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After)
+void SnctDX12CmdList::SetResourceBarrier(ISnctDXBuffer* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After)
 {
+	SnctDX12Buffer* tempResource = static_cast<SnctDX12Buffer*>(Resource);
+
 	// Resource barrier settings
 	D3D12_RESOURCE_BARRIER BarrierDesc;
 	ZeroMemory(&BarrierDesc, sizeof(BarrierDesc));
 	BarrierDesc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	BarrierDesc.Transition.pResource = Resource;
+	BarrierDesc.Transition.pResource = tempResource->GetBuffer();
 	BarrierDesc.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	BarrierDesc.Transition.StateBefore = Before;
 	BarrierDesc.Transition.StateAfter = After;

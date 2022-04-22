@@ -61,6 +61,12 @@
     <ClInclude Include="DX\Snct_DXShaderLibrary.h">
       <Filter>DX</Filter>
     </ClInclude>
+    <ClInclude Include="DX\Interface\ISnct_DXCmdQueue.h">
+      <Filter>RenderCore</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX12\Snct_DX12CmdQueue.h">
+      <Filter>RenderCore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX\DX12\Snct_DX12CmdList.cpp">
@@ -89,6 +95,9 @@
     </ClCompile>
     <ClCompile Include="DX\Snct_DXShaderLibrary.cpp">
       <Filter>DX</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX12\Snct_DX12CmdQueue.cpp">
+      <Filter>RenderCore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

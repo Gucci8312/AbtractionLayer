@@ -19,17 +19,16 @@ SnctDX12Render::~SnctDX12Render()
 	WaitGPU();
 
 	// Release
-	m_cmdQueue.Reset();
+	//m_cmdQueue.Reset();
 	m_swapChain.Reset();
 	m_heapRTV.Reset();
 	m_heapDSV.Reset();
 	m_fence.Reset();
-	m_depthBuffer.Reset();
+	//m_depthBuffer.Reset();
 
 	for (auto Idx = 0; Idx < m_frameCount; ++Idx)
 	{
 		m_cmdAllocator[Idx].Reset();
-		m_colorBuffer[Idx].Reset();
 	}
 
 	// Event destroy
@@ -74,7 +73,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		QueueDesc.NodeMask = 0;
 
 		// Create commnd queue
-		auto hr = m_device.CreateCommandQueue(QueueDesc, m_cmdQueue.ReleaseAndGetAddressOf());
+		auto hr = m_device.CreateCommandQueue(QueueDesc, m_cmdQueue.GetCmdQueueAddress());
 		if (FAILED(hr)) throw std::runtime_error("DirectX12 command queue create error");
 
 		// Create DXGI factoy
@@ -102,7 +101,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 
 		// Create swapchain
 		ComPtr<IDXGISwapChain> pSwapChain;
-		hr = Factory->CreateSwapChain(m_cmdQueue.Get(), &SwapChainDesc, pSwapChain.ReleaseAndGetAddressOf());
+		hr = Factory->CreateSwapChain(m_cmdQueue.GetCmdQueue(), &SwapChainDesc, pSwapChain.ReleaseAndGetAddressOf());
 		if (FAILED(hr)) throw std::runtime_error("DirectX12 IDXGISwapchain create error");
 
 		// Get IDXGISwapChain3
@@ -145,7 +144,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		for (auto i = 0u; i < m_frameCount; ++i)
 		{
 			// Get color buffer
-			hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(m_colorBuffer[i].ReleaseAndGetAddressOf()));
+			hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(m_colorBuffer[i].GetBufferAddress()));
 			if (FAILED(hr)) throw std::runtime_error("DirectX12 color buffer create error");
 
 			// Render target view settings
@@ -205,7 +204,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		DepthResDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
 
 		// Depth buffer clear value
-		D3D12_CLEAR_VALUE ClearValue;
+		D3D12_CLEAR_VALUE ClearValue = {};
 		ClearValue.Format = DXGI_FORMAT_D32_FLOAT;
 		ClearValue.DepthStencil.Depth = 1.0f;
 		ClearValue.DepthStencil.Stencil = 0;
@@ -213,7 +212,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		// Create depth buffer
 		hr = m_device.GetDevice()->CreateCommittedResource(&DepthHeapProp, D3D12_HEAP_FLAG_NONE,
 			&DepthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &ClearValue,
-			IID_PPV_ARGS(m_depthBuffer.ReleaseAndGetAddressOf()));
+			IID_PPV_ARGS(m_depthBuffer.GetBufferAddress()));
 		if (FAILED(hr)) throw std::runtime_error("DirectX12 depth buffer create error");
 
 		// Depth descriptor heap settings
@@ -241,7 +240,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		DepthViewDesc.Flags = D3D12_DSV_FLAG_NONE;
 
 		// Create depth stencil view
-		m_device.GetDevice()->CreateDepthStencilView(m_depthBuffer.Get(), &DepthViewDesc, handle);
+		m_device.GetDevice()->CreateDepthStencilView(m_depthBuffer.GetBuffer(), &DepthViewDesc, handle);
 
 		// Set the size of the descriptor heap for depth
 		m_handleDSV.SetHandle(handle);
@@ -272,7 +271,7 @@ void SnctDX12Render::RenderBegin()
 	m_cmdList.ClearRTV(&m_handleRTV[m_frameIndex], 0, nullptr);
 
 	// Clear depth stencil view
-	m_cmdList.ClearDSV(&m_handleDSV, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	m_cmdList.ClearDSV(&m_handleDSV, DEPTH_CLEAR_FLAGS::CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// Set screen parameter
 	m_cmdList.SetViewPort(g_screenWidth, g_screenHeight, 0.0f, 1.0f);
@@ -288,20 +287,20 @@ void SnctDX12Render::RenderBegin()
 void SnctDX12Render::RenderEnd()
 {
 	m_cmdList.SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-
+	
 	// End command recording
 	m_cmdList.Close();
 
 	// Execute command
-	ID3D12CommandList* ppCmdLists[] = { m_cmdList.Get() };
-	m_cmdQueue->ExecuteCommandLists(1, ppCmdLists);
+	ISnctDXCmdList* ppCmdLists[] = { static_cast<ISnctDXCmdList*>(&m_cmdList) };
+	m_cmdQueue.Execute(1, ppCmdLists);
 
 	// Display on screen
 	m_swapChain->Present(1, 0);
 
 	// Signal processing
-	const auto currentValue = m_fenceCounter[m_frameIndex];
-	m_cmdQueue->Signal(m_fence.Get(), currentValue);
+	uint64_t  currentValue = m_fenceCounter[m_frameIndex];
+	m_cmdQueue.Signal(m_fence.Get(), currentValue);
 
 	// Update back buffer number
 	m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
@@ -343,13 +342,14 @@ void SnctDX12Render::CreateObject(HashKey key, Vertices* pVertices, Indices* pIn
 //------------------------------------------------------------------------------
 void SnctDX12Render::WaitGPU()
 {
-	m_cmdQueue->Signal(m_fence.Get(), m_fenceCounter[m_frameIndex]);
+	uint64_t currentValue = m_fenceCounter[m_frameIndex];
+	m_cmdQueue.Signal(m_fence.Get(), currentValue);
 
 	// When GPU procesing is completed
 	m_fence->SetEventOnCompletion(m_fenceCounter[m_frameIndex], m_fenceEvent);
 
 	// Wait procesing
-	WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
+	WaitForSingleObjectEx(m_fenceEvent, INFINITE, false);
 
 	// Counter increase
 	m_fenceCounter[m_frameIndex]++;
