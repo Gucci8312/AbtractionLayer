@@ -49,7 +49,7 @@
     <ClInclude Include="DX\Snct_DXResource.h">
       <Filter>Header</Filter>
     </ClInclude>
-    <ClInclude Include="DX\ISnct_CmdList.h">
+    <ClInclude Include="DX\ISnct_DxCmdList.h">
       <Filter>Header\RenderCore</Filter>
     </ClInclude>
     <ClInclude Include="DX\DX12\Snct_Dx12CmdList.h">
@@ -58,7 +58,7 @@
     <ClInclude Include="DX\DX12\Snct_Dx12Device.h">
       <Filter>Header\RenderCore</Filter>
     </ClInclude>
-    <ClInclude Include="DX\ISnct_Device.h">
+    <ClInclude Include="DX\ISnct_DxDevice.h">
       <Filter>Header\RenderCore</Filter>
     </ClInclude>
   </ItemGroup>

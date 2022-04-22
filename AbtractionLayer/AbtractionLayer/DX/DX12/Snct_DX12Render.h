@@ -39,9 +39,8 @@ private:
 	HANDLE								   m_fenceEvent = {};
 	uint64_t							   m_fenceCounter[m_frameCount];
 	uint32_t                               m_frameIndex = 0;
-	//D3D12_CPU_DESCRIPTOR_HANDLE            m_handleRTV[m_frameCount];
-	SnctDx12RTV							   m_rtv;
-	D3D12_CPU_DESCRIPTOR_HANDLE            m_handleDSV = {};
+	SnctDx12RTV					           m_handleRTV[m_frameCount];
+	SnctDx12DSV				               m_handleDSV = {};
 	D3D12_VIEWPORT                         m_viewPort = {};
 	D3D12_RECT                             m_scissor = {};
 };

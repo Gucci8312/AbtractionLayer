@@ -1,11 +1,9 @@
 // DirectX12 command list management file...
 #pragma once
-#include "../ISnct_CmdList.h"
-#include "../../Snct_Windows.h"
-#include "../Snct_DXResource.h"
+#include "../ISnct_DxCmdList.h"
 
 // Classes that manage DirectX12 command list
-class SnctDx12CmdList : public ISnctCmdList
+class SnctDx12CmdList : public ISnctDxCommandList
 {
 public:
 	//---------------------------------------------------------------------------
@@ -13,16 +11,19 @@ public:
 	//---------------------------------------------------------------------------	
 	ID3D12GraphicsCommandList* Get() { return m_cmdList.Get(); }
 	HRESULT Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Device, ID3D12CommandAllocator* CmdAllocator);
-	void ClearRTV(D3D12_CPU_DESCRIPTOR_HANDLE Descriptors, UINT NumRects, D3D12_RECT* pRects);
-	void ClearDSV(D3D12_CPU_DESCRIPTOR_HANDLE Descriptors, D3D12_CLEAR_FLAGS Flag, float Depth,
-		unsigned short Stencil, UINT NumRects, D3D12_RECT* pRects);
+	void ClearRTV(ISnctDxRTV* Descriptors, UINT NumRects, D3D12_RECT* pRects);
+	void ClearDSV(ISnctDxDSV* Descriptors, D3D12_CLEAR_FLAGS Flag, float Depth,
+		UINT8 Stencil, UINT NumRects, D3D12_RECT* pRects);
 	void Reset(ID3D12CommandAllocator* CmdAllocator, ID3D12PipelineState* PipelineState);
-	void SetRTV(UINT NumDescriptors, ISnctRTV* Descriptors,
-		bool SingleHandleToDescriptorRange, D3D12_CPU_DESCRIPTOR_HANDLE* DSHandle);
+	void SetResourceBarrier(ID3D12Resource* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After);
+
+	// Override function
+	void SetRTV(UINT NumDescriptors, ISnctDxRTV* Descriptors,
+		bool SingleHandleToDescriptorRange, ISnctDxDSV* DSHandle)override final;
 	void SetViewPort(float Width, float Height, float MinDepth, float MaxDepth) override final;
 	void SetScissorRects(float Width, float Height) override final;
 	void Close() override final;
-	void SetResourceBarrier(ID3D12Resource* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After);
+
 private:
 	//---------------------------------------------------------------------------
 	// private variables.

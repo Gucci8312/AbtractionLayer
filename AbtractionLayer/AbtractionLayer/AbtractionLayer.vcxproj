@@ -25,8 +25,8 @@
     <ClInclude Include="DX\DX12\Snct_Dx12CmdList.h" />
     <ClInclude Include="DX\DX12\Snct_Dx12Device.h" />
     <ClInclude Include="DX\DX12\Snct_DX12Render.h" />
-    <ClInclude Include="DX\ISnct_CmdList.h" />
-    <ClInclude Include="DX\ISnct_Device.h" />
+    <ClInclude Include="DX\ISnct_DxCmdList.h" />
+    <ClInclude Include="DX\ISnct_DxDevice.h" />
     <ClInclude Include="DX\Snct_DXConstantParameter.h" />
     <ClInclude Include="DX\Snct_DXRender.h" />
     <ClInclude Include="DX\Snct_DXResource.h" />

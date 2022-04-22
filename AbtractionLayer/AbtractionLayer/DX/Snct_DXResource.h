@@ -1,103 +1,70 @@
 #pragma once
-#include <d3d12.h>
-#include <dxgi1_4.h>
 #include <d3d11.h>
+#include <d3d12.h>
 
-#pragma comment(lib, "d3d11.lib")
-
-#pragma comment(lib, "d3d12.lib")
-#pragma comment(lib, "dxgi.lib")
-
-#pragma region Render target view
-// View management interface class
-class ISnctView
+// Render target view management interface class
+class ISnctDxRTV
 {
 public:
-	virtual ~ISnctView() {};
-	virtual void Get(void* ReceiveData) = 0;
-	//virtual ISnctView* GetView() = 0;
-};
-
-// 生成していくRTVの元
-class ISnctRTV
-{
-public:
-	// Return as areturn value
-	template <class T> void Get(T* ReturnRTV)
-	{
-		
-	}
-
-	// RTV for DirectX11
-	template <> void Get<ID3D11RenderTargetView>(ID3D11RenderTargetView* ReturnRtv)
-	{
-		ReturnRtv = reinterpret_cast<ID3D11RenderTargetView*>(m_RenderTargetView);
-	}
-
-	// RTV for DirectX12
-	template <> void Get<D3D12_CPU_DESCRIPTOR_HANDLE>(D3D12_CPU_DESCRIPTOR_HANDLE* ReturnRtv)
-	{
-		ReturnRtv = reinterpret_cast<D3D12_CPU_DESCRIPTOR_HANDLE*>(m_RenderTargetView);
-	}
-
-
-protected:
-	//---------------------------------------------------------------------------
-	// protected variables.
-	//---------------------------------------------------------------------------	
-	ISnctView* m_RenderTargetView;
-};
-
-class RTV :public ISnctRTV
-{
-public:
-	//---------------------------------------------------------------------------
-	// public methods
-	//---------------------------------------------------------------------------	
-	template<class T> RTV(T* RTVResource) { m_RenderTargetView = reinterpret_cast<ISnctView*>(RTVResource); }
-	~RTV() {}
+	virtual ~ISnctDxRTV() {}
+	virtual ISnctDxRTV* Get() = 0;
 private:
 };
 
-// RTV
-class ISnctCreateRTV 
+
+// DirectX11 render target view management class
+class SnctDx11RTV : public ISnctDxRTV
 {
 public:
-	ISnctCreateRTV() {}
-	~ISnctCreateRTV() {}
-	template<class T>  ISnctRTV* Convert(T* rtv)
-	{
-		ISnctRTV* p = new RTV(rtv);
-		return p;
-	}
-};
-
-// Dx11用レンダーターゲットビュー
-class SnctDx11RTV :public ISnctView
-{
+	SnctDx11RTV* Get() override final { return this; }
+	ID3D11RenderTargetView* GetRTV() { return m_rtv; }
 private:
-	ID3D11RenderTargetView* m_RenderTargetView;
-public:
-	ISnctView* Get() { return (ISnctView*)m_RenderTargetView; }
-	//void Get(void* ReceiveData) { ReceiveData = m_RenderTargetView; }
-	void Create(ID3D11Device* Device, ID3D11Texture2D* BackBuffer);
+	ID3D11RenderTargetView* m_rtv;
 };
 
-// Dx12用レンダーターゲットビュー
-class SnctDx12RTV :public ISnctView
+
+// DirectX12 render target view management class
+class SnctDx12RTV : public ISnctDxRTV
 {
 public:
-	//---------------------------------------------------------------------------
-	// public methods
-	//---------------------------------------------------------------------------	
-	D3D12_CPU_DESCRIPTOR_HANDLE* Get() { return m_handle; }
-	void Get(void* ReceiveData) { ReceiveData = m_handle; }
-	void Create(ID3D12Device* device, D3D12_RENDER_TARGET_VIEW_DESC RTVDesc, D3D12_CPU_DESCRIPTOR_HANDLE startHandle, int BackBufferNum, ID3D12Resource** Buffer);
+	SnctDx12RTV* Get() override final { return this; }
+	void SetHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) { m_rtvHandle = handle; }
+	D3D12_CPU_DESCRIPTOR_HANDLE* GetpHandle() { return &m_rtvHandle; }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetRTV() { return m_rtvHandle; }
 private:
-	//---------------------------------------------------------------------------
-	// private variables.
-	//---------------------------------------------------------------------------	
-	D3D12_CPU_DESCRIPTOR_HANDLE* m_handle;
+	D3D12_CPU_DESCRIPTOR_HANDLE m_rtvHandle;
 };
 
-#pragma endregion
+
+// Render target view management interface class
+class ISnctDxDSV
+{
+public:
+	virtual ~ISnctDxDSV() {}
+	virtual ISnctDxDSV* Get() = 0;
+private:
+};
+
+
+// DirectX11 render target view management class
+class SnctDx11DSV : public ISnctDxDSV
+{
+public:
+	SnctDx11DSV* Get() override final { return this; }
+	ID3D11DepthStencilView* GetRTV() { return m_dsv; }
+private:
+	ID3D11DepthStencilView* m_dsv;
+};
+
+
+// DirectX12 render target view management class
+class SnctDx12DSV : public ISnctDxDSV
+{
+public:
+	SnctDx12DSV* Get() override final { return this; }
+	void SetHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) { m_dsvHandle = handle; }
+	D3D12_CPU_DESCRIPTOR_HANDLE* GetpHandle() { return &m_dsvHandle; }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetDSV() { return m_dsvHandle; }
+private:
+	D3D12_CPU_DESCRIPTOR_HANDLE m_dsvHandle;
+};
