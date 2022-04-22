@@ -1,7 +1,6 @@
 #include "Snct_Utility.h"
 #include "Snct_Application.h"
 
-//----å„Ç≈è¡Ç∑--------
 #include "Snct_Render.h"
 #include "Snct_Scene.h"
 #include "DX/DX12/Snct_DX12Render.h"
@@ -10,9 +9,6 @@
 
 std::unique_ptr<ISnctRender>	pRender;
 std::unique_ptr<ISnctScene>		pScene;
-
-SnctDX12Render Dx12;
-//------------------------
 
 //------------------------------------------------------------------------------
 /// Window Procedure
@@ -79,7 +75,7 @@ bool SnctApplication::Initialize()
 	pScene	= std::make_unique<Scene01>();
 	pScene->SetRender(pRender.get());
 	
-	pRender->Build(&m_hwnd);
+	pRender->Build(m_hwnd);
 	pScene->Initialize();
 
 	return true;
@@ -199,7 +195,6 @@ void SnctApplication::MainLoop()
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 
-				//-----------------
 				pScene	->Update();
 
 				pRender	->RenderBegin();
