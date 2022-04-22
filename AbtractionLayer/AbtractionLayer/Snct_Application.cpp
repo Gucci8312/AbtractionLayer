@@ -2,8 +2,9 @@
 #include "Snct_Application.h"
 
 //----å„Ç≈è¡Ç∑--------
+#include "DX/DX11/Snct_DX11Render.h"
 #include "DX/DX12/Snct_DX12Render.h"
-SnctDX12Render Dx12;
+SnctDX11Render Dx;
 //------------------------
 
 //------------------------------------------------------------------------------
@@ -64,7 +65,7 @@ bool SnctApplication::Initialize()
 
 	// Console window destroy
 	FreeConsole();
-	Dx12.Build(&m_hwnd);
+	Dx.Build(m_hwnd);
 	return true;
 }
 
@@ -183,8 +184,8 @@ void SnctApplication::MainLoop()
 				DispatchMessage(&msg);
 
 				//-----------------
-				Dx12.RenderBegin();
-				Dx12.RenderEnd();
+				Dx.RenderBegin();
+				Dx.RenderEnd();
 			}
 		}
 		else

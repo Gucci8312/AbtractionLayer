@@ -53,8 +53,39 @@ unsigned int SnctDX12Device::GetIncrementHandleSize(D3D12_DESCRIPTOR_HEAP_TYPE t
 /// \param[in]		Render target view handle
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12Device::CreateRTV(ISnctDXBuffer* buffer, D3D12_RENDER_TARGET_VIEW_DESC rtvDesc, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle)
+void SnctDX12Device::CreateRTV(ISnctDXBuffer* buffer,  ISnctDXRTV* rtvHandle)
 {
+    // Render target view settings
+    D3D12_RENDER_TARGET_VIEW_DESC viewDesc = {};
+    viewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+    viewDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+    viewDesc.Texture2D.MipSlice = 0;
+    viewDesc.Texture2D.PlaneSlice = 0;
+
     SnctDX12Buffer* tempBuffer = static_cast<SnctDX12Buffer*>(buffer);
-    m_pDevice->CreateRenderTargetView(tempBuffer->GetBuffer(), &rtvDesc, rtvHandle);
+    SnctDX12RTV* tempRTVHandle = static_cast<SnctDX12RTV*>(rtvHandle);
+    m_pDevice->CreateRenderTargetView(tempBuffer->GetBuffer(), &viewDesc, tempRTVHandle->GetRTV());
+}
+
+//------------------------------------------------------------------------------
+/// Create render target view
+/// \param[in]		Render target view desc
+/// \param[in]		Render target view handle
+/// \return			none
+//------------------------------------------------------------------------------
+void SnctDX12Device::CreateDSV(ISnctDXBuffer* buffer,  ISnctDXDSV* dsvHandle)
+{
+    // Render target view settings
+        // Depth stencil view settings
+    D3D12_DEPTH_STENCIL_VIEW_DESC DepthViewDesc = {};
+    DepthViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    DepthViewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+    DepthViewDesc.Texture2D.MipSlice = 0;
+    DepthViewDesc.Flags = D3D12_DSV_FLAG_NONE;
+
+    SnctDX12Buffer* tempBuffer = static_cast<SnctDX12Buffer*>(buffer);
+    SnctDX12DSV* tempRTVHandle = static_cast<SnctDX12DSV*>(dsvHandle);
+
+    // Create depth stencil view
+    m_pDevice->CreateDepthStencilView(tempBuffer->GetBuffer(), &DepthViewDesc, tempRTVHandle->GetDSV());
 }
