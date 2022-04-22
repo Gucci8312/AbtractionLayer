@@ -1,4 +1,9 @@
+#include "../../Snct_DXFrameResource.h"
 #include "Snct_DX12Render.h"
+
+#include <process.h>
+
+SnctDX12Render* SnctDX12Render::s_app = nullptr;
 
 //------------------------------------------------------------------------------
 /// Constructor
@@ -6,7 +11,7 @@
 //------------------------------------------------------------------------------
 SnctDX12Render::SnctDX12Render()
 {
-	// Nothing //
+	s_app = this;
 }
 
 //------------------------------------------------------------------------------
@@ -353,4 +358,54 @@ void SnctDX12Render::WaitGPU()
 
 	// Counter increase
 	m_fenceCounter[m_frameIndex]++;
+}
+
+void SnctDX12Render::DrawCallPool()
+{
+	struct threadwrapper
+	{
+		static unsigned int WINAPI pool(LPVOID lpParameter)
+		{
+			ThreadParameter* parameter = reinterpret_cast<ThreadParameter*>(lpParameter);
+			SnctDX12Render::Get()->DrawThread(parameter->threadIndex);
+			return 0;
+		}
+	};
+
+	for (int i = 0; i < ThreadNum; ++i) {
+
+		m_hBeginFrame[i] = CreateEvent(
+			nullptr,
+			false,
+			false,
+			nullptr
+		);
+
+		m_hFinishFrame[i] = CreateEvent(
+			nullptr,
+			false,
+			false,
+			nullptr
+		);
+
+		m_threadParameters[i].threadIndex = i;
+		
+		m_hThread[i] = reinterpret_cast<HANDLE>(_beginthreadex(
+			nullptr,
+			0,
+			threadwrapper::pool,
+			reinterpret_cast<LPVOID>(&m_threadParameters[i]),
+			0,
+			nullptr
+		));
+	}
+}
+
+void SnctDX12Render::DrawThread(UINT threadIndex)
+{
+	while (threadIndex >= 0 && threadIndex < ThreadNum)
+	{
+		WaitForSingleObject(m_hBeginFrame[threadIndex], INFINITE);
+	}
+
 }

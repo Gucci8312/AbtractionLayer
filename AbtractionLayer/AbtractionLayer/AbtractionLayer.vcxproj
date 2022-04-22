@@ -32,6 +32,7 @@
     <ClInclude Include="DX\Snct_DXResource.h" />
     <ClInclude Include="DX\Snct_DXShaderLibrary.h" />
     <ClInclude Include="Snct_Application.h" />
+    <ClInclude Include="Snct_DXFrameResource.h" />
     <ClInclude Include="Snct_Math.h" />
     <ClInclude Include="Snct_Object.h" />
     <ClInclude Include="Snct_Render.h" />
@@ -50,6 +51,7 @@
     <ClCompile Include="DX\Snct_DXShaderLibrary.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Snct_Application.cpp" />
+    <ClCompile Include="Snct_DXFrameResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="DX\Shader\n_pixel.hlsl">

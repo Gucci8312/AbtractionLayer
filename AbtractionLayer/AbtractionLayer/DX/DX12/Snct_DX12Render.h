@@ -15,16 +15,38 @@ public:
 	//---------------------------------------------------------------------------	
 	SnctDX12Render();
 	~SnctDX12Render();
+
+	static SnctDX12Render* Get() { return s_app; }
+
 	void Build(HWND* hWnd)	override final;
 	void RenderBegin()		override final;
 	void RenderEnd()		override final;
 	void Draw(HashKey key, SNCT_DRAW_FLAG drawFlag) override final;
 	void CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices) override final;
 	void WaitGPU();
+
+	void DrawCallPool();
+	void DrawThread	 (UINT threadIndex);
+
+	static SnctDX12Render* s_app;
+
+
+
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
 	//---------------------------------------------------------------------------	
+
+	struct ThreadParameter
+	{
+		UINT threadIndex;
+	};
+	ThreadParameter m_threadParameters[ThreadNum];
+
+	HANDLE m_hBeginFrame	[ThreadNum];
+	HANDLE m_hFinishFrame	[ThreadNum];
+	HANDLE m_hThread		[ThreadNum];
+
 	static const uint32_t				   m_frameCount = 2;
 	SnctDX12Device						   m_device;
 	ComPtr<ID3D12CommandQueue>             m_cmdQueue;

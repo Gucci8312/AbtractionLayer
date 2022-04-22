@@ -4,6 +4,13 @@
 #include <d3dcompiler.h>
 #pragma comment(lib, "d3dcompiler.lib")
 
+//------------------------------------------------------------------------------
+/// Create Shader Blob From File
+/// \param[in]		hash key
+/// \param[in]		file name
+/// \param[in]		shader type
+/// \return			none
+//------------------------------------------------------------------------------
 void SnctShaderLibrary::CreateShaderFromFile(HashKey key, std::wstring szFileName, DX_SHADER_TYPE type)
 {
     UINT debugFlag = 0;

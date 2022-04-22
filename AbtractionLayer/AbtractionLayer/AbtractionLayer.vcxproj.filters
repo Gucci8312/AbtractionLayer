@@ -61,6 +61,9 @@
     <ClInclude Include="DX\Snct_DXShaderLibrary.h">
       <Filter>DX</Filter>
     </ClInclude>
+    <ClInclude Include="Snct_DXFrameResource.h">
+      <Filter>DX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX\DX12\Snct_DX12CmdList.cpp">
@@ -88,6 +91,9 @@
       <Filter>Sorce</Filter>
     </ClCompile>
     <ClCompile Include="DX\Snct_DXShaderLibrary.cpp">
+      <Filter>DX</Filter>
+    </ClCompile>
+    <ClCompile Include="Snct_DXFrameResource.cpp">
       <Filter>DX</Filter>
     </ClCompile>
   </ItemGroup>
