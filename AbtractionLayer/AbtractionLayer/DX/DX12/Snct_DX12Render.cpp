@@ -80,12 +80,12 @@ void SnctDX12Render::Build(HWND* hWnd)
 
 		// Create commnd queue
 		auto hr = m_device.GetDevice()->CreateCommandQueue(&QueueDesc, IID_PPV_ARGS(m_cmdQueue.ReleaseAndGetAddressOf()));
-		if (FAILED(hr)) throw "DirectX12 command queue create error";
+		if (FAILED(hr)) throw std::runtime_error("DirectX12 command queue create error");
 
 		// Create DXGI factoy
 		ComPtr<IDXGIFactory4> Factory = nullptr;
 		hr = CreateDXGIFactory1(IID_PPV_ARGS(Factory.ReleaseAndGetAddressOf()));
-		if (FAILED(hr)) throw "DirectX12 DXGIFactory create error";
+		if (FAILED(hr)) throw std::runtime_error("DirectX12 DXGIFactory create error");
 
 		// Swapchain Setteings
 		DXGI_SWAP_CHAIN_DESC SwapChainDesc = {};
@@ -108,11 +108,11 @@ void SnctDX12Render::Build(HWND* hWnd)
 		// Create swapchain
 		ComPtr<IDXGISwapChain> pSwapChain;
 		hr = Factory->CreateSwapChain(m_cmdQueue.Get(), &SwapChainDesc, pSwapChain.ReleaseAndGetAddressOf());
-		if (FAILED(hr)) throw "DirectX12 IDXGISwapchain create error";
+		if (FAILED(hr)) throw std::runtime_error("DirectX12 IDXGISwapchain create error");
 
 		// Get IDXGISwapChain3
 		hr = pSwapChain.As(&m_swapChain);
-		if (FAILED(hr)) throw "DirectX12 IDXGISwapchain create error";
+		if (FAILED(hr)) throw std::runtime_error("DirectX12 IDXGISwapchain create error");
 
 		// Get buckbuffer idx
 		m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
@@ -122,12 +122,12 @@ void SnctDX12Render::Build(HWND* hWnd)
 		{
 			hr = m_device.GetDevice()->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
 				IID_PPV_ARGS(m_cmdAllocator[i].ReleaseAndGetAddressOf()));
-			if (FAILED(hr)) throw "DirectX12 command allocator create error";
+			if (FAILED(hr)) throw std::runtime_error("DirectX12 command allocator create error");
 		}
 
 		// Create commandlist
 		hr = m_cmdList.Create(D3D12_COMMAND_LIST_TYPE_DIRECT, m_device.GetDevice(), m_cmdAllocator[m_frameIndex].Get());
-		if (FAILED(hr)) throw "DirectX12 command list create error";
+		if (FAILED(hr)) throw std::runtime_error("DirectX12 command list create error");
 
 		// Render target view settings
 		D3D12_DESCRIPTOR_HEAP_DESC RTVHeapDesc = {};
@@ -138,7 +138,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 
 		// Create descriptor heap
 		hr = m_device.GetDevice()->CreateDescriptorHeap(&RTVHeapDesc, IID_PPV_ARGS(m_heapRTV.ReleaseAndGetAddressOf()));
-		if (FAILED(hr)) throw "DirectX12 render target descriptor heap creation error";
+		if (FAILED(hr)) throw std::runtime_error("DirectX12 render target descriptor heap creation error");
 
 		// Descriptor handle
 		auto handle = m_heapRTV->GetCPUDescriptorHandleForHeapStart();
@@ -151,7 +151,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		{
 			// Get color buffer
 			hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(m_colorBuffer[i].ReleaseAndGetAddressOf()));
-			if (FAILED(hr)) throw "DirectX12 color buffer create error";
+			if (FAILED(hr)) throw std::runtime_error("DirectX12 color buffer create error");
 
 			// Render target view settings
 			D3D12_RENDER_TARGET_VIEW_DESC viewDesc = {};
@@ -176,7 +176,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		// Create fence
 		hr = m_device.GetDevice()->CreateFence(m_fenceCounter[m_frameIndex],
 			D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(m_fence.ReleaseAndGetAddressOf()));
-		if (FAILED(hr)) throw "DirectX12 fence create error";
+		if (FAILED(hr)) throw std::runtime_error("DirectX12 fence create error");
 
 		m_fenceCounter[m_frameIndex]++;
 
@@ -219,7 +219,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		hr = m_device.GetDevice()->CreateCommittedResource(&DepthHeapProp, D3D12_HEAP_FLAG_NONE,
 			&DepthResDesc, D3D12_RESOURCE_STATE_DEPTH_WRITE, &ClearValue,
 			IID_PPV_ARGS(m_depthBuffer.ReleaseAndGetAddressOf()));
-		if (FAILED(hr)) throw "DirectX12 depth buffer create error";
+		if (FAILED(hr)) throw std::runtime_error("DirectX12 depth buffer create error");
 
 		// Depth descriptor heap settings
 		D3D12_DESCRIPTOR_HEAP_DESC DepthHeapDesc = {};
@@ -230,7 +230,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 
 		// Create descriptor heap for depth
 		hr = m_device.GetDevice()->CreateDescriptorHeap(&DepthHeapDesc, IID_PPV_ARGS(m_heapDSV.ReleaseAndGetAddressOf()));
-		if (FAILED(hr)) throw "DirectX12 depth stencil view descriptor heap creation error";
+		if (FAILED(hr)) throw std::runtime_error("DirectX12 depth stencil view descriptor heap creation error");
 
 		// Get the handle of the descriptor heap for depth
 		handle = m_heapDSV->GetCPUDescriptorHandleForHeapStart();
