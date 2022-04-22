@@ -44,7 +44,7 @@ SnctDX12Render::~SnctDX12Render()
 /// \param[in]		Window handle pointer
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12Render::Build(HWND* hWnd)
+void SnctDX12Render::Build(HWND hWnd)
 {
 	// Debug option
 #if defined(DEBUG) || defined(_DEBUG)
@@ -94,7 +94,7 @@ void SnctDX12Render::Build(HWND* hWnd)
 		SwapChainDesc.SampleDesc.Quality = 0;
 		SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		SwapChainDesc.BufferCount = m_frameCount;
-		SwapChainDesc.OutputWindow = *hWnd;
+		SwapChainDesc.OutputWindow = hWnd;
 		SwapChainDesc.Windowed = TRUE;
 		SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
@@ -147,15 +147,11 @@ void SnctDX12Render::Build(HWND* hWnd)
 			hr = m_swapChain->GetBuffer(i, IID_PPV_ARGS(m_colorBuffer[i].GetBufferAddress()));
 			if (FAILED(hr)) throw std::runtime_error("DirectX12 color buffer create error");
 
-			// Render target view settings
-			D3D12_RENDER_TARGET_VIEW_DESC viewDesc = {};
-			viewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-			viewDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-			viewDesc.Texture2D.MipSlice = 0;
-			viewDesc.Texture2D.PlaneSlice = 0;
+			SnctDX12RTV TempRTV = {};
+			TempRTV.SetHandle(handle);
 
 			// Create render target view
-			m_device.CreateRTV(m_colorBuffer[i].Get(), viewDesc, handle);
+			m_device.CreateRTV(m_colorBuffer[i].Get(), &TempRTV);
 
 			m_handleRTV[i].SetHandle(handle);
 			handle.ptr += incrementSize;
@@ -232,15 +228,11 @@ void SnctDX12Render::Build(HWND* hWnd)
 		// Get the size of the depth stencil view
 		incrementSize = m_device.GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
-		// Depth stencil view settings
-		D3D12_DEPTH_STENCIL_VIEW_DESC DepthViewDesc = {};
-		DepthViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
-		DepthViewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-		DepthViewDesc.Texture2D.MipSlice = 0;
-		DepthViewDesc.Flags = D3D12_DSV_FLAG_NONE;
+		SnctDX12DSV TempDSV = {};
+		TempDSV.SetHandle(handle);
 
 		// Create depth stencil view
-		m_device.GetDevice()->CreateDepthStencilView(m_depthBuffer.GetBuffer(), &DepthViewDesc, handle);
+		m_device.CreateDSV(m_depthBuffer.Get(), &TempDSV);
 
 		// Set the size of the descriptor heap for depth
 		m_handleDSV.SetHandle(handle);
@@ -266,7 +258,7 @@ void SnctDX12Render::RenderBegin()
 	m_cmdList.Reset(m_cmdAllocator[m_frameIndex].Get(), nullptr);
 
 	m_cmdList.SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	
+
 	// Render target setting
 	m_cmdList.SetRTV(1, &m_handleRTV[m_frameIndex], false, &m_handleDSV);
 
@@ -290,7 +282,7 @@ void SnctDX12Render::RenderBegin()
 void SnctDX12Render::RenderEnd()
 {
 	m_cmdList.SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-	
+
 	// End command recording
 	m_cmdList.Close();
 

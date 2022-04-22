@@ -9,7 +9,6 @@ enum class DEPTH_CLEAR_FLAGS
 	CLEAR_FLAG_STENCIL = 0x2,
 };
 
-
 // Render target view management interface class
 class ISnctDXRTV
 {
@@ -30,12 +29,14 @@ public:
 	// public methods
 	//---------------------------------------------------------------------------	
 	ISnctDXRTV* Get() override final { return this; }
-	ID3D11RenderTargetView* GetRTV() { return m_rtv; }
+	ID3D11RenderTargetView* GetRTV() { return m_rtv.Get(); }
+	ID3D11RenderTargetView** GetRTVAddress() { return m_rtv.GetAddressOf(); }
+	ID3D11RenderTargetView** SetRTVAddress() { return m_rtv.ReleaseAndGetAddressOf(); }
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
 	//---------------------------------------------------------------------------	
-	ID3D11RenderTargetView* m_rtv;
+	ComPtr<ID3D11RenderTargetView> m_rtv;
 };
 
 
@@ -48,8 +49,10 @@ public:
 	//---------------------------------------------------------------------------	
 	SnctDX12RTV* Get() override final { return this; }
 	void SetHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) { m_rtvHandle = handle; }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetHandle() { return m_rtvHandle; }
 	D3D12_CPU_DESCRIPTOR_HANDLE* GetpHandle() { return &m_rtvHandle; }
 	D3D12_CPU_DESCRIPTOR_HANDLE GetRTV() { return m_rtvHandle; }
+	void IncrementHandlePointer(unsigned int size) { m_rtvHandle.ptr += size; }
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
@@ -78,12 +81,14 @@ public:
 	// public methods
 	//---------------------------------------------------------------------------	
 	SnctDX11DSV* Get() override final { return this; }
-	ID3D11DepthStencilView* GetRTV() { return m_dsv; }
+	ID3D11DepthStencilView* GetDSV() { return m_dsv.Get(); }
+	ID3D11DepthStencilView** GetDSVAddress() { return m_dsv.GetAddressOf(); }
+	ID3D11DepthStencilView** SetDSVAddress() { return m_dsv.ReleaseAndGetAddressOf(); }
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
 	//---------------------------------------------------------------------------	
-	ID3D11DepthStencilView* m_dsv;
+	ComPtr<ID3D11DepthStencilView> m_dsv;
 };
 
 
@@ -107,19 +112,19 @@ private:
 
 
 // DirectX resource management class
-class SnctDXResource
+class ISnctDXResource
 {
 public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	virtual ~SnctDXResource() {}
-	virtual SnctDXResource* Get() = 0;
+	virtual ~ISnctDXResource() {}
+	virtual ISnctDXResource* Get() = 0;
 };
 
 
 // DirectX buffer management interface class
-class ISnctDXBuffer : public SnctDXResource
+class ISnctDXBuffer : public ISnctDXResource
 {
 };
 
@@ -157,4 +162,35 @@ private:
 	// private variables.
 	//---------------------------------------------------------------------------	
 	ComPtr<ID3D12Resource> m_pBuffer;
+};
+
+class ISnctDXTexture : public ISnctDXBuffer
+{
+
+};
+
+class SnctDX11Texture : public ISnctDXTexture
+{
+public:
+	SnctDX11Texture* Get() override final { return this; }
+	ID3D11Texture2D* GetResource() { return m_pTexture.Get(); }
+	ID3D11Texture2D** GetResourceAddress() { return m_pTexture.GetAddressOf(); }
+	ID3D11Texture2D** SetResourceAddress() { return m_pTexture.ReleaseAndGetAddressOf(); }
+private:
+	ComPtr<ID3D11Texture2D> m_pTexture;
+};
+
+class SnctDX12Texture : public ISnctDXTexture
+{
+public:
+	SnctDX12Texture* Get() override final { return this; }
+	ID3D12Resource* GetResource() { return m_pResouce.Get(); }
+	ID3D12Resource** GetResourceAddress() { return m_pResouce.GetAddressOf(); }
+	ID3D12Resource** SetResourceAddress() { return m_pResouce.ReleaseAndGetAddressOf(); }
+	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle() { return m_CPUHandle; }
+	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() { return m_GPUHandle; }
+private:
+	ComPtr<ID3D12Resource> m_pResouce;
+	D3D12_CPU_DESCRIPTOR_HANDLE m_CPUHandle;
+	D3D12_GPU_DESCRIPTOR_HANDLE m_GPUHandle;
 };

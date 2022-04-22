@@ -18,12 +18,13 @@ public:
 	//---------------------------------------------------------------------------	
 	SnctDX12Render();
 	~SnctDX12Render();
-	void Build(HWND* hWnd)	override final;
+	void Build(HWND hWnd)	override final;
 	void RenderBegin()		override final;
 	void RenderEnd()		override final;
 	void Draw(HashKey key, SNCT_DRAW_FLAG drawFlag) override final;
 	void CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices) override final;
 	void WaitGPU();
+
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
