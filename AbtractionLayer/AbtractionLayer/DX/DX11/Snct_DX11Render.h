@@ -1,13 +1,15 @@
 #pragma once
 #include "Snct_DX11.h"
 #include "../Snct_DXRender.h"
+#include "Snct_DX11Device.h"
 
 class SnctDX11Render : public SnctDXRender
 {
-
 public:
+	SnctDX11Render() {}
+	~SnctDX11Render() {}
 	// render override
-	void Build(HWND* hWnd)	override;
+	void Build(HWND hWnd)	override;
 	void RenderBegin()		override;
 	void RenderEnd()		override;
 
@@ -18,9 +20,8 @@ protected:
 private:
 	ComPtr<IDXGISwapChain>			m_pSwapChain;
 
-	ComPtr<ID3D11Device>			m_pDevice;
-	ComPtr<ID3D11DeviceContext>		m_pDeviceContext;
-	ComPtr<ID3D11RenderTargetView>	m_pBackBufferView;
+	SnctDX11Device					m_pDevice;
+	SnctDX11RTV						m_pBackBufferView;
 	ComPtr<ID3D11DepthStencilState>	m_pDepthState;
 	ComPtr<ID3D11DepthStencilView>	m_pDepthStencileView;
 
@@ -30,7 +31,7 @@ private:
 	ComPtr<ID3D11CommandList>		m_pCommandList;
 
 
-	std::unique_ptr<SnctShaderLibrary>	m_pShaderLibrary;
+	//std::unique_ptr<Snct_DXShaderLibrary>	m_pShaderLibrary;
 	//std::unique_ptr<SnctCommandList>	m_pCommandList;
 	//std::unique_ptr<SnctResorceLibrary>	m_pResourceLibrary;
 

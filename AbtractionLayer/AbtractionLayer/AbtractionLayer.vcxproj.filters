@@ -4,12 +4,6 @@
     <ClInclude Include="DX\ISnct_DXCmdList.h">
       <Filter>RenderCore</Filter>
     </ClInclude>
-    <ClInclude Include="DX\DX12\Snct_DX12CmdList.h">
-      <Filter>RenderCore</Filter>
-    </ClInclude>
-    <ClInclude Include="DX\DX12\Snct_DX12Device.h">
-      <Filter>RenderCore</Filter>
-    </ClInclude>
     <ClInclude Include="DX\ISnct_DXDevice.h">
       <Filter>RenderCore</Filter>
     </ClInclude>
@@ -64,17 +58,20 @@
     <ClInclude Include="DX\Interface\ISnct_DXCmdQueue.h">
       <Filter>RenderCore</Filter>
     </ClInclude>
+    <ClInclude Include="DX\DX12\Snct_DX12CmdList.h">
+      <Filter>RenderCore\DX12</Filter>
+    </ClInclude>
     <ClInclude Include="DX\DX12\Snct_DX12CmdQueue.h">
-      <Filter>RenderCore</Filter>
+      <Filter>RenderCore\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX12\Snct_DX12Device.h">
+      <Filter>RenderCore\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX11\Snct_DX11Device.h">
+      <Filter>RenderCore\DX11</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DX\DX12\Snct_DX12CmdList.cpp">
-      <Filter>RenderCore</Filter>
-    </ClCompile>
-    <ClCompile Include="DX\DX12\Snct_DX12Device.cpp">
-      <Filter>RenderCore</Filter>
-    </ClCompile>
     <ClCompile Include="DX\DX12\Snct_DX12Render.cpp">
       <Filter>DX\DX12</Filter>
     </ClCompile>
@@ -96,8 +93,17 @@
     <ClCompile Include="DX\Snct_DXShaderLibrary.cpp">
       <Filter>DX</Filter>
     </ClCompile>
+    <ClCompile Include="DX\DX12\Snct_DX12CmdList.cpp">
+      <Filter>RenderCore\DX12</Filter>
+    </ClCompile>
     <ClCompile Include="DX\DX12\Snct_DX12CmdQueue.cpp">
-      <Filter>RenderCore</Filter>
+      <Filter>RenderCore\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX12\Snct_DX12Device.cpp">
+      <Filter>RenderCore\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX11\Snct_DX11Device.cpp">
+      <Filter>RenderCore\DX11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -121,6 +127,12 @@
     </Filter>
     <Filter Include="Resource\hlsl">
       <UniqueIdentifier>{9096fcc5-3b23-4d35-9b97-738279583b9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderCore\DX11">
+      <UniqueIdentifier>{a0cc6171-bcba-4ed7-955b-d7807e5da226}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderCore\DX12">
+      <UniqueIdentifier>{ff21fc86-92e2-4f32-9df4-d454665980cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
