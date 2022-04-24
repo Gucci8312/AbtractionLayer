@@ -39,7 +39,7 @@ void SnctDX12CmdList::ClearRTV(ISnctDXRTV* DescriptorHandle, UINT NumRects, RECT
 /// \param[in]		Rects
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::ClearDSV(ISnctDXDSV* DescriptorHandle, DEPTH_CLEAR_FLAGS Flag, float Depth, UINT8 Stencil, UINT NumRects, RECT* pRects )
+void SnctDX12CmdList::ClearDSV(ISnctDXDSV* DescriptorHandle, UINT Flag, float Depth, UINT8 Stencil, UINT NumRects, RECT* pRects )
 {
 	SnctDX12DSV* TempDSV = static_cast<SnctDX12DSV*>(DescriptorHandle);
 	m_pCmdList.Get()->ClearDepthStencilView(*TempDSV->GetpHandle(), static_cast<D3D12_CLEAR_FLAGS>(Flag), Depth, Stencil, NumRects, pRects);
@@ -64,7 +64,7 @@ void SnctDX12CmdList::Reset(ID3D12CommandAllocator* CmdAllocator, ID3D12Pipeline
 /// \param[in]		Descriptor handle
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::SetRTV(UINT NumDescriptors, ISnctDXRTV* DescriptorHandle, bool SingleHandleToDescriptorRange, ISnctDXDSV* DSHandle)
+void SnctDX12CmdList::SetRTV(UINT NumDescriptors, ISnctDXRTV* DescriptorHandle, ISnctDXDSV* DSHandle, bool SingleHandleToDescriptorRange)
 {
 	SnctDX12RTV* TempRTV = static_cast<SnctDX12RTV*>(DescriptorHandle);
 	SnctDX12DSV* TempDSV = static_cast<SnctDX12DSV*>(DSHandle);

@@ -10,10 +10,8 @@ public:
 	// public methods
 	//---------------------------------------------------------------------------	
 	virtual void SetViewPort(float Width, float Height, float MinDepth, float MaxDepth) = 0;
-	virtual void SetScissorRects(float Width, float Height) = 0;
-	virtual void Close() = 0;
 	virtual void ClearRTV(ISnctDXRTV* Descriptors, UINT NumRects, RECT* pRects = 0) = 0;
-	virtual void ClearDSV(ISnctDXDSV* Descriptors, DEPTH_CLEAR_FLAGS Flag, float Depth,
-		UINT8 Stencil, UINT NumRects, RECT* pRects = 0) = 0;
-	virtual void SetRTV(UINT NumDescriptors, ISnctDXRTV* DescriptorHandle, bool SingleHandleToDescriptorRange, ISnctDXDSV* DSHandle) = 0;
+	virtual void ClearDSV(ISnctDXDSV* Descriptors, UINT Flag, float Depth,
+		UINT8 Stencil, UINT NumRects = 0, RECT* pRects = 0) = 0;
+	virtual void SetRTV(UINT NumDescriptors, ISnctDXRTV* DescriptorHandle, ISnctDXDSV* DSHandle, bool SingleHandleToDescriptorRange) = 0;
 };

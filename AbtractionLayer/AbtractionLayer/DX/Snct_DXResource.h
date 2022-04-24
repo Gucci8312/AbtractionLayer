@@ -3,11 +3,36 @@
 #include <d3d11.h>
 #include <d3d12.h>
 
-enum class DEPTH_CLEAR_FLAGS
+typedef
+enum DEPTH_CLEAR_FLAGS
 {
 	CLEAR_FLAG_DEPTH = 0x1,
 	CLEAR_FLAG_STENCIL = 0x2,
-};
+} 	DEPTH_CLEAR_FLAGS;
+
+DEFINE_ENUM_FLAG_OPERATORS(DEPTH_CLEAR_FLAGS);
+
+typedef enum SNCT_USAGE
+{
+	USAGE_DEFAULT = 0,
+	USAGE_IMMUTABLE = 1,
+	USAGE_DYNAMIC = 2,
+	USAGE_STAGING = 3
+} 	SNCT_USAGE;
+
+typedef struct SNCT_TEXTURE2D_DESC
+{
+	UINT Width;
+	UINT Height;
+	UINT MipLevels;
+	UINT ArraySize;
+	DXGI_FORMAT Format;
+	DXGI_SAMPLE_DESC SampleDesc;
+	SNCT_USAGE Usage;
+	UINT BindFlags;
+	UINT CPUAccessFlags;
+	UINT MiscFlags;
+} 	SNCT_TEXTURE2D_DESC;
 
 // Render target view management interface class
 class ISnctDXRTV
@@ -139,6 +164,7 @@ public:
 	SnctDX11Buffer* Get() override final { return this; }
 	ID3D11Buffer* GetBuffer() { return m_pBuffer.Get(); }
 	ID3D11Buffer** GetBufferAddress() { return m_pBuffer.GetAddressOf(); }
+
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
@@ -173,9 +199,11 @@ class SnctDX11Texture : public ISnctDXTexture
 {
 public:
 	SnctDX11Texture* Get() override final { return this; }
-	ID3D11Texture2D* GetResource() { return m_pTexture.Get(); }
-	ID3D11Texture2D** GetResourceAddress() { return m_pTexture.GetAddressOf(); }
-	ID3D11Texture2D** SetResourceAddress() { return m_pTexture.ReleaseAndGetAddressOf(); }
+	ID3D11Texture2D* GetTexture() { return m_pTexture.Get(); }
+	ID3D11Texture2D** GetTextureAddress() { return m_pTexture.GetAddressOf(); }
+	ID3D11Texture2D** SetTextureAddress() { return m_pTexture.ReleaseAndGetAddressOf(); }
+	HRESULT Create(ID3D11Device* device, SNCT_TEXTURE2D_DESC desc);
+
 private:
 	ComPtr<ID3D11Texture2D> m_pTexture;
 };

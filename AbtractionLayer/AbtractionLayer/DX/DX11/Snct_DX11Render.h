@@ -1,7 +1,9 @@
 #pragma once
 #include "Snct_DX11.h"
+#include "../Snct_DXResource.h"
 #include "../Snct_DXRender.h"
 #include "Snct_DX11Device.h"
+#include "Snct_DX11CmdList.h"
 
 class SnctDX11Render : public SnctDXRender
 {
@@ -23,11 +25,12 @@ private:
 	SnctDX11Device					m_pDevice;
 	SnctDX11RTV						m_pBackBufferView;
 	ComPtr<ID3D11DepthStencilState>	m_pDepthState;
-	ComPtr<ID3D11DepthStencilView>	m_pDepthStencileView;
+	//ComPtr<ID3D11DepthStencilView>	m_pDepthStencileView;
+	SnctDX11DSV						m_pDepthStencileView;
 
 	D3D11_VIEWPORT					m_viewport{};
 
-	ComPtr<ID3D11DeviceContext>		m_pDeferredContext;
+	SnctDX11CmdList					m_pDeferredContext;
 	ComPtr<ID3D11CommandList>		m_pCommandList;
 
 

@@ -70,6 +70,9 @@
     <ClInclude Include="DX\DX11\Snct_DX11Device.h">
       <Filter>RenderCore\DX11</Filter>
     </ClInclude>
+    <ClInclude Include="DX\DX11\Snct_DX11CmdList.h">
+      <Filter>RenderCore\DX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX\DX12\Snct_DX12Render.cpp">
@@ -103,6 +106,9 @@
       <Filter>RenderCore\DX12</Filter>
     </ClCompile>
     <ClCompile Include="DX\DX11\Snct_DX11Device.cpp">
+      <Filter>RenderCore\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX11\Snct_DX11CmdList.cpp">
       <Filter>RenderCore\DX11</Filter>
     </ClCompile>
   </ItemGroup>

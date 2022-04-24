@@ -20,16 +20,16 @@ void SnctDX11Device::CreateDeferredContext(ID3D11DeviceContext** DeferredContext
 	m_pDevice->CreateDeferredContext(0, DeferredContext);
 }
 
-void SnctDX11Device::CreateRTV(ISnctDXBuffer* backbuffer, ISnctDXRTV* rtv)
+HRESULT SnctDX11Device::CreateRTV(ISnctDXBuffer* backbuffer, ISnctDXRTV* rtv)
 {
 	SnctDX11Buffer* tempBuffer = static_cast<SnctDX11Buffer*>(backbuffer);
 	SnctDX11RTV* tempRTV = dynamic_cast<SnctDX11RTV*>(rtv);
 
-	m_pDevice->CreateRenderTargetView(tempBuffer->GetBuffer(),
+	return m_pDevice->CreateRenderTargetView(tempBuffer->GetBuffer(),
 		nullptr, tempRTV->GetRTVAddress());
 }
 
-void SnctDX11Device::CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* dsv)
+HRESULT SnctDX11Device::CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* dsv)
 {
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDepthStencilView{};
 	descDepthStencilView.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -39,6 +39,6 @@ void SnctDX11Device::CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* dsv)
 	SnctDX11Buffer* tempBuffer = static_cast<SnctDX11Buffer*>(buffer);
 	SnctDX11DSV* tempDSV = dynamic_cast<SnctDX11DSV*>(dsv);
 
-	m_pDevice->CreateDepthStencilView(tempBuffer->GetBuffer(),
+	return m_pDevice->CreateDepthStencilView(tempBuffer->GetBuffer(),
 		&descDepthStencilView, tempDSV->GetDSVAddress());
 }

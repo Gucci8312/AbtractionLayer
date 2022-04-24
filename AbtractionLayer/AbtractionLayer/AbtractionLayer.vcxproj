@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX\DX11\Snct_DX11.h" />
+    <ClInclude Include="DX\DX11\Snct_DX11CmdList.h" />
     <ClInclude Include="DX\DX11\Snct_DX11Device.h" />
     <ClInclude Include="DX\DX11\Snct_DX11Render.h" />
     <ClInclude Include="DX\DX12\Snct_DX12.h" />
@@ -44,6 +45,7 @@
     <ClInclude Include="Snct_Windows.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DX\DX11\Snct_DX11CmdList.cpp" />
     <ClCompile Include="DX\DX11\Snct_DX11Device.cpp" />
     <ClCompile Include="DX\DX11\Snct_DX11Render.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12CmdList.cpp" />

@@ -16,8 +16,8 @@ public:
 	SnctDX12Device* Get() { return this; }
 	HRESULT CreateCommandQueue(D3D12_COMMAND_QUEUE_DESC queueDesc, ID3D12CommandQueue** commandqueue);
 	unsigned int GetIncrementHandleSize(D3D12_DESCRIPTOR_HEAP_TYPE type);
-	void CreateRTV(ISnctDXBuffer* buffer, ISnctDXRTV* rtvHandle) override final;
-	void CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* rtvHandle) override final;
+	HRESULT CreateRTV(ISnctDXBuffer* buffer, ISnctDXRTV* rtvHandle) override final;
+	HRESULT CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* rtvHandle) override final;
 private:
 	//---------------------------------------------------------------------------
 	// private variables.

@@ -257,7 +257,7 @@ void SnctDX12Render::RenderBegin()
 	m_cmdList.SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	// Render target setting
-	m_cmdList.SetRTV(1, &m_handleRTV[m_frameIndex], false, &m_handleDSV);
+	m_cmdList.SetRTV(1, &m_handleRTV[m_frameIndex], &m_handleDSV, false);
 
 	// Clear render targt view
 	m_cmdList.ClearRTV(&m_handleRTV[m_frameIndex], 0, nullptr);

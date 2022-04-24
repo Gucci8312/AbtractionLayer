@@ -53,7 +53,7 @@ unsigned int SnctDX12Device::GetIncrementHandleSize(D3D12_DESCRIPTOR_HEAP_TYPE t
 /// \param[in]		Render target view handle
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12Device::CreateRTV(ISnctDXBuffer* buffer,  ISnctDXRTV* rtvHandle)
+HRESULT SnctDX12Device::CreateRTV(ISnctDXBuffer* buffer,  ISnctDXRTV* rtvHandle)
 {
     // Render target view settings
     D3D12_RENDER_TARGET_VIEW_DESC viewDesc = {};
@@ -65,6 +65,9 @@ void SnctDX12Device::CreateRTV(ISnctDXBuffer* buffer,  ISnctDXRTV* rtvHandle)
     SnctDX12Buffer* tempBuffer = static_cast<SnctDX12Buffer*>(buffer);
     SnctDX12RTV* tempRTVHandle = static_cast<SnctDX12RTV*>(rtvHandle);
     m_pDevice->CreateRenderTargetView(tempBuffer->GetBuffer(), &viewDesc, tempRTVHandle->GetRTV());
+
+    if (tempRTVHandle != nullptr) return E_FAIL;
+    return S_OK;
 }
 
 //------------------------------------------------------------------------------
@@ -73,7 +76,7 @@ void SnctDX12Device::CreateRTV(ISnctDXBuffer* buffer,  ISnctDXRTV* rtvHandle)
 /// \param[in]		Render target view handle
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12Device::CreateDSV(ISnctDXBuffer* buffer,  ISnctDXDSV* dsvHandle)
+HRESULT SnctDX12Device::CreateDSV(ISnctDXBuffer* buffer,  ISnctDXDSV* dsvHandle)
 {
     // Render target view settings
         // Depth stencil view settings
@@ -84,8 +87,11 @@ void SnctDX12Device::CreateDSV(ISnctDXBuffer* buffer,  ISnctDXDSV* dsvHandle)
     DepthViewDesc.Flags = D3D12_DSV_FLAG_NONE;
 
     SnctDX12Buffer* tempBuffer = static_cast<SnctDX12Buffer*>(buffer);
-    SnctDX12DSV* tempRTVHandle = static_cast<SnctDX12DSV*>(dsvHandle);
+    SnctDX12DSV* tempDSVHandle = static_cast<SnctDX12DSV*>(dsvHandle);
 
     // Create depth stencil view
-    m_pDevice->CreateDepthStencilView(tempBuffer->GetBuffer(), &DepthViewDesc, tempRTVHandle->GetDSV());
+    m_pDevice->CreateDepthStencilView(tempBuffer->GetBuffer(), &DepthViewDesc, tempDSVHandle->GetDSV());
+
+    if (tempDSVHandle != nullptr) return E_FAIL;
+    return S_OK;
 }

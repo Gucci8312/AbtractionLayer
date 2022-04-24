@@ -14,25 +14,6 @@ void SnctDX11Render::Build(HWND hWnd)
 		}
 
 		{
-			/*	D3D_FEATURE_LEVEL featureLevels[] =
-				{
-					D3D_FEATURE_LEVEL_11_0,
-					D3D_FEATURE_LEVEL_11_1
-				};
-
-				if (FAILED(D3D11CreateDevice(
-					nullptr,
-					D3D_DRIVER_TYPE_HARDWARE,
-					nullptr,
-					D3D11_CREATE_DEVICE_BGRA_SUPPORT,
-					featureLevels,
-					ARRAYSIZE(featureLevels),
-					D3D11_SDK_VERSION,
-					m_pDevice.GetAddressOf(),
-					nullptr,
-					m_pDevice.GetDeviceContext().GetAddressOf()
-				)))*/
-
 			if (FAILED(m_pDevice.Create(D3D_FEATURE_LEVEL_11_1)))
 			{
 				throw std::runtime_error("!Failed to create device");
@@ -66,7 +47,7 @@ void SnctDX11Render::Build(HWND hWnd)
 
 		{
 			// デファードコンテクストの作成
-			m_pDevice.CreateDeferredContext(m_pDeferredContext.GetAddressOf());
+			m_pDevice.CreateDeferredContext(m_pDeferredContext.GetContextAddress());
 
 			// 型自体も　Immadiateと変わらないので　同じ設定ができる。もしくは、する必要がある。
 		}
@@ -76,13 +57,16 @@ void SnctDX11Render::Build(HWND hWnd)
 
 			if (FAILED(m_pSwapChain->GetBuffer(
 				0,
-				IID_PPV_ARGS(pBackBuffer.SetResourceAddress())
+				IID_PPV_ARGS(pBackBuffer.SetTextureAddress())
 			)))
 			{
 				throw std::runtime_error("!Failed to get back buffer");
 			}
 			
-			m_pDevice.CreateRTV(&pBackBuffer, &m_pBackBufferView);
+			if (FAILED(m_pDevice.CreateRTV(&pBackBuffer, &m_pBackBufferView)))
+			{
+				throw std::runtime_error("!Failed to create render target buffer");
+			}
 		}
 
 		{
@@ -100,24 +84,21 @@ void SnctDX11Render::Build(HWND hWnd)
 				throw std::runtime_error("!Failed to create depth stancil state");
 			}
 
-			ComPtr<ID3D11Texture2D> pDepthStencilTex = nullptr;
-			D3D11_TEXTURE2D_DESC	descDepthTex{};
+			SnctDX11Texture pDepthStencilTex ;
+			SNCT_TEXTURE2D_DESC	descDepthTex{};
 			descDepthTex.Width = g_screenWidth;
 			descDepthTex.Height = g_screenHeight;
 			descDepthTex.MipLevels = 1;
 			descDepthTex.ArraySize = 1;
 			descDepthTex.Format = DXGI_FORMAT_R24G8_TYPELESS;
 			descDepthTex.SampleDesc = { 1, 0 };
-			descDepthTex.Usage = D3D11_USAGE_DEFAULT;
+			descDepthTex.Usage = USAGE_DEFAULT;
 			descDepthTex.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 			descDepthTex.CPUAccessFlags = 0;
 			descDepthTex.MiscFlags = 0;
 
-			if (FAILED(m_pDevice.GetDevice()->CreateTexture2D(
-				&descDepthTex,
-				nullptr,
-				pDepthStencilTex.GetAddressOf()
-			)))
+			if (FAILED(pDepthStencilTex.Create(m_pDevice.GetDevice(),
+				descDepthTex)))
 			{
 				throw std::runtime_error("!Failed to create depth stencil buffer texture");
 			}
@@ -127,11 +108,7 @@ void SnctDX11Render::Build(HWND hWnd)
 			descDepthStencilView.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 			descDepthStencilView.Flags = 0;
 
-			if (FAILED(m_pDevice.GetDevice()->CreateDepthStencilView(
-				pDepthStencilTex.Get(),
-				&descDepthStencilView,
-				m_pDepthStencileView.GetAddressOf()
-			)))
+			if (FAILED(m_pDevice.CreateDSV(&pDepthStencilTex, &m_pDepthStencileView)))
 			{
 				throw std::runtime_error("!Failed to create depth stencil buffer view");
 			}
@@ -155,7 +132,7 @@ void SnctDX11Render::Build(HWND hWnd)
 			}
 
 			m_pDevice.GetDeviceContext()->RSSetState(rasterizerState.Get());
-			m_pDeferredContext->RSSetState(rasterizerState.Get());
+			m_pDeferredContext.SetRasterRizerState(rasterizerState.Get());
 		}
 
 		{
@@ -196,7 +173,7 @@ void SnctDX11Render::Build(HWND hWnd)
 		m_viewport.TopLeftY = 0.0f;
 
 		m_pDevice.GetDeviceContext()->RSSetViewports(1, &m_viewport);
-		m_pDeferredContext->RSSetViewports(1, &m_viewport);
+		m_pDeferredContext.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
 	}
 
 	//m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
@@ -211,14 +188,14 @@ void SnctDX11Render::RenderBegin()
 	//　Immadiate　と deferred　の双方をクリア
 
 	m_pDevice.GetDeviceContext()->ClearRenderTargetView(m_pBackBufferView.GetRTV(), clearColor);
-	m_pDevice.GetDeviceContext()->ClearDepthStencilView(m_pDepthStencileView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	m_pDevice.GetDeviceContext()->OMSetRenderTargets(1, m_pBackBufferView.GetRTVAddress(), m_pDepthStencileView.Get());
+	m_pDevice.GetDeviceContext()->ClearDepthStencilView(m_pDepthStencileView.GetDSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pDevice.GetDeviceContext()->OMSetRenderTargets(1, m_pBackBufferView.GetRTVAddress(), m_pDepthStencileView.GetDSV());
 	m_pDevice.GetDeviceContext()->RSSetViewports(1, &m_viewport);
 
-	m_pDeferredContext->ClearRenderTargetView(m_pBackBufferView.GetRTV(), clearColor);
-	m_pDeferredContext->ClearDepthStencilView(m_pDepthStencileView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	m_pDeferredContext->OMSetRenderTargets(1, m_pBackBufferView.GetRTVAddress(), m_pDepthStencileView.Get());
-	m_pDeferredContext->RSSetViewports(1, &m_viewport);
+	m_pDeferredContext.ClearRTV(&m_pBackBufferView);
+	m_pDeferredContext.ClearDSV(&m_pDepthStencileView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pDeferredContext.SetRTV(1, &m_pBackBufferView, &m_pDepthStencileView);
+	m_pDeferredContext.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight,0.0f,1.0f);
 }
 
 void SnctDX11Render::RenderEnd()
@@ -228,7 +205,7 @@ void SnctDX11Render::RenderEnd()
 		ComPtr<ID3D11CommandList> pCommandList;
 
 		// !　ここでDeferred contextで設定したものをCommandListとして登録
-		m_pDeferredContext->FinishCommandList(true, pCommandList.GetAddressOf());
+		m_pDeferredContext.GetContext()->FinishCommandList(true, pCommandList.GetAddressOf());
 
 		// Immadiate context で　実行命令
 		m_pDevice.GetDeviceContext()->ExecuteCommandList(pCommandList.Get(), false);
@@ -258,18 +235,18 @@ void SnctDX11Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 	UINT offset = 0;
 
 	//　型は Immadiateと変わらないので直前の設定が可能　
-	m_pDeferredContext->VSSetShader(nullptr/*頂点シェーダー*/, nullptr, 0);
-	m_pDeferredContext->PSSetShader(nullptr/*ピクセルシェーダー*/, nullptr, 0);
+	m_pDeferredContext.GetContext()->VSSetShader(nullptr/*頂点シェーダー*/, nullptr, 0);
+	m_pDeferredContext.GetContext()->PSSetShader(nullptr/*ピクセルシェーダー*/, nullptr, 0);
 
-	m_pDeferredContext->VSSetConstantBuffers(0, 1, nullptr/*コンスタントバッファー*/);
-	m_pDeferredContext->PSSetConstantBuffers(0, 1, nullptr/*コンスタントバッファー*/);
+	m_pDeferredContext.GetContext()->VSSetConstantBuffers(0, 1, nullptr/*コンスタントバッファー*/);
+	m_pDeferredContext.GetContext()->PSSetConstantBuffers(0, 1, nullptr/*コンスタントバッファー*/);
 
-	m_pDeferredContext->IASetVertexBuffers(0, 1, nullptr/*vertex buffer*/, &stride, &offset);
-	m_pDeferredContext->IASetInputLayout(nullptr/*layout*/);
-	m_pDeferredContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_pDeferredContext.GetContext()->IASetVertexBuffers(0, 1, nullptr/*vertex buffer*/, &stride, &offset);
+	m_pDeferredContext.GetContext()->IASetInputLayout(nullptr/*layout*/);
+	m_pDeferredContext.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// 12と共通化のため　DrawIndexedInstanced　を使用　Drawなども使用可
-	m_pDeferredContext->DrawIndexedInstanced(0/*IndexNum*/, 1, 0, 0, 0);
+	m_pDeferredContext.GetContext()->DrawIndexedInstanced(0/*IndexNum*/, 1, 0, 0, 0);
 }
 
 void SnctDX11Render::CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices)
