@@ -151,6 +151,7 @@ public:
 // DirectX buffer management interface class
 class ISnctDXBuffer : public ISnctDXResource
 {
+	// Nothing //
 };
 
 
@@ -190,11 +191,15 @@ private:
 	ComPtr<ID3D12Resource> m_pBuffer;
 };
 
+
+// DirectX texture management interface class
 class ISnctDXTexture : public ISnctDXBuffer
 {
-
+	// Nothing //
 };
 
+
+// DirectX11 texture management clas
 class SnctDX11Texture : public ISnctDXTexture
 {
 public:
@@ -208,6 +213,8 @@ private:
 	ComPtr<ID3D11Texture2D> m_pTexture;
 };
 
+
+// DirectX12 texture management clas
 class SnctDX12Texture : public ISnctDXTexture
 {
 public:
@@ -221,4 +228,18 @@ private:
 	ComPtr<ID3D12Resource> m_pResouce;
 	D3D12_CPU_DESCRIPTOR_HANDLE m_CPUHandle;
 	D3D12_GPU_DESCRIPTOR_HANDLE m_GPUHandle;
+};
+
+class SnctDXShader : public ISnctDXResource
+{
+public:
+private:
+	ComPtr<ID3DBlob>			m_pShaderBlob;
+};
+
+class SnctDXVertexShader : SnctDXShader
+{
+public:
+private:
+	ComPtr<ID3D11VertexShader>	m_pShaderObject;
 };

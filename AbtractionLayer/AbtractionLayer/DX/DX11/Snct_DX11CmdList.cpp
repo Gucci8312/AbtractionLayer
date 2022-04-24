@@ -28,7 +28,6 @@ void SnctDX11CmdList::ClearRTV(ISnctDXRTV* Descriptors, UINT NumRects, RECT* pRe
 void SnctDX11CmdList::ClearDSV(ISnctDXDSV* Descriptors, UINT Flag, float Depth, UINT8 Stencil, UINT NumRects, RECT* pRects)
 {
 	SnctDX11DSV* TempDSV = static_cast<SnctDX11DSV*>(Descriptors);
-	//SnctDX11DSV* TempValue = static_cast<SnctDX11DSV*>(Descriptors);
 	m_pContext->ClearDepthStencilView(TempDSV->GetDSV(), static_cast<UINT>(Flag), Depth, Stencil);
 }
 
