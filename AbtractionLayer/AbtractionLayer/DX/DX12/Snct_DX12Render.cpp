@@ -236,6 +236,9 @@ void SnctDX12Render::Build(HWND hWnd)
 
 		// Set the size of the descriptor heap for depth
 		m_handleDSV.SetHandle(handle);
+
+		// Create object manager
+		m_pSceneObjects = std::make_unique<SnctDX12Objects>();
 	}
 	catch (std::runtime_error& e) {
 		SnctRuntimeError(e);
@@ -325,6 +328,7 @@ void SnctDX12Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 //------------------------------------------------------------------------------
 void SnctDX12Render::CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices)
 {
+	m_pSceneObjects->AddSceneObject(m_device.GetDevice(), key, pVertices, pIndices);
 }
 
 //------------------------------------------------------------------------------

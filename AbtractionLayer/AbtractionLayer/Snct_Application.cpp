@@ -1,11 +1,14 @@
 #include "Snct_Utility.h"
 #include "Snct_Application.h"
 
-//----å„Ç≈è¡Ç∑--------
-#include "DX/DX11/Snct_DX11Render.h"
+#include "Snct_Render.h"
+#include "Snct_Scene.h"
 #include "DX/DX12/Snct_DX12Render.h"
-SnctDX11Render Dx;
-//------------------------
+
+#include "../resource/scene01.h"
+
+std::unique_ptr<ISnctRender>	pRender;
+std::unique_ptr<ISnctScene>		pScene;
 
 //------------------------------------------------------------------------------
 /// Window Procedure
@@ -65,7 +68,16 @@ bool SnctApplication::Initialize()
 
 	// Console window destroy
 	FreeConsole();
-	Dx.Build(m_hwnd);
+
+
+
+	pRender = std::make_unique<SnctDX12Render>();
+	pScene	= std::make_unique<Scene01>();
+	pScene->SetRender(pRender.get());
+	
+	pRender->Build(m_hwnd);
+	pScene->Initialize();
+
 	return true;
 }
 
@@ -183,9 +195,11 @@ void SnctApplication::MainLoop()
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
 
-				//-----------------
-				Dx.RenderBegin();
-				Dx.RenderEnd();
+				pScene	->Update();
+
+				pRender	->RenderBegin();
+				pScene	->Draw();
+				pRender	->RenderEnd();
 			}
 		}
 		else

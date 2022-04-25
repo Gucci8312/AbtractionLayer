@@ -5,7 +5,9 @@
 #include "Snct_Dx12CmdList.h"
 #include "Snct_Dx12Device.h"
 #include "Snct_DX12CmdQueue.h"
+#include "../../Snct_DX12Objects.h"
 #include "../Snct_DXResource.h"
+#include "../Snct_DXConstantParameter.h"
 
 // A class that manages DirectX12 render core
 class SnctDX12Render : public SnctDXRender
@@ -45,5 +47,7 @@ private:
 	SnctDX12DSV				               m_handleDSV = {};
 	D3D12_VIEWPORT                         m_viewPort = {};
 	D3D12_RECT                             m_scissor = {};
+
+	std::unique_ptr<SnctDX12Objects>		m_pSceneObjects;
 };
 
