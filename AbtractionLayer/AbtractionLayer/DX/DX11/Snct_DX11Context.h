@@ -1,11 +1,11 @@
 #pragma once
 #include "Snct_DX11.h"
-#include "../Interface/ISnct_DxCmdList.h"
+#include "../Interface/ISnct_DxContext.h"
 
-class SnctDX11CmdList : public ISnctDXCmdList
+class SnctDX11Context : public ISnctDXContext
 {
 public:
-	~SnctDX11CmdList() { 
+	~SnctDX11Context() { 
 		m_pCmdList.Reset(), m_pContext.Reset(); }
 	//---------------------------------------------------------------------------
 	// public methods

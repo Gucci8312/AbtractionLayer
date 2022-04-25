@@ -3,15 +3,6 @@
 #include <d3d11.h>
 #include <d3d12.h>
 
-typedef
-enum DEPTH_CLEAR_FLAGS
-{
-	CLEAR_FLAG_DEPTH = 0x1,
-	CLEAR_FLAG_STENCIL = 0x2,
-} 	DEPTH_CLEAR_FLAGS;
-
-DEFINE_ENUM_FLAG_OPERATORS(DEPTH_CLEAR_FLAGS);
-
 typedef enum SNCT_USAGE
 {
 	USAGE_DEFAULT = 0,

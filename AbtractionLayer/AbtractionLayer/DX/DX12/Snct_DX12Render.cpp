@@ -120,7 +120,7 @@ void SnctDX12Render::Build(HWND hWnd)
 		}
 
 		// Create commandlist
-		hr = m_cmdList.Create(D3D12_COMMAND_LIST_TYPE_DIRECT, m_device.GetDevice(), m_cmdAllocator[m_frameIndex].Get());
+		hr = m_cmdList.Create(D3D12_COMMAND_LIST_TYPE_DIRECT, m_device.GetDevice(),nullptr, m_cmdAllocator[m_frameIndex].Get());
 		if (FAILED(hr)) throw std::runtime_error("DirectX12 command list create error");
 
 		// Render target view settings
@@ -266,7 +266,7 @@ void SnctDX12Render::RenderBegin()
 	m_cmdList.ClearRTV(&m_handleRTV[m_frameIndex], 0, nullptr);
 
 	// Clear depth stencil view
-	m_cmdList.ClearDSV(&m_handleDSV, DEPTH_CLEAR_FLAGS::CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	m_cmdList.ClearDSV(&m_handleDSV, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// Set screen parameter
 	m_cmdList.SetViewPort(g_screenWidth, g_screenHeight, 0.0f, 1.0f);
@@ -287,7 +287,7 @@ void SnctDX12Render::RenderEnd()
 	m_cmdList.Close();
 
 	// Execute command
-	ISnctDXCmdList* ppCmdLists[] = { static_cast<ISnctDXCmdList*>(&m_cmdList) };
+	ISnctDXContext* ppCmdLists[] = { static_cast<ISnctDXContext*>(&m_cmdList) };
 	m_cmdQueue.Execute(1, ppCmdLists);
 
 	// Display on screen

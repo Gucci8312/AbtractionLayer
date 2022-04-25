@@ -3,6 +3,7 @@
 
 #include "Snct_Render.h"
 #include "Snct_Scene.h"
+#include "DX/DX11/Snct_DX11Render.h"
 #include "DX/DX12/Snct_DX12Render.h"
 
 #include "../resource/scene01.h"
@@ -77,7 +78,7 @@ bool SnctApplication::Initialize()
 
 
 
-	pRender = std::make_unique<SnctDX12Render>();
+	pRender = std::make_unique<SnctDX11Render>();
 	pScene	= std::make_unique<Scene01>();
 	pScene->SetRender(pRender.get());
 	

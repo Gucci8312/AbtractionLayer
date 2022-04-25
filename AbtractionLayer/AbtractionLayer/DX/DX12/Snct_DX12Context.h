@@ -1,17 +1,17 @@
 // DirectX12 command list management file...
 #pragma once
 #include "Snct_DX12.h"
-#include "../Interface/ISnct_DxCmdList.h"
+#include "../Interface/ISnct_DXContext.h"
 
 // A class that manages DirectX12 command list
-class SnctDX12CmdList : public ISnctDXCmdList
+class SnctDX12Context : public ISnctDXContext
 {
 public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
 	ID3D12GraphicsCommandList* Get() { return m_pCmdList.Get(); }
-	HRESULT Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Device, ID3D12CommandAllocator* CmdAllocator);
+	HRESULT Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Device, ID3D12PipelineState* pipelineState, ID3D12CommandAllocator* CmdAllocator);
 	void Reset(ID3D12CommandAllocator* CmdAllocator, ID3D12PipelineState* PipelineState);
 	void SetResourceBarrier(ISnctDXBuffer* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After);
 

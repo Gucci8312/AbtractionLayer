@@ -186,12 +186,13 @@ void SnctDX11Render::RenderBegin()
 	float clearColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
 
 	//　Immadiate　と deferred　の双方をクリア
+	// Immadiate context command
+	m_pDevice.ClearRTV(&m_pBackBufferView);
+	m_pDevice.ClearDSV(&m_pDepthStencileView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	m_pDevice.SetRTV(1, &m_pBackBufferView, &m_pDepthStencileView);
+	m_pDevice.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
 
-	m_pDevice.GetDeviceContext()->ClearRenderTargetView(m_pBackBufferView.GetRTV(), clearColor);
-	m_pDevice.GetDeviceContext()->ClearDepthStencilView(m_pDepthStencileView.GetDSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-	m_pDevice.GetDeviceContext()->OMSetRenderTargets(1, m_pBackBufferView.GetRTVAddress(), m_pDepthStencileView.GetDSV());
-	m_pDevice.GetDeviceContext()->RSSetViewports(1, &m_viewport);
-
+	// Deferred context command
 	m_pDeferredContext.ClearRTV(&m_pBackBufferView);
 	m_pDeferredContext.ClearDSV(&m_pDepthStencileView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	m_pDeferredContext.SetRTV(1, &m_pBackBufferView, &m_pDepthStencileView);
@@ -205,7 +206,7 @@ void SnctDX11Render::RenderEnd()
 		ComPtr<ID3D11CommandList> pCommandList;
 
 		// !　ここでDeferred contextで設定したものをCommandListとして登録
-		m_pDeferredContext.GetContext()->FinishCommandList(true, pCommandList.GetAddressOf());
+		m_pDeferredContext.GetContext()->FinishCommandList(true, pCommandList.ReleaseAndGetAddressOf());
 
 		// Immadiate context で　実行命令
 		m_pDevice.GetDeviceContext()->ExecuteCommandList(pCommandList.Get(), false);

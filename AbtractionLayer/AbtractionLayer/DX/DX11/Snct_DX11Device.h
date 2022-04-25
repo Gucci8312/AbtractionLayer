@@ -17,6 +17,17 @@ public:
 	HRESULT CreateRTV(ISnctDXBuffer* buffer, ISnctDXRTV* rtvHandle) override final;
 	HRESULT CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* rtvHandle) override final;
 
+	// Device
+	void ExecuteCmdList(ID3D11CommandList* cmdList);
+
+
+	// Context command
+	void SetViewPort(float Width, float Height, float MinDepth, float MaxDepth) ;
+	void ClearRTV(ISnctDXRTV* Descriptors, UINT NumRects = 1, RECT* pRects = 0);
+	void ClearDSV(ISnctDXDSV* Descriptors, UINT Flag, float Depth,
+		UINT8 Stencil, UINT NumRects = 0, RECT* pRects = 0) ;
+	void SetRTV(UINT NumDescriptors, ISnctDXRTV* Descriptors, ISnctDXDSV* DSHandle = nullptr,
+		bool SingleHandleToDescriptorRange = 0);
 private:
 	//---------------------------------------------------------------------------
 	// private variables.

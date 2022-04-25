@@ -3,7 +3,7 @@
 #include "../Snct_DXResource.h"
 #include "../Snct_DXRender.h"
 #include "Snct_DX11Device.h"
-#include "Snct_DX11CmdList.h"
+#include "Snct_DX11Context.h"
 
 class SnctDX11Render : public SnctDXRender
 {
@@ -31,7 +31,7 @@ private:
 	D3D11_VIEWPORT					m_viewport{};
 
 	//ComPtr<ID3D11DeviceContext>					m_pDeferredContext;
-	SnctDX11CmdList					m_pDeferredContext;
+	SnctDX11Context					m_pDeferredContext;
 	ComPtr<ID3D11CommandList>		m_pCommandList;
 
 

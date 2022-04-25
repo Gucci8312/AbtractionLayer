@@ -42,3 +42,41 @@ HRESULT SnctDX11Device::CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* dsv)
 	return m_pDevice->CreateDepthStencilView(tempBuffer->GetBuffer(),
 		&descDepthStencilView, tempDSV->SetDSVAddress());
 }
+
+void SnctDX11Device::ExecuteCmdList(ID3D11CommandList* cmdList)
+{
+	m_pDeviceContext->ExecuteCommandList(cmdList, false);
+}
+
+void SnctDX11Device::SetViewPort(float Width, float Height, float MinDepth, float MaxDepth)
+{
+	D3D11_VIEWPORT viewPort;
+	viewPort.Width = Width;
+	viewPort.Height = Height;
+	viewPort.MinDepth = MinDepth;
+	viewPort.MaxDepth = MaxDepth;
+	viewPort.TopLeftX = 0.0f;
+	viewPort.TopLeftY = 0.0f;
+
+	m_pDeviceContext->RSSetViewports(1, &viewPort);
+}
+
+void SnctDX11Device::ClearRTV(ISnctDXRTV* Descriptors, UINT NumRects, RECT* pRects)
+{
+	float clearColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	SnctDX11RTV* TempRTV = static_cast<SnctDX11RTV*>(Descriptors);
+	m_pDeviceContext->ClearRenderTargetView(TempRTV->GetRTV(), clearColor);
+}
+
+void SnctDX11Device::ClearDSV(ISnctDXDSV* Descriptors, UINT Flag, float Depth, UINT8 Stencil, UINT NumRects, RECT* pRects)
+{
+	SnctDX11DSV* TempDSV = static_cast<SnctDX11DSV*>(Descriptors);
+	m_pDeviceContext->ClearDepthStencilView(TempDSV->GetDSV(), static_cast<UINT>(Flag), Depth, Stencil);
+}
+
+void SnctDX11Device::SetRTV(UINT NumDescriptors, ISnctDXRTV* Descriptors, ISnctDXDSV* DSHandle, bool SingleHandleToDescriptorRange)
+{
+	SnctDX11RTV* TempRTV = static_cast<SnctDX11RTV*>(Descriptors);
+	SnctDX11DSV* TempDSV = static_cast<SnctDX11DSV*>(DSHandle);
+	m_pDeviceContext->OMSetRenderTargets(1, TempRTV->GetRTVAddress(), TempDSV->GetDSV());
+}

@@ -1,12 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClInclude Include="DX\ISnct_DXCmdList.h">
-      <Filter>RenderCore</Filter>
-    </ClInclude>
-    <ClInclude Include="DX\ISnct_DXDevice.h">
-      <Filter>RenderCore</Filter>
-    </ClInclude>
     <ClInclude Include="DX\DX11\Snct_DX11.h">
       <Filter>DX\DX11</Filter>
     </ClInclude>
@@ -55,10 +49,7 @@
     <ClInclude Include="DX\Snct_DXShaderLibrary.h">
       <Filter>DX</Filter>
     </ClInclude>
-    <ClInclude Include="DX\Interface\ISnct_DXCmdQueue.h">
-      <Filter>RenderCore</Filter>
-    </ClInclude>
-    <ClInclude Include="DX\DX12\Snct_DX12CmdList.h">
+    <ClInclude Include="DX\DX12\Snct_DX12Context.h">
       <Filter>RenderCore\DX12</Filter>
     </ClInclude>
     <ClInclude Include="DX\DX12\Snct_DX12CmdQueue.h">
@@ -70,8 +61,21 @@
     <ClInclude Include="DX\DX11\Snct_DX11Device.h">
       <Filter>RenderCore\DX11</Filter>
     </ClInclude>
-    <ClInclude Include="DX\DX11\Snct_DX11CmdList.h">
+    <ClInclude Include="DX\DX11\Snct_DX11Context.h">
       <Filter>RenderCore\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\resource\box.h" />
+    <ClInclude Include="..\resource\camera.h" />
+    <ClInclude Include="..\resource\scene01.h" />
+    <ClInclude Include="Snct_DX12Objects.h" />
+    <ClInclude Include="DX\Interface\ISnct_DXDevice.h">
+      <Filter>RenderCore\Inerface</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\Interface\ISnct_DXCmdQueue.h">
+      <Filter>RenderCore\Inerface</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\Interface\ISnct_DXContext.h">
+      <Filter>RenderCore\Inerface</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -96,7 +100,7 @@
     <ClCompile Include="DX\Snct_DXShaderLibrary.cpp">
       <Filter>DX</Filter>
     </ClCompile>
-    <ClCompile Include="DX\DX12\Snct_DX12CmdList.cpp">
+    <ClCompile Include="DX\DX12\Snct_DX12Context.cpp">
       <Filter>RenderCore\DX12</Filter>
     </ClCompile>
     <ClCompile Include="DX\DX12\Snct_DX12CmdQueue.cpp">
@@ -108,9 +112,10 @@
     <ClCompile Include="DX\DX11\Snct_DX11Device.cpp">
       <Filter>RenderCore\DX11</Filter>
     </ClCompile>
-    <ClCompile Include="DX\DX11\Snct_DX11CmdList.cpp">
+    <ClCompile Include="DX\DX11\Snct_DX11Context.cpp">
       <Filter>RenderCore\DX11</Filter>
     </ClCompile>
+    <ClCompile Include="Snct_DX12Objects.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DX">
@@ -139,6 +144,9 @@
     </Filter>
     <Filter Include="RenderCore\DX12">
       <UniqueIdentifier>{ff21fc86-92e2-4f32-9df4-d454665980cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderCore\Inerface">
+      <UniqueIdentifier>{3cb0b5ab-1b0e-4f77-8554-e386e648337c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

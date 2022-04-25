@@ -2,7 +2,7 @@
 #pragma once
 #include "../Snct_DXRender.h"
 #include "Snct_DX12.h"
-#include "Snct_Dx12CmdList.h"
+#include "Snct_Dx12Context.h"
 #include "Snct_Dx12Device.h"
 #include "Snct_DX12CmdQueue.h"
 #include "../../Snct_DX12Objects.h"
@@ -34,7 +34,7 @@ private:
 	SnctDX12CmdQueue			           m_cmdQueue;
 	ComPtr<IDXGISwapChain3>                m_swapChain;
 	ComPtr<ID3D12CommandAllocator>         m_cmdAllocator[m_frameCount];
-	SnctDX12CmdList						   m_cmdList;
+	SnctDX12Context						   m_cmdList;
 	ComPtr<ID3D12DescriptorHeap>           m_heapRTV;
 	ComPtr<ID3D12DescriptorHeap>           m_heapDSV;
 	SnctDX12Buffer						   m_colorBuffer[m_frameCount];

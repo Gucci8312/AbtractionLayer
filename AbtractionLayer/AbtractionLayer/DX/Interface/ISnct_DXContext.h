@@ -3,7 +3,7 @@
 #include "../Snct_DXResource.h"
 
 // A class that manages DirectX command list interface
-class ISnctDXCmdList
+class ISnctDXContext
 {
 public:
 	//---------------------------------------------------------------------------
