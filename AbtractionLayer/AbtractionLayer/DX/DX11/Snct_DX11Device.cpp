@@ -1,7 +1,11 @@
 #include "Snct_DX11Device.h"
 
-// デバイスの作成関連後で修正
-HRESULT SnctDX11Device::Create(D3D_FEATURE_LEVEL Level)
+//------------------------------------------------------------------------------
+/// Create Directx12 device
+/// \param[in]		Feature level
+/// \return			Whether it was created
+//------------------------------------------------------------------------------
+HRESULT SnctDX11Device::CreateDevice(D3D_FEATURE_LEVEL Level)
 {
 	return D3D11CreateDevice(nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
@@ -15,17 +19,29 @@ HRESULT SnctDX11Device::Create(D3D_FEATURE_LEVEL Level)
 		m_pDeviceContext.ReleaseAndGetAddressOf());
 }
 
-void SnctDX11Device::CreateDeferredContext(ID3D11DeviceContext** DeferredContext)
+
+//------------------------------------------------------------------------------
+/// Create DirectX11 deferred context
+/// \param[out]		deferred context double pointer
+/// \return			Whether it was created
+//------------------------------------------------------------------------------
+HRESULT SnctDX11Device::CreateDeferredContext(ID3D11DeviceContext** ppDeferredContext)
 {
-	m_pDevice->CreateDeferredContext(0, DeferredContext);
+	return m_pDevice->CreateDeferredContext(0, ppDeferredContext);
 }
 
-HRESULT SnctDX11Device::CreateRTV(ISnctDXBuffer* backbuffer, ISnctDXRTV* rtv)
-{
-	SnctDX11Buffer* tempBuffer = static_cast<SnctDX11Buffer*>(backbuffer);
-	SnctDX11RTV* tempRTV = dynamic_cast<SnctDX11RTV*>(rtv);
 
-	return m_pDevice->CreateRenderTargetView(tempBuffer->GetBuffer(),
+//------------------------------------------------------------------------------
+/// Create DirectX11 render target view
+/// \param[out]		Back buffer pointer
+/// \return			Whether it was created
+//------------------------------------------------------------------------------
+HRESULT SnctDX11Device::CreateRTV(ISnctDXBuffer* pBuckBuffer, ISnctDXRTV* pRTV)
+{
+	ID3D11Resource* tempResource = static_cast<SnctDX11Buffer*>(pBuckBuffer)->GetBuffer();
+	SnctDX11RTV* tempRTV = dynamic_cast<SnctDX11RTV*>(pRTV);
+
+	return m_pDevice->CreateRenderTargetView(tempResource,
 		nullptr, tempRTV->SetRTVAddress());
 }
 
@@ -39,8 +55,15 @@ HRESULT SnctDX11Device::CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* dsv)
 	SnctDX11Buffer* tempBuffer = static_cast<SnctDX11Buffer*>(buffer);
 	SnctDX11DSV* tempDSV = dynamic_cast<SnctDX11DSV*>(dsv);
 
-	return m_pDevice->CreateDepthStencilView(tempBuffer->GetBuffer(),
-		&descDepthStencilView, tempDSV->SetDSVAddress());
+	ID3D11DepthStencilView* tempCreateDSV = {};
+	 m_pDevice->CreateDepthStencilView(tempBuffer->GetBuffer(),
+		&descDepthStencilView, &tempCreateDSV);
+
+	if (tempCreateDSV)return	E_FAIL;
+
+	tempDSV->SetDSV(tempCreateDSV);
+
+	return S_OK;
 }
 
 void SnctDX11Device::ExecuteCmdList(ID3D11CommandList* cmdList)
@@ -61,9 +84,8 @@ void SnctDX11Device::SetViewPort(float Width, float Height, float MinDepth, floa
 	m_pDeviceContext->RSSetViewports(1, &viewPort);
 }
 
-void SnctDX11Device::ClearRTV(ISnctDXRTV* Descriptors, UINT NumRects, RECT* pRects)
+void SnctDX11Device::ClearRTV(ISnctDXRTV* Descriptors, float clearColor[4], UINT NumRects, RECT* pRects)
 {
-	float clearColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
 	SnctDX11RTV* TempRTV = static_cast<SnctDX11RTV*>(Descriptors);
 	m_pDeviceContext->ClearRenderTargetView(TempRTV->GetRTV(), clearColor);
 }
@@ -79,4 +101,9 @@ void SnctDX11Device::SetRTV(UINT NumDescriptors, ISnctDXRTV* Descriptors, ISnctD
 	SnctDX11RTV* TempRTV = static_cast<SnctDX11RTV*>(Descriptors);
 	SnctDX11DSV* TempDSV = static_cast<SnctDX11DSV*>(DSHandle);
 	m_pDeviceContext->OMSetRenderTargets(1, TempRTV->GetRTVAddress(), TempDSV->GetDSV());
+}
+
+void SnctDX11Device::SetRasterizerState(ID3D11RasterizerState* rasterizerState)
+{
+	m_pDeviceContext->RSSetState(rasterizerState);
 }

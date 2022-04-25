@@ -1,10 +1,24 @@
 #include "Snct_DX11Context.h"
 
-void SnctDX11Context::SetRasterRizerState(ID3D11RasterizerState* raseterRizeState)
+//------------------------------------------------------------------------------
+/// Set raster rizer state
+/// \param[in]		Rasterize state
+/// \return			none
+//------------------------------------------------------------------------------
+void SnctDX11Context::SetRasterizerState(ID3D11RasterizerState* pRaseterizeState)
 {
-	m_pContext->RSSetState(raseterRizeState);
+	m_pContext->RSSetState(pRaseterizeState);
 }
 
+
+//------------------------------------------------------------------------------
+/// Set view port
+/// \param[in]		Width
+/// \param[in]		Height
+/// \param[in]		Minimum depth
+/// \param[in]		Maximum depth
+/// \return			none
+//------------------------------------------------------------------------------
 void SnctDX11Context::SetViewPort(float Width, float Height, float MinDepth, float MaxDepth)
 {
 	D3D11_VIEWPORT viewPort;
@@ -18,10 +32,9 @@ void SnctDX11Context::SetViewPort(float Width, float Height, float MinDepth, flo
 	m_pContext->RSSetViewports(1, &viewPort);
 }
 
-void SnctDX11Context::ClearRTV(ISnctDXRTV* Descriptors, UINT NumRects, RECT* pRects)
+void SnctDX11Context::ClearRTV(ISnctDXRTV* pRTV, float clearColor[4], UINT NumRects, RECT* pRects)
 {
-	float clearColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
-	SnctDX11RTV* TempRTV = static_cast<SnctDX11RTV*>(Descriptors);
+	SnctDX11RTV* TempRTV = static_cast<SnctDX11RTV*>(pRTV);
 	m_pContext->ClearRenderTargetView(TempRTV->GetRTV(), clearColor);
 }
 
@@ -42,4 +55,9 @@ void SnctDX11Context::Close(bool RestoreDeferredContextState, ID3D11CommandList*
 {
 	m_pContext->FinishCommandList(true, cmdList);
 
+}
+
+void SnctDX11Context::RegisterCmdList(ID3D11CommandList** cmdList)
+{
+	m_pContext->FinishCommandList(true, cmdList);
 }

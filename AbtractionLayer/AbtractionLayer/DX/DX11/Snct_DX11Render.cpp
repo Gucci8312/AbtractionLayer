@@ -14,7 +14,7 @@ void SnctDX11Render::Build(HWND hWnd)
 		}
 
 		{
-			if (FAILED(m_pDevice.Create(D3D_FEATURE_LEVEL_11_1)))
+			if (FAILED(m_pDevice.CreateDevice(D3D_FEATURE_LEVEL_11_1)))
 			{
 				throw std::runtime_error("!Failed to create device");
 			}
@@ -62,7 +62,7 @@ void SnctDX11Render::Build(HWND hWnd)
 			{
 				throw std::runtime_error("!Failed to get back buffer");
 			}
-			
+
 			if (FAILED(m_pDevice.CreateRTV(&pBackBuffer, &m_pBackBufferView)))
 			{
 				throw std::runtime_error("!Failed to create render target buffer");
@@ -84,7 +84,7 @@ void SnctDX11Render::Build(HWND hWnd)
 				throw std::runtime_error("!Failed to create depth stancil state");
 			}
 
-			SnctDX11Texture pDepthStencilTex ;
+			SnctDX11Texture pDepthStencilTex;
 			SNCT_TEXTURE2D_DESC	descDepthTex{};
 			descDepthTex.Width = g_screenWidth;
 			descDepthTex.Height = g_screenHeight;
@@ -131,8 +131,8 @@ void SnctDX11Render::Build(HWND hWnd)
 				throw std::runtime_error("!Failed to Create Rasterizer State");
 			}
 
-			m_pDevice.GetDeviceContext()->RSSetState(rasterizerState.Get());
-			m_pDeferredContext.SetRasterRizerState(rasterizerState.Get());
+			m_pDevice.SetRasterizerState(rasterizerState.Get());
+			m_pDeferredContext.SetRasterizerState(rasterizerState.Get());
 		}
 
 		{
@@ -165,14 +165,14 @@ void SnctDX11Render::Build(HWND hWnd)
 	}
 
 	{
-		m_viewport.Width = (FLOAT)g_screenWidth;
-		m_viewport.Height = (FLOAT)g_screenHeight;
-		m_viewport.MinDepth = 0.0f;
-		m_viewport.MaxDepth = 1.0f;
-		m_viewport.TopLeftX = 0.0f;
-		m_viewport.TopLeftY = 0.0f;
+		//m_viewport.Width = (FLOAT)g_screenWidth;
+		//m_viewport.Height = (FLOAT)g_screenHeight;
+		//m_viewport.MinDepth = 0.0f;
+		//m_viewport.MaxDepth = 1.0f;
+		//m_viewport.TopLeftX = 0.0f;
+		//m_viewport.TopLeftY = 0.0f;
 
-		m_pDevice.GetDeviceContext()->RSSetViewports(1, &m_viewport);
+		m_pDevice.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
 		m_pDeferredContext.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
 	}
 
@@ -187,16 +187,16 @@ void SnctDX11Render::RenderBegin()
 
 	//　Immadiate　と deferred　の双方をクリア
 	// Immadiate context command
-	m_pDevice.ClearRTV(&m_pBackBufferView);
+	m_pDevice.ClearRTV(&m_pBackBufferView, clearColor);
 	m_pDevice.ClearDSV(&m_pDepthStencileView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	m_pDevice.SetRTV(1, &m_pBackBufferView, &m_pDepthStencileView);
 	m_pDevice.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
 
 	// Deferred context command
-	m_pDeferredContext.ClearRTV(&m_pBackBufferView);
+	m_pDeferredContext.ClearRTV(&m_pBackBufferView, clearColor);
 	m_pDeferredContext.ClearDSV(&m_pDepthStencileView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	m_pDeferredContext.SetRTV(1, &m_pBackBufferView, &m_pDepthStencileView);
-	m_pDeferredContext.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight,0.0f,1.0f);
+	m_pDeferredContext.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
 }
 
 void SnctDX11Render::RenderEnd()
@@ -206,10 +206,10 @@ void SnctDX11Render::RenderEnd()
 		ComPtr<ID3D11CommandList> pCommandList;
 
 		// !　ここでDeferred contextで設定したものをCommandListとして登録
-		m_pDeferredContext.GetContext()->FinishCommandList(true, pCommandList.ReleaseAndGetAddressOf());
+		m_pDeferredContext.RegisterCmdList(pCommandList.ReleaseAndGetAddressOf());
 
 		// Immadiate context で　実行命令
-		m_pDevice.GetDeviceContext()->ExecuteCommandList(pCommandList.Get(), false);
+		m_pDevice.ExecuteCmdList(pCommandList.Get());
 
 		//　実質的に運用方法は、Immadiate と変わらない
 		//　commandList も存在するが

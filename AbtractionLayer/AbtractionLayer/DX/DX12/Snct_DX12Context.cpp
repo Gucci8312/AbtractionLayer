@@ -21,11 +21,10 @@ HRESULT SnctDX12Context::Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Devi
 /// \param[in]		Rect
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12Context::ClearRTV(ISnctDXRTV* DescriptorHandle, UINT NumRects, RECT* pRects )
+void SnctDX12Context::ClearRTV(ISnctDXRTV* DescriptorHandle, float clearColor[4], UINT NumRects, RECT* pRects )
 {
-	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	SnctDX12RTV* TempRTV = static_cast<SnctDX12RTV*>(DescriptorHandle);
-	m_pCmdList->ClearRenderTargetView(TempRTV->GetRTV(), clearColor, 0, pRects);
+	m_pCmdList->ClearRenderTargetView(TempRTV->GetHandle(), clearColor, NumRects, pRects);
 }
 
 

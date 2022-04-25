@@ -28,7 +28,7 @@ private:
 	//ComPtr<ID3D11DepthStencilView>	m_pDepthStencileView;
 	SnctDX11DSV						m_pDepthStencileView;
 
-	D3D11_VIEWPORT					m_viewport{};
+	//D3D11_VIEWPORT					m_viewport{};
 
 	//ComPtr<ID3D11DeviceContext>					m_pDeferredContext;
 	SnctDX11Context					m_pDeferredContext;

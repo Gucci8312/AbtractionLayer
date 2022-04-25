@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include <d3d12.h>
 
+// How to use texture
 typedef enum SNCT_USAGE
 {
 	USAGE_DEFAULT = 0,
@@ -11,6 +12,8 @@ typedef enum SNCT_USAGE
 	USAGE_STAGING = 3
 } 	SNCT_USAGE;
 
+
+// Texture settings
 typedef struct SNCT_TEXTURE2D_DESC
 {
 	UINT Width;
@@ -25,6 +28,7 @@ typedef struct SNCT_TEXTURE2D_DESC
 	UINT MiscFlags;
 } 	SNCT_TEXTURE2D_DESC;
 
+
 // Render target view management interface class
 class ISnctDXRTV
 {
@@ -33,7 +37,7 @@ public:
 	// public methods
 	//---------------------------------------------------------------------------	
 	virtual ~ISnctDXRTV() {}
-	virtual ISnctDXRTV* Get() = 0;
+	const virtual ISnctDXRTV* Get() = 0;
 };
 
 
@@ -44,10 +48,14 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	ISnctDXRTV* Get() override final { return this; }
+	// Getter
+	const ISnctDXRTV* Get() override final { return this; }
 	ID3D11RenderTargetView* GetRTV() { return m_rtv.Get(); }
 	ID3D11RenderTargetView** GetRTVAddress() { return m_rtv.GetAddressOf(); }
+
+	//Setter
 	ID3D11RenderTargetView** SetRTVAddress() { return m_rtv.ReleaseAndGetAddressOf(); }
+
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
@@ -63,12 +71,16 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	SnctDX12RTV* Get() override final { return this; }
+	// Getter
+	const SnctDX12RTV* Get() override final { return this; }
+	const D3D12_CPU_DESCRIPTOR_HANDLE GetHandle() { return m_rtvHandle; }
+	const D3D12_CPU_DESCRIPTOR_HANDLE* GetpHandle() { return &m_rtvHandle; }
+
+	// Setter
 	void SetHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) { m_rtvHandle = handle; }
-	D3D12_CPU_DESCRIPTOR_HANDLE GetHandle() { return m_rtvHandle; }
-	D3D12_CPU_DESCRIPTOR_HANDLE* GetpHandle() { return &m_rtvHandle; }
-	D3D12_CPU_DESCRIPTOR_HANDLE GetRTV() { return m_rtvHandle; }
+
 	void IncrementHandlePointer(unsigned int size) { m_rtvHandle.ptr += size; }
+
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
@@ -85,7 +97,7 @@ public:
 	// public methods
 	//---------------------------------------------------------------------------	
 	virtual ~ISnctDXDSV() {}
-	virtual ISnctDXDSV* Get() = 0;
+	const virtual ISnctDXDSV* Get() = 0;
 };
 
 
@@ -96,10 +108,12 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	SnctDX11DSV* Get() override final { return this; }
+	const SnctDX11DSV* Get() override final { return this; }
 	ID3D11DepthStencilView* GetDSV() { return m_dsv.Get(); }
 	ID3D11DepthStencilView** GetDSVAddress() { return m_dsv.GetAddressOf(); }
-	ID3D11DepthStencilView** SetDSVAddress() { return m_dsv.ReleaseAndGetAddressOf(); }
+
+	void SetDSV(ID3D11DepthStencilView* ppDSV) { m_dsv = ppDSV; }
+
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
@@ -115,10 +129,14 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	SnctDX12DSV* Get() override final { return this; }
+	const SnctDX12DSV* Get() override final { return this; }
+	const D3D12_CPU_DESCRIPTOR_HANDLE GetHandle() { return m_dsvHandle; }
+	const D3D12_CPU_DESCRIPTOR_HANDLE* GetpHandle() { return &m_dsvHandle; }
+
 	void SetHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) { m_dsvHandle = handle; }
-	D3D12_CPU_DESCRIPTOR_HANDLE* GetpHandle() { return &m_dsvHandle; }
-	D3D12_CPU_DESCRIPTOR_HANDLE GetDSV() { return m_dsvHandle; }
+
+	void IncrementHandlePointer(unsigned int size) { m_dsvHandle.ptr += size; }
+
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
@@ -135,7 +153,7 @@ public:
 	// public methods
 	//---------------------------------------------------------------------------	
 	virtual ~ISnctDXResource() {}
-	virtual ISnctDXResource* Get() = 0;
+	const virtual ISnctDXResource* Get() = 0;
 };
 
 
@@ -153,7 +171,7 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	SnctDX11Buffer* Get() override final { return this; }
+	const SnctDX11Buffer* Get() override final { return this; }
 	ID3D11Buffer* GetBuffer() { return m_pBuffer.Get(); }
 	ID3D11Buffer** GetBufferAddress() { return m_pBuffer.GetAddressOf(); }
 
@@ -172,9 +190,10 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	SnctDX12Buffer* Get() override final { return this; }
+	const SnctDX12Buffer* Get() override final { return this; }
 	ID3D12Resource* GetBuffer() { return m_pBuffer.Get(); }
 	ID3D12Resource** GetBufferAddress() { return m_pBuffer.GetAddressOf(); }
+
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
@@ -194,13 +213,19 @@ class ISnctDXTexture : public ISnctDXBuffer
 class SnctDX11Texture : public ISnctDXTexture
 {
 public:
-	SnctDX11Texture* Get() override final { return this; }
+	//---------------------------------------------------------------------------
+	// public methods
+	//---------------------------------------------------------------------------	
+	const SnctDX11Texture* Get() override final { return this; }
 	ID3D11Texture2D* GetTexture() { return m_pTexture.Get(); }
 	ID3D11Texture2D** GetTextureAddress() { return m_pTexture.GetAddressOf(); }
 	ID3D11Texture2D** SetTextureAddress() { return m_pTexture.ReleaseAndGetAddressOf(); }
 	HRESULT Create(ID3D11Device* device, SNCT_TEXTURE2D_DESC desc);
 
 private:
+	//---------------------------------------------------------------------------
+	// private variables.
+	//---------------------------------------------------------------------------	
 	ComPtr<ID3D11Texture2D> m_pTexture;
 };
 
@@ -209,28 +234,21 @@ private:
 class SnctDX12Texture : public ISnctDXTexture
 {
 public:
-	SnctDX12Texture* Get() override final { return this; }
+	//---------------------------------------------------------------------------
+	// public methods
+	//---------------------------------------------------------------------------	
+	const SnctDX12Texture* Get() override final { return this; }
 	ID3D12Resource* GetResource() { return m_pResouce.Get(); }
 	ID3D12Resource** GetResourceAddress() { return m_pResouce.GetAddressOf(); }
 	ID3D12Resource** SetResourceAddress() { return m_pResouce.ReleaseAndGetAddressOf(); }
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle() { return m_CPUHandle; }
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() { return m_GPUHandle; }
+
 private:
+	//---------------------------------------------------------------------------
+	// private variables.
+	//---------------------------------------------------------------------------	
 	ComPtr<ID3D12Resource> m_pResouce;
 	D3D12_CPU_DESCRIPTOR_HANDLE m_CPUHandle;
 	D3D12_GPU_DESCRIPTOR_HANDLE m_GPUHandle;
-};
-
-class SnctDXShader : public ISnctDXResource
-{
-public:
-private:
-	ComPtr<ID3DBlob>			m_pShaderBlob;
-};
-
-class SnctDXVertexShader : SnctDXShader
-{
-public:
-private:
-	ComPtr<ID3D11VertexShader>	m_pShaderObject;
 };

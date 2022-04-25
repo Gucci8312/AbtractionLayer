@@ -21,7 +21,7 @@ public:
 	void SetViewPort(float Width, float Height, float MinDepth, float MaxDepth) override final;
 	void SetScissorRects(float Width, float Height) ;
 	void Close() ;
-	void ClearRTV(ISnctDXRTV* Descriptors, UINT NumRects, RECT* pRects = 0)override final;
+	void ClearRTV(ISnctDXRTV* Descriptors, float clearColor[4], UINT NumRects=0, RECT* pRects = 0)override final;
 	void ClearDSV(ISnctDXDSV* Descriptors, UINT Flag, float Depth,
 		UINT8 Stencil, UINT NumRects = 0, RECT* pRects = 0) override final;
 

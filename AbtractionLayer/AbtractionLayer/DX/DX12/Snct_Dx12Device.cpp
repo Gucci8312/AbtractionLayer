@@ -3,95 +3,103 @@
 //------------------------------------------------------------------------------
 /// Create Directx12 device
 /// \param[in]		Feature level
-/// \return			HRESULT
+/// \return			Whether it was created
 //------------------------------------------------------------------------------
-HRESULT SnctDX12Device::Create(D3D_FEATURE_LEVEL Level)
+HRESULT SnctDX12Device::CreateDevice(D3D_FEATURE_LEVEL Level)
 {
-    return D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0,
-        IID_PPV_ARGS(m_pDevice.ReleaseAndGetAddressOf()));
+	return D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0,
+		IID_PPV_ARGS(m_pDevice.ReleaseAndGetAddressOf()));
 }
 
 
 //------------------------------------------------------------------------------
 /// Create Directx12 command allocator
-/// \param[in]		Command allocator
-/// \return			HRESULT
+/// \param[in]		Command allocator double pointer
+/// \return			Whether it was created
 //------------------------------------------------------------------------------
-HRESULT SnctDX12Device::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE commandListType, ID3D12CommandAllocator** cmdAllocator)
+HRESULT SnctDX12Device::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE commandListType, ID3D12CommandAllocator** ppCmdAllocator)
 {
-    return m_pDevice->CreateCommandAllocator(commandListType,
-        IID_PPV_ARGS(cmdAllocator));
+	return m_pDevice->CreateCommandAllocator(commandListType,
+		IID_PPV_ARGS(ppCmdAllocator));
 }
 
 
 //------------------------------------------------------------------------------
-/// Create Directx12 command queue
+/// Create DirectX12 command queue
 /// \param[in]		Command queue desc
-/// \param[in]		Command queue 
-/// \return			HRESULT
+/// \param[in]		Command queue double pointer
+/// \return			Whether it was created
 //------------------------------------------------------------------------------
-HRESULT SnctDX12Device::CreateCommandQueue(D3D12_COMMAND_QUEUE_DESC queueDesc, ID3D12CommandQueue** commandqueue)
+HRESULT SnctDX12Device::CreateCommandQueue(D3D12_COMMAND_QUEUE_DESC CmdQueueDesc, ID3D12CommandQueue** ppCommandQueue)
 {
-    return m_pDevice->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(commandqueue));
+	return m_pDevice->CreateCommandQueue(&CmdQueueDesc, IID_PPV_ARGS(ppCommandQueue));
 }
 
 
 //------------------------------------------------------------------------------
 /// return increment handle size
 /// \param[in]		Descriptor heap type
-/// \return			unsigned int
+/// \return			Descriptor increment size
 //------------------------------------------------------------------------------
 unsigned int SnctDX12Device::GetIncrementHandleSize(D3D12_DESCRIPTOR_HEAP_TYPE type)
 {
-    return m_pDevice->GetDescriptorHandleIncrementSize(type);
+	return m_pDevice->GetDescriptorHandleIncrementSize(type);
 }
 
 
 //------------------------------------------------------------------------------
 /// Create render target view
-/// \param[in]		Render target view desc
-/// \param[in]		Render target view handle
-/// \return			none
+/// \param[in]		Buck buffer pointer
+/// \param[out]		Render target view handle pointer
+/// \return			Whether it was created
 //------------------------------------------------------------------------------
-HRESULT SnctDX12Device::CreateRTV(ISnctDXBuffer* buffer,  ISnctDXRTV* rtvHandle)
+HRESULT SnctDX12Device::CreateRTV(ISnctDXBuffer* pBuckBuffer, ISnctDXRTV* pRTV)
 {
-    // Render target view settings
-    D3D12_RENDER_TARGET_VIEW_DESC viewDesc = {};
-    viewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
-    viewDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
-    viewDesc.Texture2D.MipSlice = 0;
-    viewDesc.Texture2D.PlaneSlice = 0;
+	// Render target view settings
+	D3D12_RENDER_TARGET_VIEW_DESC viewDesc = {};
+	viewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	viewDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+	viewDesc.Texture2D.MipSlice = 0;
+	viewDesc.Texture2D.PlaneSlice = 0;
 
-    SnctDX12Buffer* tempBuffer = static_cast<SnctDX12Buffer*>(buffer);
-    SnctDX12RTV* tempRTVHandle = static_cast<SnctDX12RTV*>(rtvHandle);
-    m_pDevice->CreateRenderTargetView(tempBuffer->GetBuffer(), &viewDesc, tempRTVHandle->GetRTV());
+	// For temporary storage
+	ID3D12Resource* tempBuffer = static_cast<SnctDX12Buffer*>(pBuckBuffer)->GetBuffer();
+	SnctDX12RTV* tempRTV = static_cast<SnctDX12RTV*>(pRTV);
 
-    if (tempRTVHandle != nullptr) return E_FAIL;
-    return S_OK;
+	// Create render target
+	m_pDevice->CreateRenderTargetView(tempBuffer, &viewDesc, tempRTV->GetHandle());
+
+	// Error checking
+	if (tempRTV->GetHandle().ptr) return S_OK;
+	return E_FAIL;
 }
+
 
 //------------------------------------------------------------------------------
 /// Create render target view
-/// \param[in]		Render target view desc
-/// \param[in]		Render target view handle
-/// \return			none
+/// \param[in]		Depth texture pointer
+/// \param[out]		Render target view handle pointer
+/// \return			Whether it was created
 //------------------------------------------------------------------------------
-HRESULT SnctDX12Device::CreateDSV(ISnctDXBuffer* buffer,  ISnctDXDSV* dsvHandle)
+HRESULT SnctDX12Device::CreateDSV(ISnctDXBuffer* pDepthTexture, ISnctDXDSV* pDSV)
 {
-    // Render target view settings
-        // Depth stencil view settings
-    D3D12_DEPTH_STENCIL_VIEW_DESC DepthViewDesc = {};
-    DepthViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
-    DepthViewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
-    DepthViewDesc.Texture2D.MipSlice = 0;
-    DepthViewDesc.Flags = D3D12_DSV_FLAG_NONE;
+	// Depth stencil view settings
+	D3D12_DEPTH_STENCIL_VIEW_DESC DepthViewDesc = {};
+	DepthViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	DepthViewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	DepthViewDesc.Texture2D.MipSlice = 0;
+	DepthViewDesc.Flags = D3D12_DSV_FLAG_NONE;
 
-    SnctDX12Buffer* tempBuffer = static_cast<SnctDX12Buffer*>(buffer);
-    SnctDX12DSV* tempDSVHandle = static_cast<SnctDX12DSV*>(dsvHandle);
+	// For temporary storage
+	ID3D12Resource* tempBuffer = static_cast<SnctDX12Buffer*>(pDepthTexture)->GetBuffer();
+	SnctDX12DSV* tempDSV = static_cast<SnctDX12DSV*>(pDSV);
 
-    // Create depth stencil view
-    m_pDevice->CreateDepthStencilView(tempBuffer->GetBuffer(), &DepthViewDesc, tempDSVHandle->GetDSV());
+	// Create depth stencil view
+	D3D12_CPU_DESCRIPTOR_HANDLE tempCreateHandle = {};
+	m_pDevice->CreateDepthStencilView(tempBuffer, &DepthViewDesc, tempCreateHandle);
+	tempDSV->SetHandle(tempCreateHandle);
 
-    if (tempDSVHandle != nullptr) return E_FAIL;
-    return S_OK;
+	// Error checking
+	if (tempDSV->GetHandle().ptr) return S_OK;
+	return E_FAIL;
 }
