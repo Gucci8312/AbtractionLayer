@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include <d3d12.h>
 
+#pragma region Parameter
 // How to use texture
 typedef enum SNCT_USAGE
 {
@@ -27,19 +28,44 @@ typedef struct SNCT_TEXTURE2D_DESC
 	UINT CPUAccessFlags;
 	UINT MiscFlags;
 } 	SNCT_TEXTURE2D_DESC;
+#pragma endregion
 
 
-// Render target view management interface class
-class ISnctDXRTV
+#pragma region SuperClass
+// DirectX resource management class
+class ISnctDXResource
 {
 public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	virtual ~ISnctDXRTV() {}
-	const virtual ISnctDXRTV* Get() = 0;
+	// Getter
+	const virtual ISnctDXResource* Get() = 0;
+
+	// Method
+	virtual ~ISnctDXResource() {}
+};
+#pragma endregion
+
+
+#pragma region View
+// Render target view management interface class
+class ISnctDXRTV : public ISnctDXResource
+{
+public:
+	// Nothing //	
 };
 
+// Render target view management interface class
+class ISnctDXDSV
+{
+public:
+	//---------------------------------------------------------------------------
+	// public methods
+	//---------------------------------------------------------------------------	
+	virtual ~ISnctDXDSV() {}
+	const virtual ISnctDXDSV* Get() = 0;
+};
 
 // DirectX11 render target view management class
 class SnctDX11RTV : public ISnctDXRTV
@@ -90,16 +116,7 @@ private:
 };
 
 
-// Render target view management interface class
-class ISnctDXDSV
-{
-public:
-	//---------------------------------------------------------------------------
-	// public methods
-	//---------------------------------------------------------------------------	
-	virtual ~ISnctDXDSV() {}
-	const virtual ISnctDXDSV* Get() = 0;
-};
+
 
 
 // DirectX11 render target view management class
@@ -147,29 +164,15 @@ private:
 	//---------------------------------------------------------------------------	
 	D3D12_CPU_DESCRIPTOR_HANDLE m_DSVHandle = {};
 };
+#pragma endregion
 
 
-// DirectX resource management class
-class ISnctDXResource
-{
-public:
-	//---------------------------------------------------------------------------
-	// public methods
-	//---------------------------------------------------------------------------	
-	// Getter
-	const virtual ISnctDXResource* Get() = 0;
-
-	// Method
-	virtual ~ISnctDXResource() {}
-};
-
-
+#pragma region Buffer
 // DirectX buffer management interface class
 class ISnctDXBuffer : public ISnctDXResource
 {
 	// Nothing //
 };
-
 
 // DirectX11 buffer management clas
 class SnctDX11Buffer : public ISnctDXBuffer
@@ -215,14 +218,15 @@ private:
 	//---------------------------------------------------------------------------	
 	ComPtr<ID3D12Resource> m_pBuffer;
 };
+#pragma endregion
 
 
+#pragma region Texture
 // DirectX texture management interface class
 class ISnctDXTexture : public ISnctDXBuffer
 {
 	// Nothing //
 };
-
 
 // DirectX11 texture management clas
 class SnctDX11Texture : public ISnctDXTexture
@@ -275,3 +279,36 @@ private:
 	D3D12_CPU_DESCRIPTOR_HANDLE m_CPUHandle;
 	D3D12_GPU_DESCRIPTOR_HANDLE m_GPUHandle;
 };
+#pragma endregion
+
+
+#pragma region Shader
+class SnctDXShader : public ISnctDXResource
+{
+public:
+protected:
+	ComPtr<ID3DBlob> m_pShaderBlob;
+};
+
+
+class SnctDX11Shader : public SnctDXShader
+{
+	virtual HRESULT Create(const void* pShaderBytecode, SIZE_T BytecodeLength) = 0;
+};
+
+
+class SnctDX12Shader : public SnctDXShader
+{
+public:
+	void Set(const void* pByteCode, SIZE_T size)
+	{
+		m_shaderData.pShaderBytecode = pByteCode;
+		m_shaderData.BytecodeLength = size;
+	}
+
+	const D3D12_SHADER_BYTECODE GetShaderDesc() { return m_shaderData; }
+
+protected:
+	D3D12_SHADER_BYTECODE m_shaderData;
+};
+#pragma endregion
