@@ -120,8 +120,9 @@ void SnctDX12Render::Build(HWND hWnd)
 		}
 
 		m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
-		m_pShaderLibrary->CreateShaderFromFile("n_vertex.hlsl", L"C:\\Users\\koki.yamaguchi\\Documents\AbtractionLayer\\AbtractionLayer\\AbtractionLayer\\DX\\Shader\\n_vertex.hlsl", DX_SHADER_TYPE::VS);
-		m_pShaderLibrary->CreateShaderFromFile("n_pixel.hlsl", L"C:\\Users\\koki.yamaguchi\\Documents\AbtractionLayer\\AbtractionLayer\\AbtractionLayer\\DX\\Shader\\n_pixel.hlsl", DX_SHADER_TYPE::PS);
+
+		m_pShaderLibrary->CreateShaderFromFile("n_vertex.hlsl", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
+		m_pShaderLibrary->CreateShaderFromFile("n_pixel.hlsl" , L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl" , DX_SHADER_TYPE::PS);
 			
 		TEST_CODE_CreateRootSignature();
 		TEST_CODE_CreatePipelineState();
@@ -263,7 +264,7 @@ void SnctDX12Render::Build(HWND hWnd)
 //------------------------------------------------------------------------------
 void SnctDX12Render::RenderBegin()
 {
-	float clearColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
+	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 	// Start command input
 	m_cmdAllocator[m_frameIndex]->Reset();

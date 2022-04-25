@@ -1,6 +1,14 @@
 #include "DX/Snct_DXConstantParameter.h"
 #include "Snct_DX12Objects.h"
 
+//------------------------------------------------------------------------------
+/// Create and add object primitive data.
+/// \param			device
+/// \param			hash key
+/// \param			vertcies
+/// \param			indices
+/// \return			none
+//------------------------------------------------------------------------------
 void SnctDX12Objects::AddSceneObject(ID3D12Device* device, HashKey key, Vertices* vertices, Indices* indices)
 {
 	// create vertex & index map
@@ -89,6 +97,7 @@ void SnctDX12Objects::AddSceneObject(ID3D12Device* device, HashKey key, Vertices
 			object.pIndexBuffer->Unmap(0, nullptr);
 		}
 
+		// constnt 
 		{
 			object.pConstantObject.resize(2);
 			object.objectCBV.resize(2);
@@ -157,11 +166,21 @@ void SnctDX12Objects::AddSceneObject(ID3D12Device* device, HashKey key, Vertices
 	}
 }
 
+//------------------------------------------------------------------------------
+/// delete object data.
+/// \param			hash key
+/// \return			none
+//------------------------------------------------------------------------------
 void SnctDX12Objects::SubSceneObject(HashKey key)
 {
 	objectBufferMap.erase(key);
 }
 
+//------------------------------------------------------------------------------
+/// return Object data
+/// \param			hash key
+/// \return			object data
+//------------------------------------------------------------------------------
 SnctDX12ObjectBuffer* SnctDX12Objects::GetObjectBuffer(HashKey key)
 {
 	return &objectBufferMap.at(key);

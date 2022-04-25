@@ -4,6 +4,13 @@
 #include <d3dcompiler.h>
 #pragma comment(lib, "d3dcompiler.lib")
 
+//------------------------------------------------------------------------------
+/// Create shader Blob data 
+/// \param			hash key
+/// \param			file path
+/// \param			shader type(VS, PS, etc...)
+/// \return			none
+//------------------------------------------------------------------------------
 void SnctShaderLibrary::CreateShaderFromFile(HashKey key, std::wstring szFileName, DX_SHADER_TYPE type)
 {
     UINT debugFlag = 0;
@@ -52,6 +59,11 @@ void SnctShaderLibrary::CreateShaderFromFile(HashKey key, std::wstring szFileNam
 	}
 }
 
+//------------------------------------------------------------------------------
+/// return shader blob data 
+/// \param			hash key
+/// \return			shader blob data
+//------------------------------------------------------------------------------
 ID3DBlob* SnctShaderLibrary::GetShaderBlob(HashKey key)
 {
 	return m_pShaderBlobMap.at(key).Get();
