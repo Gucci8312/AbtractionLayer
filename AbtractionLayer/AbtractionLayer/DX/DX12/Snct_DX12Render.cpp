@@ -120,6 +120,7 @@ void SnctDX12Render::Build(HWND hWnd)
 		}
 
 		m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
+
 		m_pShaderLibrary->CreateShaderFromFile("n_vertex.hlsl", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
 		m_pShaderLibrary->CreateShaderFromFile("n_pixel.hlsl" , L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl" , DX_SHADER_TYPE::PS);
 			
@@ -263,6 +264,8 @@ void SnctDX12Render::Build(HWND hWnd)
 //------------------------------------------------------------------------------
 void SnctDX12Render::RenderBegin()
 {
+	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+
 	// Start command input
 	m_cmdAllocator[m_frameIndex]->Reset();
 	m_cmdList.Reset(m_cmdAllocator[m_frameIndex].Get(), nullptr);
@@ -275,7 +278,6 @@ void SnctDX12Render::RenderBegin()
 	m_cmdList.Get()->SetPipelineState(TEST_CODE_m_pPipelineState.Get());
 	m_cmdList.Get()->SetGraphicsRootSignature(TEST_CODE_m_pRootSignature.Get());
 
-	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	// Clear render targt view
 	m_cmdList.ClearRTV(&m_handleRTV[m_frameIndex], clearColor, 0, nullptr);
 

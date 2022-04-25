@@ -94,10 +94,12 @@ HRESULT SnctDX12Device::CreateDSV(ISnctDXBuffer* pDepthTexture, ISnctDXDSV* pDSV
 	ID3D12Resource* tempBuffer = static_cast<SnctDX12Buffer*>(pDepthTexture)->GetBuffer();
 	SnctDX12DSV* tempDSV = static_cast<SnctDX12DSV*>(pDSV);
 
-	// Create depth stencil view
-	D3D12_CPU_DESCRIPTOR_HANDLE tempCreateHandle = {};
-	m_pDevice->CreateDepthStencilView(tempBuffer, &DepthViewDesc, tempCreateHandle);
-	tempDSV->SetHandle(tempCreateHandle);
+	m_pDevice->CreateDepthStencilView(tempBuffer, &DepthViewDesc, tempDSV->GetHandle());
+
+	//// Create depth stencil view
+	//D3D12_CPU_DESCRIPTOR_HANDLE tempCreateHandle = {};
+	//m_pDevice->CreateDepthStencilView(tempBuffer, &DepthViewDesc, tempCreateHandle);
+	//tempDSV->SetHandle(tempCreateHandle);
 
 	// Error checking
 	if (tempDSV->GetHandle().ptr) return S_OK;

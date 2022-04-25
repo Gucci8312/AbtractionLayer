@@ -79,9 +79,9 @@ bool SnctApplication::Initialize()
 
 
 	pRender = std::make_unique<SnctDX12Render>();
-	pScene	= std::make_unique<Scene01>();
+	pScene = std::make_unique<Scene01>();
 	pScene->SetRender(pRender.get());
-	
+
 	pRender->Build(m_hwnd);
 	pScene->Initialize();
 
@@ -209,10 +209,10 @@ void SnctApplication::MainLoop()
 		}
 		else
 		{
-				pScene	->Update();
-				pRender	->RenderBegin();
-				pScene	->Draw();
-				pRender	->RenderEnd();
+			pScene->Update();
+			pRender->RenderBegin();
+			pScene->Draw();
+			pRender->RenderEnd();
 		}
 	}
 }
