@@ -54,15 +54,15 @@ void SnctDX11Render::Build(HWND hWnd)
 
 		{
 			SnctDX11Texture pBackBuffer;
-
+			ID3D11Texture2D* TempRTVBuffer;
 			if (FAILED(m_pSwapChain->GetBuffer(
 				0,
-				IID_PPV_ARGS(pBackBuffer.SetTextureAddress())
+				IID_PPV_ARGS(&TempRTVBuffer)
 			)))
 			{
 				throw std::runtime_error("!Failed to get back buffer");
 			}
-
+			pBackBuffer.SetTextureAddress(TempRTVBuffer);
 			if (FAILED(m_pDevice.CreateRTV(&pBackBuffer, &m_pBackBufferView)))
 			{
 				throw std::runtime_error("!Failed to create render target buffer");

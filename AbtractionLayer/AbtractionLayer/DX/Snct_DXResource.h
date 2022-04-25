@@ -50,17 +50,17 @@ public:
 	//---------------------------------------------------------------------------	
 	// Getter
 	const ISnctDXRTV* Get() override final { return this; }
-	ID3D11RenderTargetView* GetRTV() { return m_rtv.Get(); }
-	ID3D11RenderTargetView** GetRTVAddress() { return m_rtv.GetAddressOf(); }
+	ID3D11RenderTargetView* GetRTV() { return m_pRTV.Get(); }
+	ID3D11RenderTargetView** GetRTVAddress() { return m_pRTV.GetAddressOf(); }
 
 	//Setter
-	ID3D11RenderTargetView** SetRTVAddress() { return m_rtv.ReleaseAndGetAddressOf(); }
+	void SetRTV(ID3D11RenderTargetView* ppDSV) { m_pRTV = ppDSV; }
 
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
 	//---------------------------------------------------------------------------	
-	ComPtr<ID3D11RenderTargetView> m_rtv;
+	ComPtr<ID3D11RenderTargetView> m_pRTV;
 };
 
 
@@ -79,6 +79,7 @@ public:
 	// Setter
 	void SetHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) { m_rtvHandle = handle; }
 
+	// Method
 	void IncrementHandlePointer(unsigned int size) { m_rtvHandle.ptr += size; }
 
 private:
@@ -109,16 +110,16 @@ public:
 	// public methods
 	//---------------------------------------------------------------------------	
 	const SnctDX11DSV* Get() override final { return this; }
-	ID3D11DepthStencilView* GetDSV() { return m_dsv.Get(); }
-	ID3D11DepthStencilView** GetDSVAddress() { return m_dsv.GetAddressOf(); }
+	ID3D11DepthStencilView* GetDSV() { return m_pDSV.Get(); }
+	ID3D11DepthStencilView** GetDSVAddress() { return m_pDSV.GetAddressOf(); }
 
-	void SetDSV(ID3D11DepthStencilView* ppDSV) { m_dsv = ppDSV; }
+	void SetDSV(ID3D11DepthStencilView* ppDSV) { m_pDSV = ppDSV; }
 
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
 	//---------------------------------------------------------------------------	
-	ComPtr<ID3D11DepthStencilView> m_dsv;
+	ComPtr<ID3D11DepthStencilView> m_pDSV;
 };
 
 
@@ -129,19 +130,22 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
+	// Getter
 	const SnctDX12DSV* Get() override final { return this; }
-	const D3D12_CPU_DESCRIPTOR_HANDLE GetHandle() { return m_dsvHandle; }
-	const D3D12_CPU_DESCRIPTOR_HANDLE* GetpHandle() { return &m_dsvHandle; }
+	const D3D12_CPU_DESCRIPTOR_HANDLE GetHandle() { return m_DSVHandle; }
+	const D3D12_CPU_DESCRIPTOR_HANDLE* GetpHandle() { return &m_DSVHandle; }
 
-	void SetHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) { m_dsvHandle = handle; }
+	// Setter
+	void SetHandle(D3D12_CPU_DESCRIPTOR_HANDLE handle) { m_DSVHandle = handle; }
 
-	void IncrementHandlePointer(unsigned int size) { m_dsvHandle.ptr += size; }
+	// Method
+	void IncrementHandlePointer(unsigned int size) { m_DSVHandle.ptr += size; }
 
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
 	//---------------------------------------------------------------------------	
-	D3D12_CPU_DESCRIPTOR_HANDLE m_dsvHandle = {};
+	D3D12_CPU_DESCRIPTOR_HANDLE m_DSVHandle = {};
 };
 
 
@@ -152,8 +156,11 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	virtual ~ISnctDXResource() {}
+	// Getter
 	const virtual ISnctDXResource* Get() = 0;
+
+	// Method
+	virtual ~ISnctDXResource() {}
 };
 
 
@@ -171,9 +178,13 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
+	// Getter
 	const SnctDX11Buffer* Get() override final { return this; }
 	ID3D11Buffer* GetBuffer() { return m_pBuffer.Get(); }
 	ID3D11Buffer** GetBufferAddress() { return m_pBuffer.GetAddressOf(); }
+
+	// Setter
+	void SetBufferAddress(ID3D11Buffer* pBuffer) { m_pBuffer = pBuffer; }
 
 private:
 	//---------------------------------------------------------------------------
@@ -190,9 +201,13 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
+	// Getter
 	const SnctDX12Buffer* Get() override final { return this; }
 	ID3D12Resource* GetBuffer() { return m_pBuffer.Get(); }
 	ID3D12Resource** GetBufferAddress() { return m_pBuffer.GetAddressOf(); }
+
+	// Setter
+	void SetBufferAddress(ID3D12Resource* pBuffer) { m_pBuffer = pBuffer; }
 
 private:
 	//---------------------------------------------------------------------------
@@ -216,10 +231,15 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
+	// Getter
 	const SnctDX11Texture* Get() override final { return this; }
 	ID3D11Texture2D* GetTexture() { return m_pTexture.Get(); }
 	ID3D11Texture2D** GetTextureAddress() { return m_pTexture.GetAddressOf(); }
-	ID3D11Texture2D** SetTextureAddress() { return m_pTexture.ReleaseAndGetAddressOf(); }
+
+	// Setter
+	void SetTextureAddress(ID3D11Texture2D* pTex) { m_pTexture = pTex; }
+
+	// Process
 	HRESULT Create(ID3D11Device* device, SNCT_TEXTURE2D_DESC desc);
 
 private:
@@ -237,12 +257,15 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
+	// Getter
 	const SnctDX12Texture* Get() override final { return this; }
-	ID3D12Resource* GetResource() { return m_pResouce.Get(); }
-	ID3D12Resource** GetResourceAddress() { return m_pResouce.GetAddressOf(); }
-	ID3D12Resource** SetResourceAddress() { return m_pResouce.ReleaseAndGetAddressOf(); }
+	ID3D12Resource* GetTexture() { return m_pResouce.Get(); }
+	ID3D12Resource** GetTextureAddress() { return m_pResouce.GetAddressOf(); }
 	D3D12_CPU_DESCRIPTOR_HANDLE GetCPUHandle() { return m_CPUHandle; }
 	D3D12_GPU_DESCRIPTOR_HANDLE GetGPUHandle() { return m_GPUHandle; }
+
+	// Setter
+	void SetTextureAddress(ID3D12Resource* pTex) { m_pResouce = pTex; }
 
 private:
 	//---------------------------------------------------------------------------

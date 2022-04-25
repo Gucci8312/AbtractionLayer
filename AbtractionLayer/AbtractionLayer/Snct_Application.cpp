@@ -78,7 +78,7 @@ bool SnctApplication::Initialize()
 
 
 
-	pRender = std::make_unique<SnctDX12Render>();
+	pRender = std::make_unique<SnctDX11Render>();
 	pScene	= std::make_unique<Scene01>();
 	pScene->SetRender(pRender.get());
 	

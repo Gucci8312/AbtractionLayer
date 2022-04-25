@@ -41,8 +41,15 @@ HRESULT SnctDX11Device::CreateRTV(ISnctDXBuffer* pBuckBuffer, ISnctDXRTV* pRTV)
 	ID3D11Resource* tempResource = static_cast<SnctDX11Buffer*>(pBuckBuffer)->GetBuffer();
 	SnctDX11RTV* tempRTV = dynamic_cast<SnctDX11RTV*>(pRTV);
 
-	return m_pDevice->CreateRenderTargetView(tempResource,
-		nullptr, tempRTV->SetRTVAddress());
+	ID3D11RenderTargetView* TempCreateRTV;
+	auto hr=m_pDevice->CreateRenderTargetView(tempResource,
+		nullptr, &TempCreateRTV);
+
+	if (TempCreateRTV != nullptr)	 hr = E_FAIL;
+
+	tempRTV->SetRTV(TempCreateRTV);
+
+	return hr;
 }
 
 HRESULT SnctDX11Device::CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* dsv)
@@ -56,7 +63,7 @@ HRESULT SnctDX11Device::CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* dsv)
 	SnctDX11DSV* tempDSV = dynamic_cast<SnctDX11DSV*>(dsv);
 
 	ID3D11DepthStencilView* tempCreateDSV = {};
-	 m_pDevice->CreateDepthStencilView(tempBuffer->GetBuffer(),
+	m_pDevice->CreateDepthStencilView(tempBuffer->GetBuffer(),
 		&descDepthStencilView, &tempCreateDSV);
 
 	if (tempCreateDSV)return	E_FAIL;
