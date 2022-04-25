@@ -76,7 +76,9 @@ bool SnctApplication::Initialize()
 	// Console window destroy
 	FreeConsole();
 
-	pRender = std::make_unique<SnctDX11Render>();
+
+
+	pRender = std::make_unique<SnctDX12Render>();
 	pScene	= std::make_unique<Scene01>();
 	pScene->SetRender(pRender.get());
 	
@@ -203,17 +205,15 @@ void SnctApplication::MainLoop()
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
-
-				pScene	->Update();
-
-				pRender	->RenderBegin();
-				pScene	->Draw();
-				pRender	->RenderEnd();
 			}
 		}
 		else
 		{
-			Sleep(5);
+			pScene->Update();
+
+			pRender->RenderBegin();
+			pScene->Draw();
+			pRender->RenderEnd();
 		}
 	}
 }

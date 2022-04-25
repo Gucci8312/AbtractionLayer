@@ -4,6 +4,9 @@ cbuffer ConstantCamera : register(b0)
     float4x4 view;
     float4x4 projection;
     float4x4 VP;
+    float4x4 invView;
+    float4x4 invProjection;
+    float4x4 invVp;
 }
 
 cbuffer ConstantObject : register(b1)
@@ -18,7 +21,6 @@ struct VS_INPUT
 	float4 normal	: NORMAL;
 	float4 color	: COLOR;
 	float2 texCoord	: TEXCOORD;
-    uint   instance : SV_InstanceID;
 };
 
 struct VS_OUTPUT
@@ -33,10 +35,6 @@ struct VS_OUTPUT
 void main(in VS_INPUT In, out VS_OUTPUT Out)
 {
     matrix WVP = mul(world, VP);
-	
-    //In.position.x += In.instance * 5;
-	
-    In.position		+= normalize(In.normal) * In.instance * 0.005;
 	
     Out.positon		= mul(In.position, WVP);
 	Out.worldPos	= mul(In.position, world);

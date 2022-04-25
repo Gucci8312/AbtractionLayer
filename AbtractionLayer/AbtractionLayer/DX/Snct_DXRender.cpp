@@ -38,4 +38,8 @@ void SnctDXRender::SetCamera(Camera* pCamera)
 	XMStoreFloat4x4	(&m_pConstantCamera->view, XMMatrixTranspose(mtxView));
 	XMStoreFloat4x4	(&m_pConstantCamera->projection, XMMatrixTranspose(mtxProjection));
 	XMStoreFloat4x4	(&m_pConstantCamera->vp, XMMatrixTranspose(mtxVP));
+	XMStoreFloat4x4	(&m_pConstantCamera->inversView, XMMatrixInverse(nullptr, XMMatrixTranspose(mtxView)));
+	XMStoreFloat4x4	(&m_pConstantCamera->inversProjection, XMMatrixInverse(nullptr, XMMatrixTranspose(mtxProjection)));
+	XMStoreFloat4x4	(&m_pConstantCamera->inversVp, XMMatrixInverse(nullptr, XMMatrixTranspose(mtxVP)));
+	
 }

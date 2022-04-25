@@ -56,9 +56,14 @@ private:
 
 
 	// << TEST CODE >>
+	ComPtr<ID3D12DescriptorHeap>				TEST_CODE_m_pCameraHeap;
+	std::vector<ComPtr<ID3D12Resource>>			TEST_CODE_m_pCameraConstant;
+	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>	TEST_CODE_m_cameraCBV;
 
 	ComPtr<ID3D12RootSignature> TEST_CODE_m_pRootSignature;
 	ComPtr<ID3D12PipelineState> TEST_CODE_m_pPipelineState;
+
+	void TEST_CODE_CreateCameraConstantBuffer();
 	void TEST_CODE_CreateRootSignature();
 	void TEST_CODE_CreatePipelineState();
 };

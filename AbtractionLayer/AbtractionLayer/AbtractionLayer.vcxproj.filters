@@ -79,9 +79,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DX\DX12\Snct_DX12Render.cpp">
-      <Filter>DX\DX12</Filter>
-    </ClCompile>
     <ClCompile Include="DX\DX11\Snct_DX11Render.cpp">
       <Filter>DX\DX11</Filter>
     </ClCompile>
@@ -116,6 +113,9 @@
       <Filter>RenderCore\DX11</Filter>
     </ClCompile>
     <ClCompile Include="Snct_DX12Objects.cpp" />
+    <ClCompile Include="DX\DX12\Snct_DX12Render.cpp">
+      <Filter>DX\DX12</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DX">

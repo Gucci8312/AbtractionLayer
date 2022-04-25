@@ -119,8 +119,15 @@ void SnctDX12Render::Build(HWND hWnd)
 			if (FAILED(hr)) throw std::runtime_error("DirectX12 command allocator create error");
 		}
 
+		m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
+		m_pShaderLibrary->CreateShaderFromFile("n_vertex.hlsl", L"C:\\Users\\koki.yamaguchi\\Documents\AbtractionLayer\\AbtractionLayer\\AbtractionLayer\\DX\\Shader\\n_vertex.hlsl", DX_SHADER_TYPE::VS);
+		m_pShaderLibrary->CreateShaderFromFile("n_pixel.hlsl", L"C:\\Users\\koki.yamaguchi\\Documents\AbtractionLayer\\AbtractionLayer\\AbtractionLayer\\DX\\Shader\\n_pixel.hlsl", DX_SHADER_TYPE::PS);
+			
+		TEST_CODE_CreateRootSignature();
+		TEST_CODE_CreatePipelineState();
+
 		// Create commandlist
-		hr = m_cmdList.Create(D3D12_COMMAND_LIST_TYPE_DIRECT, m_device.GetDevice(),nullptr, m_cmdAllocator[m_frameIndex].Get());
+		hr = m_cmdList.Create(D3D12_COMMAND_LIST_TYPE_DIRECT, m_device.GetDevice(),TEST_CODE_m_pPipelineState.Get(), m_cmdAllocator[m_frameIndex].Get());
 		if (FAILED(hr)) throw std::runtime_error("DirectX12 command list create error");
 
 		// Render target view settings
@@ -240,9 +247,7 @@ void SnctDX12Render::Build(HWND hWnd)
 		// Create object manager
 		m_pSceneObjects = std::make_unique<SnctDX12Objects>();
 
-		m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
-		m_pShaderLibrary->CreateShaderFromFile("n_vertex", L"n_vertex.hlsl", DX_SHADER_TYPE::VS);
-		m_pShaderLibrary->CreateShaderFromFile("n_pixel", L"n_pixel.hlsl", DX_SHADER_TYPE::PS);
+		TEST_CODE_CreateCameraConstantBuffer();
 
 	}
 	catch (std::runtime_error& e) {
@@ -269,6 +274,9 @@ void SnctDX12Render::RenderBegin()
 	// Render target setting
 	m_cmdList.SetRTV(1, &m_handleRTV[m_frameIndex], &m_handleDSV, false);
 
+	m_cmdList.Get()->SetPipelineState(TEST_CODE_m_pPipelineState.Get());
+	m_cmdList.Get()->SetGraphicsRootSignature(TEST_CODE_m_pRootSignature.Get());
+
 	// Clear render targt view
 	m_cmdList.ClearRTV(&m_handleRTV[m_frameIndex], clearColor, 0, nullptr);
 
@@ -280,7 +288,7 @@ void SnctDX12Render::RenderBegin()
 	m_cmdList.SetScissorRects(g_screenWidth, g_screenHeight);
 
 	// Set camera constant buffer
-	//UpdateCameraBuffer();
+	UpdateCameraBuffer(TEST_CODE_m_pCameraConstant[m_frameIndex].Get());
 }
 
 
@@ -384,8 +392,14 @@ void SnctDX12Render::DrawIndexed(SnctDX12ObjectBuffer* pObject)
 	indexBufferView.Format				= DXGI_FORMAT_R32_UINT;
 	indexBufferView.SizeInBytes			= (UINT)sizeof(UINT) * pObject->nIndexSize;
 
-
+	
 	// Future : include factory pattern method
+	m_cmdList.Get()->SetDescriptorHeaps(1, TEST_CODE_m_pCameraHeap.GetAddressOf());
+	m_cmdList.Get()->SetGraphicsRootDescriptorTable(0, TEST_CODE_m_cameraCBV[m_frameIndex]);
+
+	m_cmdList.Get()->SetDescriptorHeaps(1, pObject->pObjectHeap.GetAddressOf());
+	m_cmdList.Get()->SetGraphicsRootDescriptorTable(1, pObject->objectCBV[m_frameIndex]);
+	
 	m_cmdList.Get()->IASetVertexBuffers(0, 1,&vertexBufferView);
 	m_cmdList.Get()->IASetIndexBuffer(&indexBufferView);
 	m_cmdList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -434,10 +448,83 @@ void SnctDX12Render::UpdateObjectBuffer(ID3D12Resource* pObjectConstant)
 }
 
 //------------------------------------------------------------------------------
+/// create camera constant buffer 
+/// \param			object unique constant buffer
+/// \return			none
+//------------------------------------------------------------------------------
+void SnctDX12Render::TEST_CODE_CreateCameraConstantBuffer()
+{
+	try {
+
+		TEST_CODE_m_pCameraConstant.resize(m_frameCount);
+		TEST_CODE_m_cameraCBV.resize(m_frameCount);
+
+		D3D12_HEAP_PROPERTIES heapProperties{};
+		heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+		heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+		heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+		heapProperties.CreationNodeMask = 1;
+		heapProperties.VisibleNodeMask = 1;
+
+		D3D12_RESOURCE_DESC descResource{};
+		descResource.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		descResource.Alignment = 0;
+		descResource.Width = (UINT)((sizeof(XMConstantCamera) + 0xff) & ~0xff);
+		descResource.Height = 1;
+		descResource.DepthOrArraySize = 1;
+		descResource.MipLevels = 1;
+		descResource.Format = DXGI_FORMAT_UNKNOWN;
+		descResource.SampleDesc = { 1, 0 };
+		descResource.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		descResource.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+		D3D12_DESCRIPTOR_HEAP_DESC	descDescriptorHeap{};
+		descDescriptorHeap.NumDescriptors = 2;
+		descDescriptorHeap.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		descDescriptorHeap.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		descDescriptorHeap.NodeMask = 0;
+
+		m_device.GetDevice()->CreateDescriptorHeap(&descDescriptorHeap, IID_PPV_ARGS(TEST_CODE_m_pCameraHeap.GetAddressOf()));
+		UINT nDescSize = m_device.GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+		for (UINT i = 0; i < m_frameCount; ++i)
+		{
+			if (FAILED(m_device.GetDevice()->CreateCommittedResource(
+				&heapProperties,
+				D3D12_HEAP_FLAG_NONE,
+				&descResource,
+				D3D12_RESOURCE_STATE_GENERIC_READ,
+				nullptr,
+				IID_PPV_ARGS(TEST_CODE_m_pCameraConstant[i].GetAddressOf())
+			)))
+				throw std::runtime_error("!Failed to create constant buffer");
+
+
+			D3D12_CONSTANT_BUFFER_VIEW_DESC descConstant{};
+			D3D12_CPU_DESCRIPTOR_HANDLE		cbvCpuHandle{};
+
+			descConstant.BufferLocation = TEST_CODE_m_pCameraConstant[i]->GetGPUVirtualAddress();
+			descConstant.SizeInBytes = (UINT)((sizeof(XMConstantCamera) + 0xff) & ~0xff);
+			cbvCpuHandle.ptr = TEST_CODE_m_pCameraHeap->GetCPUDescriptorHandleForHeapStart().ptr + static_cast<unsigned long long>(i) * nDescSize;
+
+			m_device.GetDevice()->CreateConstantBufferView(&descConstant, cbvCpuHandle);
+
+			D3D12_GPU_DESCRIPTOR_HANDLE cbvGpuHandle{};
+			cbvGpuHandle.ptr = TEST_CODE_m_pCameraHeap->GetGPUDescriptorHandleForHeapStart().ptr + static_cast<unsigned long long>(i) * nDescSize;
+			TEST_CODE_m_cameraCBV[i] = cbvGpuHandle;
+		}
+	}
+	catch (std::runtime_error& e)
+	{
+		SnctRuntimeError(e);
+	}
+}
+
+//------------------------------------------------------------------------------
 /// << ! TEST CODE >> create rootsignature
 /// \param			none
 /// \return			none
-//------------------------------------------------------------------------------/
+//------------------------------------------------------------------------------
 void SnctDX12Render::TEST_CODE_CreateRootSignature()
 {
 	// root signature
@@ -528,7 +615,7 @@ void SnctDX12Render::TEST_CODE_CreateRootSignature()
 /// << ! TEST CODE >> create pipeline state 
 /// \param			none
 /// \return			none
-//------------------------------------------------------------------------------/
+//------------------------------------------------------------------------------
 void SnctDX12Render::TEST_CODE_CreatePipelineState()
 {
 	// create pipeline
@@ -539,7 +626,6 @@ void SnctDX12Render::TEST_CODE_CreatePipelineState()
 			{"NORMAL"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 			{"COLOR"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
 			{"TEXCOORD"		, 0, DXGI_FORMAT_R32G32_FLOAT		, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
-			{"SV_InstanceID", 0, DXGI_FORMAT_R32_UINT			, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
 		};
 
 
@@ -635,7 +721,7 @@ void SnctDX12Render::TEST_CODE_CreatePipelineState()
 
 			descPipeline.PrimitiveTopologyType			= D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
 			descPipeline.NumRenderTargets				= 1;
-			descPipeline.RTVFormats[0]					= DXGI_FORMAT_R8G8B8A8_UNORM;
+			descPipeline.RTVFormats[0]					= DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 			descPipeline.DSVFormat						= DXGI_FORMAT_D32_FLOAT;
 			descPipeline.SampleMask						= UINT_MAX;
 			descPipeline.SampleDesc						= {1,0};
@@ -644,13 +730,11 @@ void SnctDX12Render::TEST_CODE_CreatePipelineState()
 				&descPipeline,
 				IID_PPV_ARGS(TEST_CODE_m_pPipelineState.GetAddressOf())
 			)))
-				throw "!Failed to create pso";
+				throw std::runtime_error("!Failed to create pso");
 		}
 	}
 	catch (std::runtime_error &e)
 	{
 		SnctRuntimeError(e);
 	}
-
-
 }

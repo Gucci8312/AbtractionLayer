@@ -73,13 +73,10 @@ public:
 			30, 31, 32, 33, 34, 35,
 		};
 
-		m_transform.position.y = 1.0f;
 		m_pRender->CreateObject(m_name, &m_vertices, &m_indices);
 	}
 	void Update()		override 
 	{
-		m_transform.rotation.x += 1.0f;
-		m_transform.rotation.y += 1.0f;
 	}
 	void Draw()			override 
 	{
