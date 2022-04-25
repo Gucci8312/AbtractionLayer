@@ -5,6 +5,8 @@
 class SnctDX11CmdList : public ISnctDXCmdList
 {
 public:
+	~SnctDX11CmdList() { 
+		m_pCmdList.Reset(), m_pContext.Reset(); }
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	

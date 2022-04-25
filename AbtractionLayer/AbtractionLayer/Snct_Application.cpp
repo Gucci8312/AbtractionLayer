@@ -10,6 +10,12 @@
 std::unique_ptr<ISnctRender>	pRender;
 std::unique_ptr<ISnctScene>		pScene;
 
+// デバッグのために追加-----------------------
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+//----------------------------------------
+
 //------------------------------------------------------------------------------
 /// Window Procedure
 /// \param[in]      Window handle
@@ -89,6 +95,10 @@ bool SnctApplication::Initialize()
 //------------------------------------------------------------------------------
 void SnctApplication::Finalize()
 {
+	// デバッグのために追加-----------------------
+	_CrtDumpMemoryLeaks();
+	//----------------------------------------
+
 }
 
 
