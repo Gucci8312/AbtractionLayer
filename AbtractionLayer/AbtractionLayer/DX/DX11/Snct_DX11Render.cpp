@@ -230,24 +230,24 @@ void SnctDX11Render::RenderEnd()
 
 void SnctDX11Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 {
-	// 仮作成　（移動予定）
+	//// 仮作成　（移動予定）
 
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
+	//UINT stride = sizeof(Vertex);
+	//UINT offset = 0;
 
-	//　型は Immadiateと変わらないので直前の設定が可能　
-	m_pDeferredContext.GetContext()->VSSetShader(nullptr/*頂点シェーダー*/, nullptr, 0);
-	m_pDeferredContext.GetContext()->PSSetShader(nullptr/*ピクセルシェーダー*/, nullptr, 0);
+	////　型は Immadiateと変わらないので直前の設定が可能　
+	//m_pDeferredContext.GetContext()->VSSetShader(nullptr/*頂点シェーダー*/, nullptr, 0);
+	//m_pDeferredContext.GetContext()->PSSetShader(nullptr/*ピクセルシェーダー*/, nullptr, 0);
 
-	m_pDeferredContext.GetContext()->VSSetConstantBuffers(0, 1, nullptr/*コンスタントバッファー*/);
-	m_pDeferredContext.GetContext()->PSSetConstantBuffers(0, 1, nullptr/*コンスタントバッファー*/);
+	//m_pDeferredContext.GetContext()->VSSetConstantBuffers(0, 1, nullptr/*コンスタントバッファー*/);
+	//m_pDeferredContext.GetContext()->PSSetConstantBuffers(0, 1, nullptr/*コンスタントバッファー*/);
 
-	m_pDeferredContext.GetContext()->IASetVertexBuffers(0, 1, nullptr/*vertex buffer*/, &stride, &offset);
-	m_pDeferredContext.GetContext()->IASetInputLayout(nullptr/*layout*/);
-	m_pDeferredContext.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//m_pDeferredContext.GetContext()->IASetVertexBuffers(0, 1, nullptr/*vertex buffer*/, &stride, &offset);
+	//m_pDeferredContext.GetContext()->IASetInputLayout(nullptr/*layout*/);
+	//m_pDeferredContext.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// 12と共通化のため　DrawIndexedInstanced　を使用　Drawなども使用可
-	m_pDeferredContext.GetContext()->DrawIndexedInstanced(0/*IndexNum*/, 1, 0, 0, 0);
+	//// 12と共通化のため　DrawIndexedInstanced　を使用　Drawなども使用可
+	//m_pDeferredContext.GetContext()->DrawIndexedInstanced(0/*IndexNum*/, 1, 0, 0, 0);
 }
 
 void SnctDX11Render::CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices)
