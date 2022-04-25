@@ -120,8 +120,8 @@ void SnctDX12Render::Build(HWND hWnd)
 		}
 
 		m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
-		m_pShaderLibrary->CreateShaderFromFile("n_vertex.hlsl", L"C:\\Users\\ken.nomaguchi\\Documents\\AbtractionLayer\\AbtractionLayer\\AbtractionLayer\\DX\\Shader\\n_vertex.hlsl", DX_SHADER_TYPE::VS);
-		m_pShaderLibrary->CreateShaderFromFile("n_pixel.hlsl", L"C:\\Users\\ken.nomaguchi\\Documents\\AbtractionLayer\\AbtractionLayer\\AbtractionLayer\\DX\\Shader\\n_pixel.hlsl", DX_SHADER_TYPE::PS);
+		m_pShaderLibrary->CreateShaderFromFile("n_vertex.hlsl", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
+		m_pShaderLibrary->CreateShaderFromFile("n_pixel.hlsl" , L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl" , DX_SHADER_TYPE::PS);
 			
 		TEST_CODE_CreateRootSignature();
 		TEST_CODE_CreatePipelineState();

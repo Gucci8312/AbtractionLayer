@@ -205,17 +205,14 @@ void SnctApplication::MainLoop()
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
-
-				pScene	->Update();
-
-				pRender	->RenderBegin();
-				pScene	->Draw();
-				pRender	->RenderEnd();
 			}
 		}
 		else
 		{
-			Sleep(5);
+				pScene	->Update();
+				pRender	->RenderBegin();
+				pScene	->Draw();
+				pRender	->RenderEnd();
 		}
 	}
 }

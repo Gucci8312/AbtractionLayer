@@ -15,12 +15,21 @@ enum class DX_SHADER_TYPE
 class SnctShaderLibrary
 {
 public:
+	//---------------------------------------------------------------------------
+	// public methods
+	//---------------------------------------------------------------------------	
 	void CreateShaderFromFile(HashKey key, std::wstring szFileName, DX_SHADER_TYPE type);
 	
+	//---------------------------------------------------------------------------
+	//public variables.
+	//---------------------------------------------------------------------------	
 	ID3DBlob* GetShaderBlob(HashKey key);
 
 protected:
 
 private:
+	//---------------------------------------------------------------------------
+	// private variables.
+	//---------------------------------------------------------------------------	
 	std::unordered_map<HashKey, ComPtr<ID3DBlob>> m_pShaderBlobMap;
 };

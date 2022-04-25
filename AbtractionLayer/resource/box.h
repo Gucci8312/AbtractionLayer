@@ -77,6 +77,8 @@ public:
 	}
 	void Update()		override 
 	{
+		m_transform.rotation.x += 1.0f;
+		m_transform.rotation.y += 1.0f;
 	}
 	void Draw()			override 
 	{
