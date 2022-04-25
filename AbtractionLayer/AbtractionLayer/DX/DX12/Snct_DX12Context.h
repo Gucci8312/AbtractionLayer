@@ -26,8 +26,8 @@ public:
 		bool SingleHandleToDescriptorRange)override final;
 	void SetViewPort(float Width, float Height, float MinDepth, float MaxDepth) override final;
 	void SetScissorRects(float Width, float Height);
-	//void SetVertexBufferView(ISnctDXObjectBuffer);
-
+	void SetPipelineState(ID3D12PipelineState* pPipelineState);
+	void SetGraphicsRootSignature(ID3D12RootSignature* pRootsignature);
 private:
 	//---------------------------------------------------------------------------
 	// private variables.
