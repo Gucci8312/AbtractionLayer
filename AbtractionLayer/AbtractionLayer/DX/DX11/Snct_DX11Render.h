@@ -30,6 +30,7 @@ private:
 
 	D3D11_VIEWPORT					m_viewport{};
 
+	//ComPtr<ID3D11DeviceContext>					m_pDeferredContext;
 	SnctDX11CmdList					m_pDeferredContext;
 	ComPtr<ID3D11CommandList>		m_pCommandList;
 
