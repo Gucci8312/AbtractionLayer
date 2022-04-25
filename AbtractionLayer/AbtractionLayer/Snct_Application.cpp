@@ -79,7 +79,7 @@ bool SnctApplication::Initialize()
 	pScene	= std::make_unique<Scene01>();
 	pScene->SetRender(pRender.get());
 	
-	pRender->Build(&m_hwnd);
+	pRender->Build(m_hwnd);
 	pScene->Initialize();
 
 	return true;

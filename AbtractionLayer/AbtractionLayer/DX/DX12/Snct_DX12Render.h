@@ -49,5 +49,17 @@ private:
 	D3D12_RECT                             m_scissor = {};
 
 	std::unique_ptr<SnctDX12Objects>		m_pSceneObjects;
+
+	void DrawIndexed(SnctDX12ObjectBuffer* pObject);
+	void UpdateCameraBuffer(ID3D12Resource* pCameraConstant);
+	void UpdateObjectBuffer(ID3D12Resource* pObjectConstant);
+
+
+	// << TEST CODE >>
+
+	ComPtr<ID3D12RootSignature> TEST_CODE_m_pRootSignature;
+	ComPtr<ID3D12PipelineState> TEST_CODE_m_pPipelineState;
+	void TEST_CODE_CreateRootSignature();
+	void TEST_CODE_CreatePipelineState();
 };
 

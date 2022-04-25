@@ -1,6 +1,7 @@
 #pragma once
 #include "../Snct_Render.h"
 #include "Snct_DXConstantParameter.h"
+#include "Snct_DXShaderLibrary.h"
 
 class SnctDXRender : public ISnctRender 
 {
@@ -20,4 +21,6 @@ protected:
 	std::unique_ptr<XMConstantCamera>	m_pConstantCamera;
 	std::unique_ptr<XMConstantObject>	m_pConstantObject;
 	std::unique_ptr<XMConstantMaterial> m_pConstantMaterial;
+
+	std::unique_ptr<SnctShaderLibrary> m_pShaderLibrary;
 };

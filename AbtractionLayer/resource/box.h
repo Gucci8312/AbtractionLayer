@@ -84,6 +84,7 @@ public:
 	void Draw()			override 
 	{
 		m_pRender->SetObject(&m_transform);
+		m_pRender->Draw(m_name, SNCT_DRAW_FLAG::SNCT_DRAW_FLAG_IMMADIATE);
 	}
 
 	void Finalize()		override {};
