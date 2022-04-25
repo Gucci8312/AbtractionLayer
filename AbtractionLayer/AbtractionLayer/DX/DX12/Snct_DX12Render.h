@@ -27,7 +27,7 @@ public:
 
 private:
 	//---------------------------------------------------------------------------
-	// private variables.
+	// private variables
 	//---------------------------------------------------------------------------	
 	static const uint32_t				   m_frameCount = 2;
 	SnctDX12Device						   m_device;
@@ -50,6 +50,9 @@ private:
 
 	std::unique_ptr<SnctDX12Objects>		m_pSceneObjects;
 
+	//---------------------------------------------------------------------------
+	// private methods
+	//---------------------------------------------------------------------------	
 	void DrawIndexed(SnctDX12ObjectBuffer* pObject);
 	void UpdateCameraBuffer(ID3D12Resource* pCameraConstant);
 	void UpdateObjectBuffer(ID3D12Resource* pObjectConstant);
