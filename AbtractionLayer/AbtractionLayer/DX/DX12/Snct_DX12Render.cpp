@@ -63,7 +63,7 @@ void SnctDX12Render::Build(HWND hWnd)
 	try
 	{
 		// Device 
-		m_device.Create(D3D_FEATURE_LEVEL_11_0);
+		m_device.CreateDevice(D3D_FEATURE_LEVEL_11_0);
 
 		// Command queue Setteings
 		D3D12_COMMAND_QUEUE_DESC QueueDesc = {};
@@ -158,7 +158,7 @@ void SnctDX12Render::Build(HWND hWnd)
 			TempRTV.SetHandle(handle);
 
 			// Create render target view
-			m_device.CreateRTV(m_colorBuffer[i].Get(), &TempRTV);
+			m_device.CreateRTV(&m_colorBuffer[i], &TempRTV);
 
 			m_handleRTV[i].SetHandle(handle);
 			handle.ptr += incrementSize;
@@ -239,7 +239,7 @@ void SnctDX12Render::Build(HWND hWnd)
 		TempDSV.SetHandle(handle);
 
 		// Create depth stencil view
-		m_device.CreateDSV(m_depthBuffer.Get(), &TempDSV);
+		m_device.CreateDSV(&m_depthBuffer, &TempDSV);
 
 		// Set the size of the descriptor heap for depth
 		m_handleDSV.SetHandle(handle);
@@ -267,7 +267,7 @@ void SnctDX12Render::RenderBegin()
 	m_cmdAllocator[m_frameIndex]->Reset();
 	m_cmdList.Reset(m_cmdAllocator[m_frameIndex].Get(), nullptr);
 
-	m_cmdList.SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
+	m_cmdList.SetResourceBarrier(&m_colorBuffer[m_frameIndex], D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
 
 	// Render target setting
 	m_cmdList.SetRTV(1, &m_handleRTV[m_frameIndex], &m_handleDSV, false);
@@ -275,8 +275,9 @@ void SnctDX12Render::RenderBegin()
 	m_cmdList.Get()->SetPipelineState(TEST_CODE_m_pPipelineState.Get());
 	m_cmdList.Get()->SetGraphicsRootSignature(TEST_CODE_m_pRootSignature.Get());
 
+	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	// Clear render targt view
-	m_cmdList.ClearRTV(&m_handleRTV[m_frameIndex], 0, nullptr);
+	m_cmdList.ClearRTV(&m_handleRTV[m_frameIndex], clearColor, 0, nullptr);
 
 	// Clear depth stencil view
 	m_cmdList.ClearDSV(&m_handleDSV, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
@@ -297,7 +298,7 @@ void SnctDX12Render::RenderBegin()
 //------------------------------------------------------------------------------
 void SnctDX12Render::RenderEnd()
 {
-	m_cmdList.SetResourceBarrier(m_colorBuffer[m_frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
+	m_cmdList.SetResourceBarrier(&m_colorBuffer[m_frameIndex], D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 
 	// End command recording
 	m_cmdList.Close();
