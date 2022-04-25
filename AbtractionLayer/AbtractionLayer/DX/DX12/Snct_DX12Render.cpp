@@ -239,6 +239,11 @@ void SnctDX12Render::Build(HWND hWnd)
 
 		// Create object manager
 		m_pSceneObjects = std::make_unique<SnctDX12Objects>();
+
+		m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
+		m_pShaderLibrary->CreateShaderFromFile("n_vertex", L"n_vertex.hlsl", DX_SHADER_TYPE::VS);
+		m_pShaderLibrary->CreateShaderFromFile("n_pixel", L"n_pixel.hlsl", DX_SHADER_TYPE::PS);
+
 	}
 	catch (std::runtime_error& e) {
 		SnctRuntimeError(e);
@@ -271,6 +276,9 @@ void SnctDX12Render::RenderBegin()
 	// Set screen parameter
 	m_cmdList.SetViewPort(g_screenWidth, g_screenHeight, 0.0f, 1.0f);
 	m_cmdList.SetScissorRects(g_screenWidth, g_screenHeight);
+
+	// Set camera constant buffer
+	//UpdateCameraBuffer();
 }
 
 
@@ -316,6 +324,9 @@ void SnctDX12Render::RenderEnd()
 //------------------------------------------------------------------------------
 void SnctDX12Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 {
+	SnctDX12ObjectBuffer* object = m_pSceneObjects->GetObjectBuffer(key);
+
+	DrawIndexed(object);
 }
 
 
@@ -349,4 +360,295 @@ void SnctDX12Render::WaitGPU()
 
 	// Counter increase
 	m_fenceCounter[m_frameIndex]++;
+}
+
+//------------------------------------------------------------------------------
+/// Draw object from library
+/// \param			object pointer
+/// \return			none
+//------------------------------------------------------------------------------
+void SnctDX12Render::DrawIndexed(SnctDX12ObjectBuffer* pObject)
+{
+	// Set object constant buffer
+	UpdateObjectBuffer(pObject->pConstantObject[m_frameIndex].Get());
+	
+	D3D12_VERTEX_BUFFER_VIEW		vertexBufferView{};
+	vertexBufferView.BufferLocation		= pObject->pVertexBuffer->GetGPUVirtualAddress();
+	vertexBufferView.StrideInBytes		= sizeof(Vertex);
+	vertexBufferView.SizeInBytes		= (UINT)sizeof(Vertex) * pObject->nVertexSize;
+
+	D3D12_INDEX_BUFFER_VIEW			indexBufferView{};
+	indexBufferView.BufferLocation		= pObject->pIndexBuffer->GetGPUVirtualAddress();
+	indexBufferView.Format				= DXGI_FORMAT_R32_UINT;
+	indexBufferView.SizeInBytes			= (UINT)sizeof(UINT) * pObject->nIndexSize;
+
+
+	// Future : include factory pattern method
+	m_cmdList.Get()->IASetVertexBuffers(0, 1,&vertexBufferView);
+	m_cmdList.Get()->IASetIndexBuffer(&indexBufferView);
+	m_cmdList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	m_cmdList.Get()->DrawIndexedInstanced(pObject->nIndexSize, 1, 0, 0, 0);
+}
+
+//------------------------------------------------------------------------------
+/// Update camera constant buffer 
+/// \param			object unique constant buffer
+/// \return			none
+//------------------------------------------------------------------------------
+void SnctDX12Render::UpdateCameraBuffer(ID3D12Resource* pCameraConstant)
+{
+	void* pCameraDataBegin;
+	D3D12_RANGE range{ 0,0 };
+
+	pCameraConstant->Map(
+		0,
+		&range,
+		&pCameraDataBegin
+	);
+	
+	memcpy(pCameraDataBegin, m_pConstantCamera.get(), sizeof(XMConstantCamera));
+	pCameraConstant->Unmap(0, nullptr);
+}
+
+//------------------------------------------------------------------------------
+/// Update object constant buffer 
+/// \param			object unique constant buffer
+/// \return			none
+//------------------------------------------------------------------------------
+void SnctDX12Render::UpdateObjectBuffer(ID3D12Resource* pObjectConstant)
+{
+	void* pObjectDataBegin;
+	D3D12_RANGE range{ 0,0 };
+
+	pObjectConstant->Map(
+		0,
+		&range,
+		&pObjectDataBegin
+	);
+
+	memcpy(pObjectDataBegin, m_pConstantObject.get(), sizeof(XMConstantObject));
+	pObjectConstant->Unmap(0, nullptr);
+}
+
+//------------------------------------------------------------------------------
+/// << ! TEST CODE >> create rootsignature
+/// \param			none
+/// \return			none
+//------------------------------------------------------------------------------/
+void SnctDX12Render::TEST_CODE_CreateRootSignature()
+{
+	// root signature
+	try
+	{
+		D3D12_ROOT_PARAMETER	rootParams[3] = {};
+		D3D12_DESCRIPTOR_RANGE	camRange{}, objRange{}, srvRange{};
+		
+		// constant (b0)
+		camRange.NumDescriptors						= 1;
+		camRange.BaseShaderRegister					= 0;
+		camRange.RangeType							= D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+		camRange.OffsetInDescriptorsFromTableStart	= D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+		rootParams[0].ParameterType					= D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		rootParams[0].ShaderVisibility				= D3D12_SHADER_VISIBILITY_ALL;
+		rootParams[0].DescriptorTable				= {1, &camRange};
+		
+		// constant (b1)
+		objRange.NumDescriptors						= 1;
+		objRange.BaseShaderRegister					= 1;
+		objRange.RangeType							= D3D12_DESCRIPTOR_RANGE_TYPE_CBV;
+		objRange.OffsetInDescriptorsFromTableStart	= D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+
+		rootParams[1].ParameterType					= D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		rootParams[1].ShaderVisibility				= D3D12_SHADER_VISIBILITY_ALL;
+		rootParams[1].DescriptorTable				= {1, &objRange};
+
+		// texture	(t0)
+		srvRange.NumDescriptors						= 1;
+		srvRange.BaseShaderRegister					= 0;
+		srvRange.RangeType							= D3D12_DESCRIPTOR_RANGE_TYPE_SRV;
+		srvRange.OffsetInDescriptorsFromTableStart	= D3D12_DESCRIPTOR_RANGE_OFFSET_APPEND;
+		
+		rootParams[2].ParameterType					= D3D12_ROOT_PARAMETER_TYPE_DESCRIPTOR_TABLE;
+		rootParams[2].ShaderVisibility				= D3D12_SHADER_VISIBILITY_PIXEL;
+		rootParams[2].DescriptorTable				= {1, &srvRange};
+
+		// sampler	(s0)
+		D3D12_STATIC_SAMPLER_DESC descStaticSampler{};
+		descStaticSampler.Filter							= D3D12_FILTER_MIN_MAG_MIP_LINEAR;
+		descStaticSampler.AddressU							= D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+		descStaticSampler.AddressV							= D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+		descStaticSampler.AddressW							= D3D12_TEXTURE_ADDRESS_MODE_WRAP;
+		descStaticSampler.MipLODBias						= 0.0f;
+		descStaticSampler.MaxAnisotropy						= 16;
+		descStaticSampler.ComparisonFunc					= D3D12_COMPARISON_FUNC_NEVER;
+		descStaticSampler.BorderColor						= D3D12_STATIC_BORDER_COLOR_TRANSPARENT_BLACK;
+		descStaticSampler.MinLOD							= 0.0f;
+		descStaticSampler.MaxLOD							= D3D12_FLOAT32_MAX;
+		descStaticSampler.ShaderRegister					= 0;
+		descStaticSampler.RegisterSpace						= 0;
+		descStaticSampler.ShaderVisibility					= D3D12_SHADER_VISIBILITY_ALL;
+
+		D3D12_ROOT_SIGNATURE_DESC descRootSignature{};
+		descRootSignature.Flags								= D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+		descRootSignature.pParameters						= rootParams;
+		descRootSignature.NumParameters						= _countof(rootParams);
+		descRootSignature.pStaticSamplers					= &descStaticSampler;
+		descRootSignature.NumStaticSamplers					= 1;
+
+		ComPtr<ID3DBlob> signature;
+
+		if(FAILED(D3D12SerializeRootSignature(
+			&descRootSignature,
+			D3D_ROOT_SIGNATURE_VERSION_1,
+			&signature,
+			nullptr)
+		))
+			throw std::runtime_error("!Failed to serialize root signature");
+
+		if (FAILED(m_device.GetDevice()->CreateRootSignature(
+			0,
+			signature->GetBufferPointer(),
+			signature->GetBufferSize(),
+			IID_PPV_ARGS(TEST_CODE_m_pRootSignature.GetAddressOf()))
+		))
+			throw std::runtime_error("!Failed to create root signature");
+
+	}
+	catch (std::runtime_error& e) 
+	{
+		SnctRuntimeError(e);
+	}
+}
+
+//------------------------------------------------------------------------------
+/// << ! TEST CODE >> create pipeline state 
+/// \param			none
+/// \return			none
+//------------------------------------------------------------------------------/
+void SnctDX12Render::TEST_CODE_CreatePipelineState()
+{
+	// create pipeline
+	try
+	{
+		D3D12_INPUT_ELEMENT_DESC descInputLayout[] = {
+			{"POSITION"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"NORMAL"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"COLOR"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"TEXCOORD"		, 0, DXGI_FORMAT_R32G32_FLOAT		, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"SV_InstanceID", 0, DXGI_FORMAT_R32_UINT			, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
+		};
+
+
+		{
+			D3D12_GRAPHICS_PIPELINE_STATE_DESC descPipeline{};
+			descPipeline.pRootSignature = TEST_CODE_m_pRootSignature.Get();
+
+			// vertex
+			{
+				ID3DBlob* vertex = m_pShaderLibrary->GetShaderBlob("n_vertex.hlsl");
+
+				D3D12_SHADER_BYTECODE shaderBytecode{};
+				shaderBytecode.pShaderBytecode	= vertex->GetBufferPointer();
+				shaderBytecode.BytecodeLength	= vertex->GetBufferSize();
+
+				descPipeline.InputLayout.pInputElementDescs		= descInputLayout;
+				descPipeline.InputLayout.NumElements			= _countof(descInputLayout);
+				descPipeline.VS									= shaderBytecode;
+			}
+
+			// pixe
+			{
+				ID3DBlob* pixel = m_pShaderLibrary->GetShaderBlob("n_pixel.hlsl");
+
+				D3D12_SHADER_BYTECODE shaderBytecode{};
+				shaderBytecode.pShaderBytecode	= pixel->GetBufferPointer();
+				shaderBytecode.BytecodeLength	= pixel->GetBufferSize();
+				descPipeline.PS					= shaderBytecode;
+			}
+
+			// raterizer 
+			{
+				D3D12_RASTERIZER_DESC descRasterize{};
+				descRasterize.FillMode				= D3D12_FILL_MODE_SOLID;
+				descRasterize.CullMode				= D3D12_CULL_MODE_NONE;
+				descRasterize.FrontCounterClockwise = false;
+				descRasterize.DepthBias				= D3D12_DEFAULT_DEPTH_BIAS;
+				descRasterize.DepthBiasClamp		= D3D12_DEFAULT_DEPTH_BIAS_CLAMP;
+				descRasterize.SlopeScaledDepthBias	= D3D12_DEFAULT_SLOPE_SCALED_DEPTH_BIAS;
+				descRasterize.DepthClipEnable		= true;
+				descRasterize.MultisampleEnable		= false;
+				descRasterize.AntialiasedLineEnable	= false;
+				descRasterize.ForcedSampleCount		= 0;
+				descRasterize.ConservativeRaster	= D3D12_CONSERVATIVE_RASTERIZATION_MODE_OFF;
+				
+				descPipeline.RasterizerState = descRasterize;
+			}
+
+			// blend
+			{
+				D3D12_BLEND_DESC descBlend{};
+				descBlend.AlphaToCoverageEnable		= false;
+				descBlend.IndependentBlendEnable	= false;
+
+				for (UINT i = 0; i < D3D12_SIMULTANEOUS_RENDER_TARGET_COUNT; ++i)
+				{
+					descBlend.RenderTarget[i].BlendEnable			= false;
+					descBlend.RenderTarget[i].LogicOpEnable			= false;
+					descBlend.RenderTarget[i].SrcBlend				= D3D12_BLEND_ONE;
+					descBlend.RenderTarget[i].DestBlend				= D3D12_BLEND_ZERO;
+					descBlend.RenderTarget[i].BlendOp				= D3D12_BLEND_OP_ADD;
+					descBlend.RenderTarget[i].SrcBlendAlpha			= D3D12_BLEND_ONE;
+					descBlend.RenderTarget[i].DestBlendAlpha		= D3D12_BLEND_ZERO;
+					descBlend.RenderTarget[i].BlendOpAlpha			= D3D12_BLEND_OP_ADD;
+					descBlend.RenderTarget[i].LogicOp				= D3D12_LOGIC_OP_NOOP;
+					descBlend.RenderTarget[i].RenderTargetWriteMask	= D3D12_COLOR_WRITE_ENABLE_ALL;
+				}
+				descPipeline.BlendState = descBlend;
+			}
+
+			// depth
+			{
+				D3D12_DEPTH_STENCIL_DESC descDepth;
+				descDepth.DepthEnable					= true;
+				descDepth.DepthFunc						= D3D12_COMPARISON_FUNC_LESS;
+				descDepth.DepthWriteMask				= D3D12_DEPTH_WRITE_MASK_ALL;
+				descDepth.StencilEnable					= false;
+				descDepth.StencilReadMask				= D3D12_DEFAULT_STENCIL_READ_MASK;
+				descDepth.StencilWriteMask				= D3D12_DEFAULT_STENCIL_WRITE_MASK;
+
+				descDepth.FrontFace.StencilFailOp		= D3D12_STENCIL_OP_KEEP;
+				descDepth.FrontFace.StencilDepthFailOp	= D3D12_STENCIL_OP_KEEP;
+				descDepth.FrontFace.StencilPassOp		= D3D12_STENCIL_OP_KEEP;
+				descDepth.FrontFace.StencilFunc			= D3D12_COMPARISON_FUNC_ALWAYS;
+
+				descDepth.BackFace.StencilFailOp		= D3D12_STENCIL_OP_KEEP;
+				descDepth.BackFace.StencilDepthFailOp	= D3D12_STENCIL_OP_KEEP;
+				descDepth.BackFace.StencilPassOp		= D3D12_STENCIL_OP_KEEP;
+				descDepth.BackFace.StencilFunc			= D3D12_COMPARISON_FUNC_ALWAYS;
+
+				descPipeline.DepthStencilState = descDepth;
+			}
+
+			descPipeline.PrimitiveTopologyType			= D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+			descPipeline.NumRenderTargets				= 1;
+			descPipeline.RTVFormats[0]					= DXGI_FORMAT_R8G8B8A8_UNORM;
+			descPipeline.DSVFormat						= DXGI_FORMAT_D32_FLOAT;
+			descPipeline.SampleMask						= UINT_MAX;
+			descPipeline.SampleDesc						= {1,0};
+
+			if (FAILED(m_device.GetDevice()->CreateGraphicsPipelineState(
+				&descPipeline,
+				IID_PPV_ARGS(TEST_CODE_m_pPipelineState.GetAddressOf())
+			)))
+				throw "!Failed to create pso";
+		}
+	}
+	catch (std::runtime_error &e)
+	{
+		SnctRuntimeError(e);
+	}
+
+
 }

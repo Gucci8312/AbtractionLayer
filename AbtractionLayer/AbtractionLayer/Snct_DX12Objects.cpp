@@ -58,7 +58,7 @@ void SnctDX12Objects::AddSceneObject(ID3D12Device* device, HashKey key, Vertices
 			)))
 				throw "!Failed to copy vertex";
 
-			memcpy(pVertexDataBegin, vertices->data(), descResource.Width);
+			memcpy(pVertexDataBegin, vertices->data(), sizeof(Vertex) * vertices->size());
 			object.pVertexBuffer->Unmap(0, nullptr);
 		}
 
@@ -85,7 +85,7 @@ void SnctDX12Objects::AddSceneObject(ID3D12Device* device, HashKey key, Vertices
 			)))
 				throw std::runtime_error("!Failed to copy index");
 
-			memcpy(pIndexDataBegin, indices->data(), descResource.Width);
+			memcpy(pIndexDataBegin, indices->data(), sizeof(UINT) * indices->size());
 			object.pIndexBuffer->Unmap(0, nullptr);
 		}
 
@@ -103,7 +103,7 @@ void SnctDX12Objects::AddSceneObject(ID3D12Device* device, HashKey key, Vertices
 			D3D12_RESOURCE_DESC descResource{};
 			descResource.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
 			descResource.Alignment = 0;
-			descResource.Width = (UINT)((sizeof(XMConstantCamera) + 0xff) & ~0xff);
+			descResource.Width = (UINT)((sizeof(XMConstantObject) + 0xff) & ~0xff);
 			descResource.Height = 1;
 			descResource.DepthOrArraySize = 1;
 			descResource.MipLevels = 1;

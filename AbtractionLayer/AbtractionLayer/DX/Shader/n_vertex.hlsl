@@ -1,10 +1,15 @@
-cbuffer ConstantMatrix : register(b0)
+cbuffer ConstantCamera : register(b0)
 {
-    float4	 camPos;
-    float4x4 world;
+    float4 camPos;
     float4x4 view;
     float4x4 projection;
     float4x4 VP;
+}
+
+cbuffer ConstantObject : register(b1)
+{
+    float4 objectLocalPos;
+    float4x4 world;
 }
 
 struct VS_INPUT 
