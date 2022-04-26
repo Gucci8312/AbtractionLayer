@@ -158,10 +158,6 @@ void SnctDX11Render::Build(HWND hWnd)
 
 			m_pDevice.GetDeviceContext()->PSSetSamplers(0, 1, samplerState.GetAddressOf());
 		}
-
-		m_pSceneObjects = std::make_unique<SnctDX11Objects>();
-
-
 	}
 	catch (std::runtime_error& e) {
 		SnctRuntimeError(e);
@@ -230,12 +226,10 @@ void SnctDX11Render::RenderEnd()
 
 void SnctDX11Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 {
-	SnctDX11ObjectBuffer* object = m_pSceneObjects->GetObjectBuffer(key);
-
 	unsigned int strides = sizeof(Vertex);
 	unsigned int offsets = 0;
 
-	UpdateObjectBuffer(object->pConstantObject.Get());
+	UpdateObjectBuffer(TEST_CODE_m_pConstantObject.Get());
 
 	m_pDeferredContext.GetContext()->VSSetShader(TEST_CODE_m_pVertexShader.Get(), nullptr, 0);
 	m_pDeferredContext.GetContext()->PSSetShader(TEST_CODE_m_pPixelShader.Get(), nullptr, 0);
@@ -243,42 +237,91 @@ void SnctDX11Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 	m_pDeferredContext.GetContext()->VSSetConstantBuffers(0, 1, TEST_CODE_m_pCameraConstant.GetAddressOf());
 	m_pDeferredContext.GetContext()->PSSetConstantBuffers(0, 1, TEST_CODE_m_pCameraConstant.GetAddressOf());
 
-	m_pDeferredContext.GetContext()->VSSetConstantBuffers(1, 1, object->pConstantObject.GetAddressOf());
-	m_pDeferredContext.GetContext()->PSSetConstantBuffers(1, 1, object->pConstantObject.GetAddressOf());
+	m_pDeferredContext.GetContext()->VSSetConstantBuffers(1, 1, TEST_CODE_m_pConstantObject.GetAddressOf());
+	m_pDeferredContext.GetContext()->PSSetConstantBuffers(1, 1, TEST_CODE_m_pConstantObject.GetAddressOf());
 
-	m_pDeferredContext.GetContext()->IASetVertexBuffers(0, 1, object->pVertexBuffer.GetAddressOf(), &strides, &offsets);
-	m_pDeferredContext.GetContext()->IASetIndexBuffer(object->pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	m_pDeferredContext.GetContext()->IASetVertexBuffers(0, 1, TEST_CODE_m_pVertexBuffer.GetAddressOf(), &strides, &offsets);
+	m_pDeferredContext.GetContext()->IASetIndexBuffer(TEST_CODE_m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	m_pDeferredContext.GetContext()->IASetInputLayout(TEST_CODE_m_pInputLayout.Get());
 	m_pDeferredContext.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	m_pDeferredContext.GetContext()->DrawIndexedInstanced(object->nIndexSize, 100, 0, 0, 0);
+	m_pDeferredContext.GetContext()->DrawIndexedInstanced(TEST_CODE_nIndexSize, 100, 0, 0, 0);
 }
 
-void SnctDX11Render::CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices)
+void SnctDX11Render::CreateObject(HashKey key, Vertices* vertices, Indices* indices)
 {
-	m_pSceneObjects->AddSceneObject(m_pDevice.GetDevice(), key, pVertices, pIndices);
-}
+	// create vertex & index map
+	try
+	{
+		// vertex
+		{
+			TEST_CODE_nVertexSize = (UINT)vertices->size();
 
-void SnctDX11Render::DrawIndexed(SnctDX11ObjectBuffer* pObject)
-{
-	// Draw“à‚ÖˆÚÝ
+			D3D11_BUFFER_DESC descVBuffer{};
+			descVBuffer.ByteWidth = (UINT)sizeof(Vertex) * (UINT)vertices->size();
+			descVBuffer.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+			descVBuffer.Usage = D3D11_USAGE_DEFAULT;
+			descVBuffer.CPUAccessFlags = 0;
+			descVBuffer.MiscFlags = 0;
+			descVBuffer.StructureByteStride = 0;
 
-	//unsigned int strides = sizeof(Vertex);
-	//unsigned int offsets = 0;
+			D3D11_SUBRESOURCE_DATA dataVBuffer{};
+			dataVBuffer.pSysMem = vertices->data();
+			dataVBuffer.SysMemPitch = 0;
+			dataVBuffer.SysMemSlicePitch = 0;
 
-	//UpdateObjectBuffer(pObject->pConstantObject.Get());
+			if (FAILED(m_pDevice.GetDevice()->CreateBuffer(&descVBuffer, &dataVBuffer, TEST_CODE_m_pVertexBuffer.GetAddressOf())))
+				throw  std::runtime_error("!Failed to Create Vertex Buffer");
+		}
 
-	//m_pDeferredContext.GetContext()->VSSetConstantBuffers(0, 1, TEST_CODE_m_pCameraConstant.GetAddressOf());
-	//m_pDeferredContext.GetContext()->PSSetConstantBuffers(0, 1, TEST_CODE_m_pCameraConstant.GetAddressOf());
+		// index
+		{
+			TEST_CODE_nIndexSize = (UINT)indices->size();
 
-	//m_pDeferredContext.GetContext()->VSSetConstantBuffers(1, 1, pObject->pConstantObject.GetAddressOf());
-	//m_pDeferredContext.GetContext()->PSSetConstantBuffers(1, 1, pObject->pConstantObject.GetAddressOf());
+			D3D11_BUFFER_DESC descIndex{};
+			descIndex.ByteWidth = (UINT)sizeof(UINT) * (UINT)indices->size();
+			descIndex.BindFlags = D3D11_BIND_INDEX_BUFFER;
+			descIndex.Usage = D3D11_USAGE_DEFAULT;
+			descIndex.CPUAccessFlags = 0;
+			descIndex.MiscFlags = 0;
+			descIndex.StructureByteStride = 0;
 
-	//m_pDeferredContext.GetContext()->IASetVertexBuffers(0, 1, pObject->pVertexBuffer.GetAddressOf(), &strides, &offsets);
-	//m_pDeferredContext.GetContext()->IASetIndexBuffer(pObject->pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	//m_pDeferredContext.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			D3D11_SUBRESOURCE_DATA dataIndex{};
+			dataIndex.pSysMem = indices->data();
+			dataIndex.SysMemPitch = 0;
+			dataIndex.SysMemSlicePitch = 0;
 
-	//m_pDeferredContext.GetContext()->DrawIndexedInstanced(pObject->nIndexSize, 100, 0, 0, 0);
+			if (FAILED(m_pDevice.GetDevice()->CreateBuffer(&descIndex, &dataIndex, TEST_CODE_m_pIndexBuffer.GetAddressOf())))
+				throw std::runtime_error("!Failed to Create Index Buffer");
+		}
+
+		// constant
+		{
+			D3D11_BUFFER_DESC descConstantBuffer{};
+
+			descConstantBuffer.ByteWidth = (UINT)sizeof(XMConstantObject);
+			descConstantBuffer.Usage = D3D11_USAGE_DEFAULT;
+			descConstantBuffer.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			descConstantBuffer.CPUAccessFlags = 0;
+			descConstantBuffer.MiscFlags = 0;
+			descConstantBuffer.StructureByteStride = 0;
+
+			if (FAILED(m_pDevice.GetDevice()->CreateBuffer(
+				&descConstantBuffer,
+				nullptr,
+				TEST_CODE_m_pConstantObject.GetAddressOf()
+			)))
+				throw std::runtime_error("!Failed to Create Constant Matrix Buffer");
+		}
+
+	}
+	catch (std::runtime_error& e)
+	{
+		SnctRuntimeError(e);
+	}
+
+
+
 }
 
 void SnctDX11Render::UpdateCameraBuffer(ID3D11Buffer* pCameraConstant)

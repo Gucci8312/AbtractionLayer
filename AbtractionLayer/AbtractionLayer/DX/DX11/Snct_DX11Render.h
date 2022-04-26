@@ -33,13 +33,19 @@ private:
 	SnctDX11Context					m_pDeferredContext;
 	ComPtr<ID3D11CommandList>		m_pCommandList;
 
-	std::unique_ptr<SnctDX11Objects> m_pSceneObjects;
-
-	void DrawIndexed(SnctDX11ObjectBuffer* pObject);
 	void UpdateObjectBuffer(ID3D11Buffer* pObjectConstant);
 	void UpdateCameraBuffer(ID3D11Buffer* pCameraConstant);
 
 	// << TEST CODE >>
+	// box用 頂点バッファ等　
+
+	UINT TEST_CODE_nVertexSize	= 0;
+	UINT TEST_CODE_nIndexSize	= 0;
+
+	ComPtr<ID3D11Buffer>			TEST_CODE_m_pVertexBuffer;
+	ComPtr<ID3D11Buffer>			TEST_CODE_m_pIndexBuffer;
+	ComPtr<ID3D11Buffer>			TEST_CODE_m_pConstantObject;
+
 	ComPtr<ID3D11VertexShader>		TEST_CODE_m_pVertexShader;
 	ComPtr<ID3D11PixelShader>		TEST_CODE_m_pPixelShader;
 

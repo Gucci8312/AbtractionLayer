@@ -48,17 +48,25 @@ private:
 	D3D12_VIEWPORT                         m_viewPort = {};
 	D3D12_RECT                             m_scissor = {};
 
-	std::unique_ptr<SnctDX12Objects>		m_pSceneObjects;
-
 	//---------------------------------------------------------------------------
 	// private methods
 	//---------------------------------------------------------------------------	
-	void DrawIndexed(SnctDX12ObjectBuffer* pObject);
 	void UpdateCameraBuffer(ID3D12Resource* pCameraConstant);
 	void UpdateObjectBuffer(ID3D12Resource* pObjectConstant);
 
 
 	// << TEST CODE >>
+	// box object buffer
+	UINT	TEST_CODE_m_nVertexSize;
+	UINT	TEST_CODE_m_nIndexSize;
+	UINT	TEST_CODE_m_nDescSize;
+
+	ComPtr<ID3D12Resource>						TEST_CODE_m_pVertexBuffer;
+	ComPtr<ID3D12Resource>						TEST_CODE_m_pIndexBuffer;
+	ComPtr<ID3D12DescriptorHeap>				TEST_CODE_m_pObjectHeap;
+	std::vector<ComPtr<ID3D12Resource>>			TEST_CODE_m_pConstantObject;
+	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>	TEST_CODE_m_objectCBV;
+
 	ComPtr<ID3D12DescriptorHeap>				TEST_CODE_m_pCameraHeap;
 	std::vector<ComPtr<ID3D12Resource>>			TEST_CODE_m_pCameraConstant;
 	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>	TEST_CODE_m_cameraCBV;

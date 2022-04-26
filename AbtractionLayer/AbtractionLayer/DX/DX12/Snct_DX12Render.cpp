@@ -335,34 +335,32 @@ void SnctDX12Render::RenderEnd()
 //------------------------------------------------------------------------------
 void SnctDX12Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 {
-	SnctDX12ObjectBuffer* object = m_pSceneObjects->GetObjectBuffer(key);
-
 	// Set object constant buffer
-	UpdateObjectBuffer(object->pConstantObject[m_frameIndex].Get());
+	UpdateObjectBuffer(TEST_CODE_m_pConstantObject[m_frameIndex].Get());
 
 	D3D12_VERTEX_BUFFER_VIEW		vertexBufferView{};
-	vertexBufferView.BufferLocation = object->pVertexBuffer->GetGPUVirtualAddress();
+	vertexBufferView.BufferLocation = TEST_CODE_m_pVertexBuffer->GetGPUVirtualAddress();
 	vertexBufferView.StrideInBytes = sizeof(Vertex);
-	vertexBufferView.SizeInBytes = (UINT)sizeof(Vertex) * object->nVertexSize;
+	vertexBufferView.SizeInBytes = (UINT)sizeof(Vertex) * TEST_CODE_m_nVertexSize;
 
 	D3D12_INDEX_BUFFER_VIEW			indexBufferView{};
-	indexBufferView.BufferLocation = object->pIndexBuffer->GetGPUVirtualAddress();
+	indexBufferView.BufferLocation = TEST_CODE_m_pIndexBuffer->GetGPUVirtualAddress();
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
-	indexBufferView.SizeInBytes = (UINT)sizeof(UINT) * object->nIndexSize;
+	indexBufferView.SizeInBytes = (UINT)sizeof(UINT) * TEST_CODE_m_nIndexSize;
 
 
 	// Future : include factory pattern method
 	m_cmdList.Get()->SetDescriptorHeaps(1, TEST_CODE_m_pCameraHeap.GetAddressOf());
 	m_cmdList.Get()->SetGraphicsRootDescriptorTable(0, TEST_CODE_m_cameraCBV[m_frameIndex]);
 
-	m_cmdList.Get()->SetDescriptorHeaps(1, object->pObjectHeap.GetAddressOf());
-	m_cmdList.Get()->SetGraphicsRootDescriptorTable(1, object->objectCBV[m_frameIndex]);
+	m_cmdList.Get()->SetDescriptorHeaps(1, TEST_CODE_m_pObjectHeap.GetAddressOf());
+	m_cmdList.Get()->SetGraphicsRootDescriptorTable(1, TEST_CODE_m_objectCBV[m_frameIndex]);
 
 	m_cmdList.Get()->IASetVertexBuffers(0, 1, &vertexBufferView);
 	m_cmdList.Get()->IASetIndexBuffer(&indexBufferView);
 	m_cmdList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	m_cmdList.Get()->DrawIndexedInstanced(object->nIndexSize, 1, 0, 0, 0);
+	m_cmdList.Get()->DrawIndexedInstanced(TEST_CODE_m_nIndexSize, 1, 0, 0, 0);
 }
 
 
@@ -373,9 +371,153 @@ void SnctDX12Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 /// \param[in]		pIndices
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12Render::CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices)
+void SnctDX12Render::CreateObject(HashKey key, Vertices* vertices, Indices* indices)
 {
-	m_pSceneObjects->AddSceneObject(m_device.GetDevice(), key, pVertices, pIndices);
+	// create vertex & index map
+	try
+	{
+		TEST_CODE_m_pConstantObject.resize(m_frameCount);
+		TEST_CODE_m_objectCBV.resize(m_frameCount);
+
+		D3D12_HEAP_PROPERTIES heapProperties{};
+		heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+		heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+		heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+		heapProperties.CreationNodeMask = 1;
+		heapProperties.VisibleNodeMask = 1;
+
+		D3D12_RESOURCE_DESC descResource{};
+		descResource.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		descResource.Alignment = 0;
+		descResource.Height = 1;
+		descResource.DepthOrArraySize = 1;
+		descResource.MipLevels = 1;
+		descResource.Format = DXGI_FORMAT_UNKNOWN;
+		descResource.SampleDesc = { 1, 0 };
+		descResource.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		descResource.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+		TEST_CODE_m_nVertexSize = (UINT)vertices->size();
+		TEST_CODE_m_nIndexSize  = (UINT)indices->size();
+
+		D3D12_RANGE readRange{ 0,0 };
+
+		// vertex
+		{
+			descResource.Width = (UINT)sizeof(Vertex) * vertices->size();
+
+			if (FAILED(m_device.GetDevice()->CreateCommittedResource(
+				&heapProperties,
+				D3D12_HEAP_FLAG_NONE,
+				&descResource,
+				D3D12_RESOURCE_STATE_GENERIC_READ,
+				nullptr,
+				IID_PPV_ARGS(TEST_CODE_m_pVertexBuffer.GetAddressOf())
+			)))
+				throw "!Failed to crate vertex buffer";
+
+			UINT8* pVertexDataBegin;
+
+			if (FAILED(TEST_CODE_m_pVertexBuffer->Map(
+				0,
+				&readRange,
+				reinterpret_cast<void**>(&pVertexDataBegin)
+			)))
+				throw "!Failed to copy vertex";
+
+			memcpy(pVertexDataBegin, vertices->data(), sizeof(Vertex) * vertices->size());
+			TEST_CODE_m_pVertexBuffer->Unmap(0, nullptr);
+		}
+
+		// index
+		{
+			descResource.Width = (UINT)sizeof(UINT) * indices->size();
+
+			if (FAILED(m_device.GetDevice()->CreateCommittedResource(
+				&heapProperties,
+				D3D12_HEAP_FLAG_NONE,
+				&descResource,
+				D3D12_RESOURCE_STATE_GENERIC_READ,
+				nullptr,
+				IID_PPV_ARGS(TEST_CODE_m_pIndexBuffer.GetAddressOf())
+			)))
+				throw std::runtime_error("!Failed to crate index buffer");
+
+			UINT8* pIndexDataBegin;
+
+			if (FAILED(TEST_CODE_m_pIndexBuffer->Map(
+				0,
+				&readRange,
+				reinterpret_cast<void**>(&pIndexDataBegin)
+			)))
+				throw std::runtime_error("!Failed to copy index");
+
+			memcpy(pIndexDataBegin, indices->data(), sizeof(UINT) * indices->size());
+			TEST_CODE_m_pIndexBuffer->Unmap(0, nullptr);
+		}
+
+		// constnt 
+		{
+			D3D12_HEAP_PROPERTIES heapProperties{};
+			heapProperties.Type = D3D12_HEAP_TYPE_UPLOAD;
+			heapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+			heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+			heapProperties.CreationNodeMask = 1;
+			heapProperties.VisibleNodeMask = 1;
+
+			D3D12_RESOURCE_DESC descResource{};
+			descResource.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+			descResource.Alignment = 0;
+			descResource.Width = (UINT)((sizeof(XMConstantObject) + 0xff) & ~0xff);
+			descResource.Height = 1;
+			descResource.DepthOrArraySize = 1;
+			descResource.MipLevels = 1;
+			descResource.Format = DXGI_FORMAT_UNKNOWN;
+			descResource.SampleDesc = { 1, 0 };
+			descResource.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+			descResource.Flags = D3D12_RESOURCE_FLAG_NONE;
+
+			D3D12_DESCRIPTOR_HEAP_DESC	descDescriptorHeap{};
+			descDescriptorHeap.NumDescriptors = 2;
+			descDescriptorHeap.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+			descDescriptorHeap.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+			descDescriptorHeap.NodeMask = 0;
+
+			m_device.GetDevice()->CreateDescriptorHeap(&descDescriptorHeap, IID_PPV_ARGS(TEST_CODE_m_pObjectHeap.GetAddressOf()));
+			TEST_CODE_m_nDescSize = m_device.GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+			for (UINT i = 0; i < 2; ++i)
+			{
+				if (FAILED(m_device.GetDevice()->CreateCommittedResource(
+					&heapProperties,
+					D3D12_HEAP_FLAG_NONE,
+					&descResource,
+					D3D12_RESOURCE_STATE_GENERIC_READ,
+					nullptr,
+					IID_PPV_ARGS(TEST_CODE_m_pConstantObject[i].GetAddressOf())
+				)))
+					throw std::runtime_error("!Failed to create constant buffer");
+
+
+				D3D12_CONSTANT_BUFFER_VIEW_DESC descConstant{};
+				D3D12_CPU_DESCRIPTOR_HANDLE		cbvCpuHandle{};
+
+				descConstant.BufferLocation = TEST_CODE_m_pConstantObject[i]->GetGPUVirtualAddress();
+				descConstant.SizeInBytes = (UINT)((sizeof(XMConstantObject) + 0xff) & ~0xff);
+				cbvCpuHandle.ptr = TEST_CODE_m_pObjectHeap->GetCPUDescriptorHandleForHeapStart().ptr + static_cast<unsigned long long>(i) * TEST_CODE_m_nDescSize;
+
+				m_device.GetDevice()->CreateConstantBufferView(&descConstant, cbvCpuHandle);
+
+				D3D12_GPU_DESCRIPTOR_HANDLE cbvGpuHandle{};
+				cbvGpuHandle.ptr = TEST_CODE_m_pObjectHeap->GetGPUDescriptorHandleForHeapStart().ptr + static_cast<unsigned long long>(i) * TEST_CODE_m_nDescSize;
+				TEST_CODE_m_objectCBV[i] = cbvGpuHandle;
+			}
+		}
+	}
+	catch (std::runtime_error& e)
+	{
+		SnctRuntimeError(e);
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -396,41 +538,6 @@ void SnctDX12Render::WaitGPU()
 
 	// Counter increase
 	m_fenceCounter[m_frameIndex]++;
-}
-
-//------------------------------------------------------------------------------
-/// Draw object from library
-/// \param			object pointer
-/// \return			none
-//------------------------------------------------------------------------------
-void SnctDX12Render::DrawIndexed(SnctDX12ObjectBuffer* pObject)
-{
-	//// Set object constant buffer
-	//UpdateObjectBuffer(pObject->pConstantObject[m_frameIndex].Get());
-	//
-	//D3D12_VERTEX_BUFFER_VIEW		vertexBufferView{};
-	//vertexBufferView.BufferLocation		= pObject->pVertexBuffer->GetGPUVirtualAddress();
-	//vertexBufferView.StrideInBytes		= sizeof(Vertex);
-	//vertexBufferView.SizeInBytes		= (UINT)sizeof(Vertex) * pObject->nVertexSize;
-
-	//D3D12_INDEX_BUFFER_VIEW			indexBufferView{};
-	//indexBufferView.BufferLocation		= pObject->pIndexBuffer->GetGPUVirtualAddress();
-	//indexBufferView.Format				= DXGI_FORMAT_R32_UINT;
-	//indexBufferView.SizeInBytes			= (UINT)sizeof(UINT) * pObject->nIndexSize;
-
-	//
-	//// Future : include factory pattern method
-	//m_cmdList.Get()->SetDescriptorHeaps(1, TEST_CODE_m_pCameraHeap.GetAddressOf());
-	//m_cmdList.Get()->SetGraphicsRootDescriptorTable(0, TEST_CODE_m_cameraCBV[m_frameIndex]);
-
-	//m_cmdList.Get()->SetDescriptorHeaps(1, pObject->pObjectHeap.GetAddressOf());
-	//m_cmdList.Get()->SetGraphicsRootDescriptorTable(1, pObject->objectCBV[m_frameIndex]);
-	//
-	//m_cmdList.Get()->IASetVertexBuffers(0, 1,&vertexBufferView);
-	//m_cmdList.Get()->IASetIndexBuffer(&indexBufferView);
-	//m_cmdList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	//m_cmdList.Get()->DrawIndexedInstanced(pObject->nIndexSize, 1, 0, 0, 0);
 }
 
 //------------------------------------------------------------------------------
