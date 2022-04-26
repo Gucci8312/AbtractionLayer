@@ -19,12 +19,10 @@ SnctDX12Render::~SnctDX12Render()
 	WaitGPU();
 
 	// Release
-	//m_cmdQueue.Reset();
 	m_swapChain.Reset();
 	m_heapRTV.Reset();
 	m_heapDSV.Reset();
 	m_fence.Reset();
-	//m_depthBuffer.Reset();
 
 	for (auto Idx = 0; Idx < m_frameCount; ++Idx)
 	{
@@ -359,10 +357,14 @@ void SnctDX12Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 	m_cmdList.Get()->SetGraphicsRootDescriptorTable(1, object->objectCBV[m_frameIndex]);
 
 	m_cmdList.Get()->IASetVertexBuffers(0, 1, &vertexBufferView);
-	m_cmdList.Get()->IASetIndexBuffer(&indexBufferView);
-	m_cmdList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//m_cmdList.SetVertexBuffer(1, SnctBuffer, sizeof(Vertex), object->nVertexSize);
 
-	m_cmdList.Get()->DrawIndexedInstanced(object->nIndexSize, 1, 0, 0, 0);
+	m_cmdList.Get()->IASetIndexBuffer(&indexBufferView);
+	//m_cmdList.SetIndexBuffer(SnctBuffer, DXGI_FORMAT_R32_UINT, (UINT)sizeof(UINT) * object->nIndexSize);
+
+	m_cmdList.SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	m_cmdList.DrawIndexedInstanced(object->nIndexSize, 1,0);
 }
 
 
@@ -405,32 +407,32 @@ void SnctDX12Render::WaitGPU()
 //------------------------------------------------------------------------------
 void SnctDX12Render::DrawIndexed(SnctDX12ObjectBuffer* pObject)
 {
-	//// Set object constant buffer
-	//UpdateObjectBuffer(pObject->pConstantObject[m_frameIndex].Get());
-	//
-	//D3D12_VERTEX_BUFFER_VIEW		vertexBufferView{};
-	//vertexBufferView.BufferLocation		= pObject->pVertexBuffer->GetGPUVirtualAddress();
-	//vertexBufferView.StrideInBytes		= sizeof(Vertex);
-	//vertexBufferView.SizeInBytes		= (UINT)sizeof(Vertex) * pObject->nVertexSize;
+	// Set object constant buffer
+	UpdateObjectBuffer(pObject->pConstantObject[m_frameIndex].Get());
+	
+	D3D12_VERTEX_BUFFER_VIEW		vertexBufferView{};
+	vertexBufferView.BufferLocation		= pObject->pVertexBuffer->GetGPUVirtualAddress();
+	vertexBufferView.StrideInBytes		= sizeof(Vertex);
+	vertexBufferView.SizeInBytes		= (UINT)sizeof(Vertex) * pObject->nVertexSize;
 
-	//D3D12_INDEX_BUFFER_VIEW			indexBufferView{};
-	//indexBufferView.BufferLocation		= pObject->pIndexBuffer->GetGPUVirtualAddress();
-	//indexBufferView.Format				= DXGI_FORMAT_R32_UINT;
-	//indexBufferView.SizeInBytes			= (UINT)sizeof(UINT) * pObject->nIndexSize;
+	D3D12_INDEX_BUFFER_VIEW			indexBufferView{};
+	indexBufferView.BufferLocation		= pObject->pIndexBuffer->GetGPUVirtualAddress();
+	indexBufferView.Format				= DXGI_FORMAT_R32_UINT;
+	indexBufferView.SizeInBytes			= (UINT)sizeof(UINT) * pObject->nIndexSize;
 
-	//
-	//// Future : include factory pattern method
-	//m_cmdList.Get()->SetDescriptorHeaps(1, TEST_CODE_m_pCameraHeap.GetAddressOf());
-	//m_cmdList.Get()->SetGraphicsRootDescriptorTable(0, TEST_CODE_m_cameraCBV[m_frameIndex]);
+	
+	// Future : include factory pattern method
+	m_cmdList.Get()->SetDescriptorHeaps(1, TEST_CODE_m_pCameraHeap.GetAddressOf());
+	m_cmdList.Get()->SetGraphicsRootDescriptorTable(0, TEST_CODE_m_cameraCBV[m_frameIndex]);
 
-	//m_cmdList.Get()->SetDescriptorHeaps(1, pObject->pObjectHeap.GetAddressOf());
-	//m_cmdList.Get()->SetGraphicsRootDescriptorTable(1, pObject->objectCBV[m_frameIndex]);
-	//
-	//m_cmdList.Get()->IASetVertexBuffers(0, 1,&vertexBufferView);
-	//m_cmdList.Get()->IASetIndexBuffer(&indexBufferView);
-	//m_cmdList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_cmdList.Get()->SetDescriptorHeaps(1, pObject->pObjectHeap.GetAddressOf());
+	m_cmdList.Get()->SetGraphicsRootDescriptorTable(1, pObject->objectCBV[m_frameIndex]);
+	
+	m_cmdList.Get()->IASetVertexBuffers(0, 1,&vertexBufferView);
+	m_cmdList.Get()->IASetIndexBuffer(&indexBufferView);
+	m_cmdList.Get()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	//m_cmdList.Get()->DrawIndexedInstanced(pObject->nIndexSize, 1, 0, 0, 0);
+	m_cmdList.Get()->DrawIndexedInstanced(pObject->nIndexSize, 1, 0, 0, 0);
 }
 
 //------------------------------------------------------------------------------

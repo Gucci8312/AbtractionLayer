@@ -35,7 +35,9 @@
     <ClInclude Include="DX\Interface\ISnct_DXCmdQueue.h" />
     <ClInclude Include="DX\Interface\ISnct_DXContext.h" />
     <ClInclude Include="DX\Interface\ISnct_DXDevice.h" />
+    <ClInclude Include="DX\Interface\ISnct_DXObject.h" />
     <ClInclude Include="DX\Snct_DXConstantParameter.h" />
+    <ClInclude Include="DX\Snct_DXObject.h" />
     <ClInclude Include="DX\Snct_DXRender.h" />
     <ClInclude Include="DX\Snct_DXResource.h" />
     <ClInclude Include="DX\Snct_DXShaderLibrary.h" />
@@ -58,6 +60,7 @@
     <ClCompile Include="DX\DX12\Snct_DX12CmdQueue.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12Device.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12Render.cpp" />
+    <ClCompile Include="DX\Snct_DXObject.cpp" />
     <ClCompile Include="DX\Snct_DXRender.cpp" />
     <ClCompile Include="DX\Snct_DXResource.cpp" />
     <ClCompile Include="DX\Snct_DXShaderLibrary.cpp" />

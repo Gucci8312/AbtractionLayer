@@ -17,7 +17,7 @@ public:
 	// public methods
 	//---------------------------------------------------------------------------	
 	SnctDX12Render();
-	~SnctDX12Render() override;
+	~SnctDX12Render();
 	void Build(HWND hWnd)	override final;
 	void RenderBegin()		override final;
 	void RenderEnd()		override final;
@@ -47,6 +47,11 @@ private:
 	SnctDX12DSV				               m_handleDSV = {};
 	D3D12_VIEWPORT                         m_viewPort = {};
 	D3D12_RECT                             m_scissor = {};
+
+
+	/// <summary>
+	/// ------------------
+	/// </summary>
 
 	std::unique_ptr<SnctDX12Objects>		m_pSceneObjects;
 
