@@ -17,7 +17,7 @@ public:
 	// public methods
 	//---------------------------------------------------------------------------	
 	SnctDX12Render();
-	~SnctDX12Render();
+	~SnctDX12Render() override;
 	void Build(HWND hWnd)	override final;
 	void RenderBegin()		override final;
 	void RenderEnd()		override final;

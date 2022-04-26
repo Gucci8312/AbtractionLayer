@@ -311,7 +311,8 @@ void SnctDX11Render::TEST_CODE_CreateCameraConstantBuffer()
 
 void SnctDX11Render::TEST_CODE_CreatePipelineState()
 {
-
-
+	//m_pDeferredContext.GetContext()->VSSetShader		();
+	//m_pDeferredContext.GetContext()->PSSetShader		();
+	//m_pDeferredContext.GetContext()->S		();
 
 }
