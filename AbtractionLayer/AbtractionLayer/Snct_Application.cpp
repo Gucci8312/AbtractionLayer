@@ -8,8 +8,10 @@
 
 #include "../resource/scene01.h"
 
-std::unique_ptr<ISnctRender>	pRender;
-std::unique_ptr<ISnctScene>		pScene;
+//std::unique_ptr<ISnctRender>	pRender;
+ISnctRender*	pRender;
+//std::unique_ptr<ISnctScene>		pScene;
+ISnctScene*		pScene;
 
 // デバッグのために追加-----------------------
 #define _CRTDBG_MAP_ALLOC
@@ -78,9 +80,11 @@ bool SnctApplication::Initialize()
 
 
 
-	pRender = std::make_unique<SnctDX11Render>();
-	pScene = std::make_unique<Scene01>();
-	pScene->SetRender(pRender.get());
+	pRender = new SnctDX12Render;
+	//pRender = std::make_unique<SnctDX12Render>();
+	//pScene = std::make_unique<Scene01>();
+	pScene = new Scene01;
+	pScene->SetRender(pRender);
 
 	pRender->Build(m_hwnd);
 	pScene->Initialize();
@@ -96,6 +100,10 @@ bool SnctApplication::Initialize()
 //------------------------------------------------------------------------------
 void SnctApplication::Finalize()
 {
+	
+	delete pScene;
+	delete pRender;
+
 	// デバッグのために追加-----------------------
 	_CrtDumpMemoryLeaks();
 	//----------------------------------------
