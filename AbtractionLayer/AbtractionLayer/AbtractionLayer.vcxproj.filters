@@ -85,9 +85,6 @@
     <ClInclude Include="DX\Snct_DXObject.h">
       <Filter>DX</Filter>
     </ClInclude>
-    <ClInclude Include="Snct_DX12Objects.h">
-      <Filter>Sorce</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX\DX11\Snct_DX11Render.cpp">
@@ -131,9 +128,6 @@
     </ClCompile>
     <ClCompile Include="DX\Snct_DXObject.cpp">
       <Filter>DX</Filter>
-    </ClCompile>
-    <ClCompile Include="Snct_DX12Objects.cpp">
-      <Filter>Sorce</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

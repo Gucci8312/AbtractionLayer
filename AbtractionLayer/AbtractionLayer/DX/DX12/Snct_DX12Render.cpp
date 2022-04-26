@@ -245,9 +245,6 @@ void SnctDX12Render::Build(HWND hWnd)
 		// Set the size of the descriptor heap for depth
 		m_handleDSV.SetHandle(handle);
 
-		// Create object manager
-		m_pSceneObjects = std::make_unique<SnctDX12Objects>();
-
 		TEST_CODE_CreateCameraConstantBuffer();
 
 	}

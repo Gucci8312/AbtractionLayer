@@ -5,7 +5,6 @@
 #include "Snct_Dx12Context.h"
 #include "Snct_Dx12Device.h"
 #include "Snct_DX12CmdQueue.h"
-#include "../../Snct_DX12Objects.h"
 #include "../Snct_DXResource.h"
 #include "../Snct_DXConstantParameter.h"
 
