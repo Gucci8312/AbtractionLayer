@@ -275,8 +275,8 @@ void SnctDX12Render::RenderBegin()
 	// Render target setting
 	m_cmdList.SetRTV(1, &m_handleRTV[m_frameIndex], &m_handleDSV, false);
 
-	m_cmdList.Get()->SetPipelineState(TEST_CODE_m_pPipelineState.Get());
-	m_cmdList.Get()->SetGraphicsRootSignature(TEST_CODE_m_pRootSignature.Get());
+	m_cmdList.SetPipelineState(TEST_CODE_m_pPipelineState.Get());
+	m_cmdList.SetGraphicsRootSignature(TEST_CODE_m_pRootSignature.Get());
 
 	// Clear render targt view
 	m_cmdList.ClearRTV(&m_handleRTV[m_frameIndex], clearColor, 0, nullptr);

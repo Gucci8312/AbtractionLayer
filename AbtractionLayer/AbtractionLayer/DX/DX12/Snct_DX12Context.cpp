@@ -111,6 +111,16 @@ void SnctDX12Context::SetScissorRects(float Width, float Height)
 	m_pCmdList->RSSetScissorRects(1, &scissor);
 }
 
+void SnctDX12Context::SetPipelineState(ID3D12PipelineState* pPipelineState)
+{
+	m_pCmdList->SetPipelineState(pPipelineState);
+}
+
+void SnctDX12Context::SetGraphicsRootSignature(ID3D12RootSignature* pRootsignature)
+{
+	m_pCmdList->SetGraphicsRootSignature(pRootsignature);
+}
+
 
 //------------------------------------------------------------------------------
 /// Close command list
