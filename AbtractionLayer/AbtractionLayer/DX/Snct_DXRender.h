@@ -11,6 +11,8 @@ public:
 		m_pConstantObject = std::make_unique<XMConstantObject>();
 		m_pConstantCamera = std::make_unique<XMConstantCamera>();
 	}
+	~SnctDXRender() override {}
+
 
 	void SetObject(Transform* pTransform) override;
 	void SetCamera(Camera* pCamera) override;
