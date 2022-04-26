@@ -21,7 +21,7 @@ HRESULT SnctDX12Context::Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Devi
 /// \param[in]		Rect
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12Context::ClearRTV(ISnctDXRTV* DescriptorHandle, float clearColor[4], UINT NumRects, RECT* pRects )
+void SnctDX12Context::ClearRTV(ISnctDXRTV* DescriptorHandle, float clearColor[4], UINT NumRects, RECT* pRects)
 {
 	SnctDX12RTV* TempRTV = static_cast<SnctDX12RTV*>(DescriptorHandle);
 	m_pCmdList->ClearRenderTargetView(TempRTV->GetHandle(), clearColor, NumRects, pRects);
@@ -38,7 +38,7 @@ void SnctDX12Context::ClearRTV(ISnctDXRTV* DescriptorHandle, float clearColor[4]
 /// \param[in]		Rects
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12Context::ClearDSV(ISnctDXDSV* DescriptorHandle, UINT Flag, float Depth, UINT8 Stencil, UINT NumRects, RECT* pRects )
+void SnctDX12Context::ClearDSV(ISnctDXDSV* DescriptorHandle, UINT Flag, float Depth, UINT8 Stencil, UINT NumRects, RECT* pRects)
 {
 	SnctDX12DSV* TempDSV = static_cast<SnctDX12DSV*>(DescriptorHandle);
 	m_pCmdList.Get()->ClearDepthStencilView(*TempDSV->GetpHandle(), static_cast<D3D12_CLEAR_FLAGS>(Flag), Depth, Stencil, NumRects, pRects);
@@ -119,6 +119,39 @@ void SnctDX12Context::SetPipelineState(ID3D12PipelineState* pPipelineState)
 void SnctDX12Context::SetGraphicsRootSignature(ID3D12RootSignature* pRootsignature)
 {
 	m_pCmdList->SetGraphicsRootSignature(pRootsignature);
+}
+
+void SnctDX12Context::SetVertexBuffer(UINT bufferNum, ISnctDXBuffer* pBuffer, UINT stride, UINT num)
+{
+	ID3D12Resource* tempBuffer = static_cast<SnctDX12Buffer*>(pBuffer)->GetBuffer();
+
+	D3D12_VERTEX_BUFFER_VIEW		vertexBufferView{};
+	vertexBufferView.BufferLocation = tempBuffer->GetGPUVirtualAddress();
+	vertexBufferView.StrideInBytes = stride;
+	vertexBufferView.SizeInBytes = num * stride;
+
+	m_pCmdList->IASetVertexBuffers(0, 1, &vertexBufferView);
+}
+
+void SnctDX12Context::SetIndexBuffer(ISnctDXBuffer* pBuffer, DXGI_FORMAT format, UINT size)
+{
+	D3D12_INDEX_BUFFER_VIEW			indexBufferView{};
+	ID3D12Resource* tempBuffer = static_cast<SnctDX12Buffer*>(pBuffer)->GetBuffer();
+	indexBufferView.BufferLocation = tempBuffer->GetGPUVirtualAddress();
+	indexBufferView.Format = format;
+	indexBufferView.SizeInBytes = size;
+
+	m_pCmdList->IASetIndexBuffer(&indexBufferView);
+}
+
+void SnctDX12Context::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)
+{
+	m_pCmdList->IASetPrimitiveTopology(topology);
+}
+
+void SnctDX12Context::DrawIndexedInstanced(UINT indexCount,UINT startIndexLocation,UINT instanceLocation)
+{
+	m_pCmdList->DrawIndexedInstanced(indexCount,1,0,0,0);
 }
 
 
