@@ -40,8 +40,12 @@ private:
 	void UpdateCameraBuffer(ID3D11Buffer* pCameraConstant);
 
 	// << TEST CODE >>
+	ComPtr<ID3D11VertexShader>		TEST_CODE_m_pVertexShader;
+	ComPtr<ID3D11PixelShader>		TEST_CODE_m_pPixelShader;
+
 	ComPtr<ID3D11Buffer>			TEST_CODE_m_pCameraConstant;
+	ComPtr<ID3D11InputLayout>		TEST_CODE_m_pInputLayout;
 
 	void TEST_CODE_CreateCameraConstantBuffer();
-	void TEST_CODE_CreatePipelineState();
+	void TEST_CODE_CreateVSAndPS();
 };

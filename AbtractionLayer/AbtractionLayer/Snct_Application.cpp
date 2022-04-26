@@ -80,7 +80,7 @@ bool SnctApplication::Initialize()
 
 
 
-	pRender = new SnctDX12Render;
+	pRender = new SnctDX11Render;
 	//pRender = std::make_unique<SnctDX12Render>();
 	//pScene = std::make_unique<Scene01>();
 	pScene = new Scene01;

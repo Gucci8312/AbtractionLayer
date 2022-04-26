@@ -161,7 +161,6 @@ void SnctDX11Render::Build(HWND hWnd)
 
 		m_pSceneObjects = std::make_unique<SnctDX11Objects>();
 
-		TEST_CODE_CreateCameraConstantBuffer();
 
 	}
 	catch (std::runtime_error& e) {
@@ -176,6 +175,9 @@ void SnctDX11Render::Build(HWND hWnd)
 	m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
 	m_pShaderLibrary->CreateShaderFromFile("n_vertex", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
 	m_pShaderLibrary->CreateShaderFromFile("n_pixel", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl", DX_SHADER_TYPE::PS);
+
+	TEST_CODE_CreateCameraConstantBuffer();
+	TEST_CODE_CreateVSAndPS();
 }
 
 void SnctDX11Render::RenderBegin()
@@ -194,6 +196,8 @@ void SnctDX11Render::RenderBegin()
 	m_pDeferredContext.ClearDSV(&m_pDepthStencileView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	m_pDeferredContext.SetRTV(1, &m_pBackBufferView, &m_pDepthStencileView);
 	m_pDeferredContext.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
+
+	UpdateCameraBuffer(TEST_CODE_m_pCameraConstant.Get());
 }
 
 void SnctDX11Render::RenderEnd()
@@ -233,6 +237,9 @@ void SnctDX11Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 
 	UpdateObjectBuffer(object->pConstantObject.Get());
 
+	m_pDeferredContext.GetContext()->VSSetShader(TEST_CODE_m_pVertexShader.Get(), nullptr, 0);
+	m_pDeferredContext.GetContext()->PSSetShader(TEST_CODE_m_pPixelShader.Get(), nullptr, 0);
+
 	m_pDeferredContext.GetContext()->VSSetConstantBuffers(0, 1, TEST_CODE_m_pCameraConstant.GetAddressOf());
 	m_pDeferredContext.GetContext()->PSSetConstantBuffers(0, 1, TEST_CODE_m_pCameraConstant.GetAddressOf());
 
@@ -241,6 +248,7 @@ void SnctDX11Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 
 	m_pDeferredContext.GetContext()->IASetVertexBuffers(0, 1, object->pVertexBuffer.GetAddressOf(), &strides, &offsets);
 	m_pDeferredContext.GetContext()->IASetIndexBuffer(object->pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	m_pDeferredContext.GetContext()->IASetInputLayout(TEST_CODE_m_pInputLayout.Get());
 	m_pDeferredContext.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	m_pDeferredContext.GetContext()->DrawIndexedInstanced(object->nIndexSize, 100, 0, 0, 0);
@@ -280,7 +288,7 @@ void SnctDX11Render::UpdateCameraBuffer(ID3D11Buffer* pCameraConstant)
 
 void SnctDX11Render::UpdateObjectBuffer(ID3D11Buffer* pObjectConstant)
 {
-	m_pDeferredContext.GetContext()->UpdateSubresource(pObjectConstant, 0, nullptr, m_pConstantCamera.get(), 0, 0);
+	m_pDeferredContext.GetContext()->UpdateSubresource(pObjectConstant, 0, nullptr, m_pConstantObject.get(), 0, 0);
 }
 
 void SnctDX11Render::TEST_CODE_CreateCameraConstantBuffer()
@@ -289,7 +297,7 @@ void SnctDX11Render::TEST_CODE_CreateCameraConstantBuffer()
 	{
 		D3D11_BUFFER_DESC descConstantBuffer{};
 
-		descConstantBuffer.ByteWidth = (UINT)sizeof(XMConstantObject);
+		descConstantBuffer.ByteWidth = (UINT)sizeof(XMConstantCamera);
 		descConstantBuffer.Usage = D3D11_USAGE_DEFAULT;
 		descConstantBuffer.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 		descConstantBuffer.CPUAccessFlags = 0;
@@ -309,10 +317,38 @@ void SnctDX11Render::TEST_CODE_CreateCameraConstantBuffer()
 	}
 }
 
-void SnctDX11Render::TEST_CODE_CreatePipelineState()
+void SnctDX11Render::TEST_CODE_CreateVSAndPS()
 {
-	//m_pDeferredContext.GetContext()->VSSetShader		();
-	//m_pDeferredContext.GetContext()->PSSetShader		();
-	//m_pDeferredContext.GetContext()->S		();
+	ID3DBlob* vs = m_pShaderLibrary->GetShaderBlob("n_vertex");
 
+	m_pDevice.GetDevice()->CreateVertexShader(
+		vs->GetBufferPointer(),
+		vs->GetBufferSize(),
+		nullptr,
+		TEST_CODE_m_pVertexShader.GetAddressOf()
+	);
+
+	D3D11_INPUT_ELEMENT_DESC descInputLayout[] = {
+	{"POSITION"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	{"NORMAL"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	{"COLOR"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	{"TEXCOORD"		, 0, DXGI_FORMAT_R32G32_FLOAT		, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+	m_pDevice.GetDevice()->CreateInputLayout(
+		descInputLayout,
+		_countof(descInputLayout),
+		vs->GetBufferPointer(),
+		vs->GetBufferSize(),
+		TEST_CODE_m_pInputLayout.GetAddressOf()
+	);
+
+	ID3DBlob* ps = m_pShaderLibrary->GetShaderBlob("n_pixel");
+
+	m_pDevice.GetDevice()->CreatePixelShader(
+		ps->GetBufferPointer(),
+		ps->GetBufferSize(),
+		nullptr,
+		TEST_CODE_m_pPixelShader.GetAddressOf()
+	);
 }
