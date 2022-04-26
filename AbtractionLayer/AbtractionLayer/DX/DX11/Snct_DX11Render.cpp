@@ -174,8 +174,8 @@ void SnctDX11Render::Build(HWND hWnd)
 	}
 
 	m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
-	m_pShaderLibrary->CreateShaderFromFile("n_vertex", L"n_vertex.hlsl", DX_SHADER_TYPE::VS);
-	m_pShaderLibrary->CreateShaderFromFile("n_pixel", L"n_pixel.hlsl", DX_SHADER_TYPE::PS);
+	m_pShaderLibrary->CreateShaderFromFile("n_vertex", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
+	m_pShaderLibrary->CreateShaderFromFile("n_pixel", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl", DX_SHADER_TYPE::PS);
 }
 
 void SnctDX11Render::RenderBegin()

@@ -80,10 +80,10 @@ void SnctDX11Objects::AddSceneObject(ID3D11Device* device, HashKey key, Vertices
 
 void SnctDX11Objects::SubSceneObject(HashKey key)
 {
-
+	objectBufferMap.erase(key);
 }
 
 SnctDX11ObjectBuffer* SnctDX11Objects::GetObjectBuffer(HashKey key)
 {
-	return nullptr;
+	return &objectBufferMap.at(key);
 }

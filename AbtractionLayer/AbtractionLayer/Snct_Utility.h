@@ -20,5 +20,5 @@ constexpr int g_screenHeight = 800;
 
 inline void SnctRuntimeError(std::runtime_error& e) 
 {
-	assert(false && e.what());
+	_RPT0(_CRT_ASSERT, e.what());
 }
