@@ -159,26 +159,23 @@ void SnctDX11Render::Build(HWND hWnd)
 			m_pDevice.GetDeviceContext()->PSSetSamplers(0, 1, samplerState.GetAddressOf());
 		}
 
+		m_pSceneObjects = std::make_unique<SnctDX11Objects>();
+
+		TEST_CODE_CreateCameraConstantBuffer();
+
 	}
 	catch (std::runtime_error& e) {
 		SnctRuntimeError(e);
 	}
 
 	{
-		//m_viewport.Width = (FLOAT)g_screenWidth;
-		//m_viewport.Height = (FLOAT)g_screenHeight;
-		//m_viewport.MinDepth = 0.0f;
-		//m_viewport.MaxDepth = 1.0f;
-		//m_viewport.TopLeftX = 0.0f;
-		//m_viewport.TopLeftY = 0.0f;
-
 		m_pDevice.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
 		m_pDeferredContext.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
 	}
 
-	//m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
-	//m_pShaderLibrary->CreateShaderFromFile("n_vertex", L"n_vertex.hlsl", DX_SHADER_TYPE::VS);
-	//m_pShaderLibrary->CreateShaderFromFile("n_pixel", L"n_pixel.hlsl", DX_SHADER_TYPE::PS);
+	m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
+	m_pShaderLibrary->CreateShaderFromFile("n_vertex", L"n_vertex.hlsl", DX_SHADER_TYPE::VS);
+	m_pShaderLibrary->CreateShaderFromFile("n_pixel", L"n_pixel.hlsl", DX_SHADER_TYPE::PS);
 }
 
 void SnctDX11Render::RenderBegin()
@@ -219,37 +216,102 @@ void SnctDX11Render::RenderEnd()
 		//  そのため CommandListは一時オブジェクトで問題ないかも?
 
 		if (FAILED(m_pSwapChain->Present(1, 0)))
-			throw "!Failed to swap chain present";
+			throw std::runtime_error("!Failed to swap chain present");
 	}
-	catch (const char* error) {
-		assert(false && error);
+	catch (std::runtime_error &e)
+	{
+		SnctRuntimeError(e);
 	}
-
-
 }
 
 void SnctDX11Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 {
-	//// 仮作成　（移動予定）
+	SnctDX11ObjectBuffer* object = m_pSceneObjects->GetObjectBuffer(key);
 
-	//UINT stride = sizeof(Vertex);
-	//UINT offset = 0;
+	unsigned int strides = sizeof(Vertex);
+	unsigned int offsets = 0;
 
-	////　型は Immadiateと変わらないので直前の設定が可能　
-	//m_pDeferredContext.GetContext()->VSSetShader(nullptr/*頂点シェーダー*/, nullptr, 0);
-	//m_pDeferredContext.GetContext()->PSSetShader(nullptr/*ピクセルシェーダー*/, nullptr, 0);
+	UpdateObjectBuffer(object->pConstantObject.Get());
 
-	//m_pDeferredContext.GetContext()->VSSetConstantBuffers(0, 1, nullptr/*コンスタントバッファー*/);
-	//m_pDeferredContext.GetContext()->PSSetConstantBuffers(0, 1, nullptr/*コンスタントバッファー*/);
+	m_pDeferredContext.GetContext()->VSSetConstantBuffers(0, 1, TEST_CODE_m_pCameraConstant.GetAddressOf());
+	m_pDeferredContext.GetContext()->PSSetConstantBuffers(0, 1, TEST_CODE_m_pCameraConstant.GetAddressOf());
 
-	//m_pDeferredContext.GetContext()->IASetVertexBuffers(0, 1, nullptr/*vertex buffer*/, &stride, &offset);
-	//m_pDeferredContext.GetContext()->IASetInputLayout(nullptr/*layout*/);
-	//m_pDeferredContext.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_pDeferredContext.GetContext()->VSSetConstantBuffers(1, 1, object->pConstantObject.GetAddressOf());
+	m_pDeferredContext.GetContext()->PSSetConstantBuffers(1, 1, object->pConstantObject.GetAddressOf());
 
-	//// 12と共通化のため　DrawIndexedInstanced　を使用　Drawなども使用可
-	//m_pDeferredContext.GetContext()->DrawIndexedInstanced(0/*IndexNum*/, 1, 0, 0, 0);
+	m_pDeferredContext.GetContext()->IASetVertexBuffers(0, 1, object->pVertexBuffer.GetAddressOf(), &strides, &offsets);
+	m_pDeferredContext.GetContext()->IASetIndexBuffer(object->pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	m_pDeferredContext.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	m_pDeferredContext.GetContext()->DrawIndexedInstanced(object->nIndexSize, 100, 0, 0, 0);
 }
 
 void SnctDX11Render::CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices)
 {
+	m_pSceneObjects->AddSceneObject(m_pDevice.GetDevice(), key, pVertices, pIndices);
+}
+
+void SnctDX11Render::DrawIndexed(SnctDX11ObjectBuffer* pObject)
+{
+	// Draw内へ移設
+
+	//unsigned int strides = sizeof(Vertex);
+	//unsigned int offsets = 0;
+
+	//UpdateObjectBuffer(pObject->pConstantObject.Get());
+
+	//m_pDeferredContext.GetContext()->VSSetConstantBuffers(0, 1, TEST_CODE_m_pCameraConstant.GetAddressOf());
+	//m_pDeferredContext.GetContext()->PSSetConstantBuffers(0, 1, TEST_CODE_m_pCameraConstant.GetAddressOf());
+
+	//m_pDeferredContext.GetContext()->VSSetConstantBuffers(1, 1, pObject->pConstantObject.GetAddressOf());
+	//m_pDeferredContext.GetContext()->PSSetConstantBuffers(1, 1, pObject->pConstantObject.GetAddressOf());
+
+	//m_pDeferredContext.GetContext()->IASetVertexBuffers(0, 1, pObject->pVertexBuffer.GetAddressOf(), &strides, &offsets);
+	//m_pDeferredContext.GetContext()->IASetIndexBuffer(pObject->pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+	//m_pDeferredContext.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	//m_pDeferredContext.GetContext()->DrawIndexedInstanced(pObject->nIndexSize, 100, 0, 0, 0);
+}
+
+void SnctDX11Render::UpdateCameraBuffer(ID3D11Buffer* pCameraConstant)
+{
+	m_pDeferredContext.GetContext()->UpdateSubresource(pCameraConstant, 0, nullptr, m_pConstantCamera.get(), 0, 0);
+}
+
+void SnctDX11Render::UpdateObjectBuffer(ID3D11Buffer* pObjectConstant)
+{
+	m_pDeferredContext.GetContext()->UpdateSubresource(pObjectConstant, 0, nullptr, m_pConstantCamera.get(), 0, 0);
+}
+
+void SnctDX11Render::TEST_CODE_CreateCameraConstantBuffer()
+{
+	try 
+	{
+		D3D11_BUFFER_DESC descConstantBuffer{};
+
+		descConstantBuffer.ByteWidth = (UINT)sizeof(XMConstantObject);
+		descConstantBuffer.Usage = D3D11_USAGE_DEFAULT;
+		descConstantBuffer.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		descConstantBuffer.CPUAccessFlags = 0;
+		descConstantBuffer.MiscFlags = 0;
+		descConstantBuffer.StructureByteStride = 0;
+
+		if (FAILED(m_pDevice.GetDevice()->CreateBuffer(
+			&descConstantBuffer,
+			nullptr,
+			TEST_CODE_m_pCameraConstant.GetAddressOf()
+		)))
+			throw std::runtime_error("!Failed to Create Constant Matrix Buffer");
+	}
+	catch (std::runtime_error& e)
+	{
+		SnctRuntimeError(e);
+	}
+}
+
+void SnctDX11Render::TEST_CODE_CreatePipelineState()
+{
+
+
+
 }

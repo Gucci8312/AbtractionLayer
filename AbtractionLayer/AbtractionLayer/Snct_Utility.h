@@ -7,6 +7,7 @@
 #include <vector>
 #include <memory>
 #include <iostream>
+#include <assert.h>
 #include <stdexcept>
 #include <unordered_map>
 
@@ -19,5 +20,5 @@ constexpr int g_screenHeight = 800;
 
 inline void SnctRuntimeError(std::runtime_error& e) 
 {
-	_ASSERT(e.what());
+	assert(false && e.what());
 }

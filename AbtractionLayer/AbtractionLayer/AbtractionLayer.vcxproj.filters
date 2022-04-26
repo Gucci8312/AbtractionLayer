@@ -77,6 +77,9 @@
     <ClInclude Include="DX\Interface\ISnct_DXContext.h">
       <Filter>RenderCore\Inerface</Filter>
     </ClInclude>
+    <ClInclude Include="DX\DX11\Snct_DX11Objects.h">
+      <Filter>DX\DX11</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX\DX11\Snct_DX11Render.cpp">
@@ -115,6 +118,9 @@
     <ClCompile Include="Snct_DX12Objects.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12Render.cpp">
       <Filter>DX\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX11\Snct_DX11Objects.cpp">
+      <Filter>DX\DX11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

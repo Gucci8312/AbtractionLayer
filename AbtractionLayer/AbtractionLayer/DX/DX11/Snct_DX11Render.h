@@ -1,15 +1,18 @@
 #pragma once
-#include "Snct_DX11.h"
 #include "../Snct_DXResource.h"
 #include "../Snct_DXRender.h"
+
+#include "Snct_DX11.h"
 #include "Snct_DX11Device.h"
 #include "Snct_DX11Context.h"
+#include "Snct_DX11Objects.h"
 
 class SnctDX11Render : public SnctDXRender
 {
 public:
 	SnctDX11Render() {}
 	~SnctDX11Render() {}
+
 	// render override
 	void Build(HWND hWnd)	override;
 	void RenderBegin()		override;
@@ -25,20 +28,20 @@ private:
 	SnctDX11Device					m_pDevice;
 	SnctDX11RTV						m_pBackBufferView;
 	ComPtr<ID3D11DepthStencilState>	m_pDepthState;
-	//ComPtr<ID3D11DepthStencilView>	m_pDepthStencileView;
 	SnctDX11DSV						m_pDepthStencileView;
 
-	//D3D11_VIEWPORT					m_viewport{};
-
-	//ComPtr<ID3D11DeviceContext>					m_pDeferredContext;
 	SnctDX11Context					m_pDeferredContext;
 	ComPtr<ID3D11CommandList>		m_pCommandList;
 
+	std::unique_ptr<SnctDX11Objects> m_pSceneObjects;
 
-	//std::unique_ptr<Snct_DXShaderLibrary>	m_pShaderLibrary;
-	//std::unique_ptr<SnctCommandList>	m_pCommandList;
-	//std::unique_ptr<SnctResorceLibrary>	m_pResourceLibrary;
+	void DrawIndexed(SnctDX11ObjectBuffer* pObject);
+	void UpdateObjectBuffer(ID3D11Buffer* pObjectConstant);
+	void UpdateCameraBuffer(ID3D11Buffer* pCameraConstant);
 
+	// << TEST CODE >>
+	ComPtr<ID3D11Buffer>			TEST_CODE_m_pCameraConstant;
 
-
+	void TEST_CODE_CreateCameraConstantBuffer();
+	void TEST_CODE_CreatePipelineState();
 };
