@@ -1,6 +1,7 @@
 #pragma once
 #include "DX11/Snct_DX11.h"
 #include "../Snct_Windows.h"
+#include "../Snct_Utility.h"
 
 enum class DX_SHADER_TYPE
 {
