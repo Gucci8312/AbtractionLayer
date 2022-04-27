@@ -121,14 +121,14 @@ void SnctDX12Context::SetGraphicsRootSignature(ID3D12RootSignature* pRootsignatu
 	m_pCmdList->SetGraphicsRootSignature(pRootsignature);
 }
 
-void SnctDX12Context::SetVertexBuffer(UINT bufferNum, ISnctDXBuffer* pBuffer, UINT stride, UINT num)
+void SnctDX12Context::SetVertexBuffer(UINT bufferNum, ISnctDXBuffer* pBuffer, UINT stride, UINT vertexNum)
 {
 	ID3D12Resource* tempBuffer = static_cast<SnctDX12Buffer*>(pBuffer)->GetBuffer();
 
 	D3D12_VERTEX_BUFFER_VIEW		vertexBufferView{};
 	vertexBufferView.BufferLocation = tempBuffer->GetGPUVirtualAddress();
 	vertexBufferView.StrideInBytes = stride;
-	vertexBufferView.SizeInBytes = num * stride;
+	vertexBufferView.SizeInBytes = vertexNum * stride;
 
 	m_pCmdList->IASetVertexBuffers(0, 1, &vertexBufferView);
 }

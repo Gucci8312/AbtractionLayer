@@ -60,8 +60,8 @@ private:
 	UINT	TEST_CODE_m_nIndexSize;
 	UINT	TEST_CODE_m_nDescSize;
 
-	ComPtr<ID3D12Resource>						TEST_CODE_m_pVertexBuffer;
-	ComPtr<ID3D12Resource>						TEST_CODE_m_pIndexBuffer;
+	SnctDX12Buffer								TEST_CODE_m_pVertexBuffer;
+	SnctDX12Buffer						TEST_CODE_m_pIndexBuffer;
 	ComPtr<ID3D12DescriptorHeap>				TEST_CODE_m_pObjectHeap;
 	std::vector<ComPtr<ID3D12Resource>>			TEST_CODE_m_pConstantObject;
 	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>	TEST_CODE_m_objectCBV;

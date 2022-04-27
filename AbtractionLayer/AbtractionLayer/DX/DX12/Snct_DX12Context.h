@@ -28,7 +28,7 @@ public:
 	void SetScissorRects(float Width, float Height);
 	void SetPipelineState(ID3D12PipelineState* pPipelineState);
 	void SetGraphicsRootSignature(ID3D12RootSignature* pRootsignature);
-	void SetVertexBuffer(UINT bufferNum, ISnctDXBuffer* pBuffer, UINT stride, UINT num) override final;
+	void SetVertexBuffer(UINT bufferNum, ISnctDXBuffer* pBuffer, UINT stride, UINT vertexNum) override final;
 	void SetIndexBuffer(ISnctDXBuffer* pBuffer, DXGI_FORMAT format, UINT size)	override final;
 	void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)	override final;
 	void DrawIndexedInstanced(UINT indexCount, UINT startIndexLocation, UINT instanceLocation)	override final;

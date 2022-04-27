@@ -336,12 +336,12 @@ void SnctDX12Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 	UpdateObjectBuffer(TEST_CODE_m_pConstantObject[m_frameIndex].Get());
 
 	D3D12_VERTEX_BUFFER_VIEW		vertexBufferView{};
-	vertexBufferView.BufferLocation = TEST_CODE_m_pVertexBuffer->GetGPUVirtualAddress();
+	vertexBufferView.BufferLocation = TEST_CODE_m_pVertexBuffer.GetBuffer()->GetGPUVirtualAddress();
 	vertexBufferView.StrideInBytes = sizeof(Vertex);
 	vertexBufferView.SizeInBytes = (UINT)sizeof(Vertex) * TEST_CODE_m_nVertexSize;
 
 	D3D12_INDEX_BUFFER_VIEW			indexBufferView{};
-	indexBufferView.BufferLocation = TEST_CODE_m_pIndexBuffer->GetGPUVirtualAddress();
+	indexBufferView.BufferLocation = TEST_CODE_m_pIndexBuffer.GetBuffer()->GetGPUVirtualAddress();
 	indexBufferView.Format = DXGI_FORMAT_R32_UINT;
 	indexBufferView.SizeInBytes = (UINT)sizeof(UINT) * TEST_CODE_m_nIndexSize;
 
@@ -398,7 +398,7 @@ void SnctDX12Render::CreateObject(HashKey key, Vertices* vertices, Indices* indi
 		TEST_CODE_m_nIndexSize  = (UINT)indices->size();
 
 		D3D12_RANGE readRange{ 0,0 };
-
+		
 		// vertex
 		{
 			descResource.Width = (UINT)sizeof(Vertex) * vertices->size();
@@ -409,13 +409,12 @@ void SnctDX12Render::CreateObject(HashKey key, Vertices* vertices, Indices* indi
 				&descResource,
 				D3D12_RESOURCE_STATE_GENERIC_READ,
 				nullptr,
-				IID_PPV_ARGS(TEST_CODE_m_pVertexBuffer.GetAddressOf())
-			)))
+				IID_PPV_ARGS(TEST_CODE_m_pVertexBuffer.GetBufferAddress()))))
 				throw "!Failed to crate vertex buffer";
 
 			UINT8* pVertexDataBegin;
 
-			if (FAILED(TEST_CODE_m_pVertexBuffer->Map(
+			if (FAILED(TEST_CODE_m_pVertexBuffer.GetBuffer()->Map(
 				0,
 				&readRange,
 				reinterpret_cast<void**>(&pVertexDataBegin)
@@ -423,7 +422,7 @@ void SnctDX12Render::CreateObject(HashKey key, Vertices* vertices, Indices* indi
 				throw "!Failed to copy vertex";
 
 			memcpy(pVertexDataBegin, vertices->data(), sizeof(Vertex) * vertices->size());
-			TEST_CODE_m_pVertexBuffer->Unmap(0, nullptr);
+			TEST_CODE_m_pVertexBuffer.GetBuffer()->Unmap(0, nullptr);
 		}
 
 		// index
@@ -436,13 +435,13 @@ void SnctDX12Render::CreateObject(HashKey key, Vertices* vertices, Indices* indi
 				&descResource,
 				D3D12_RESOURCE_STATE_GENERIC_READ,
 				nullptr,
-				IID_PPV_ARGS(TEST_CODE_m_pIndexBuffer.GetAddressOf())
+				IID_PPV_ARGS(TEST_CODE_m_pIndexBuffer.GetBufferAddress())
 			)))
 				throw std::runtime_error("!Failed to crate index buffer");
 
 			UINT8* pIndexDataBegin;
 
-			if (FAILED(TEST_CODE_m_pIndexBuffer->Map(
+			if (FAILED(TEST_CODE_m_pIndexBuffer.GetBuffer()->Map(
 				0,
 				&readRange,
 				reinterpret_cast<void**>(&pIndexDataBegin)
@@ -450,7 +449,7 @@ void SnctDX12Render::CreateObject(HashKey key, Vertices* vertices, Indices* indi
 				throw std::runtime_error("!Failed to copy index");
 
 			memcpy(pIndexDataBegin, indices->data(), sizeof(UINT) * indices->size());
-			TEST_CODE_m_pIndexBuffer->Unmap(0, nullptr);
+			TEST_CODE_m_pIndexBuffer.GetBuffer()->Unmap(0, nullptr);
 		}
 
 		// constnt 
