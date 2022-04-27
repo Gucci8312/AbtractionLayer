@@ -85,6 +85,9 @@
     <ClInclude Include="DX\Snct_DXObject.h">
       <Filter>DX</Filter>
     </ClInclude>
+    <ClInclude Include="DX\DX12\Snct_DX12FrameResource.h">
+      <Filter>RenderCore\DX12</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX\DX11\Snct_DX11Render.cpp">
@@ -129,6 +132,7 @@
     <ClCompile Include="DX\Snct_DXObject.cpp">
       <Filter>DX</Filter>
     </ClCompile>
+    <ClCompile Include="DX\DX12\Snct_DX12FrameResource.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DX">
