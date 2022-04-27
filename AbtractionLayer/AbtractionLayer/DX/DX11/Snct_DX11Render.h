@@ -1,11 +1,10 @@
 #pragma once
-#include "../Snct_DXResource.h"
 #include "../Snct_DXRender.h"
-
 #include "Snct_DX11.h"
-#include "Snct_DX11Device.h"
-#include "Snct_DX11Context.h"
-#include "Snct_DX11Objects.h"
+
+#include "Snct_Dx11Context.h"
+#include "Snct_Dx11Device.h"
+
 
 class SnctDX11Render : public SnctDXRender
 {
@@ -31,7 +30,7 @@ private:
 	SnctDX11DSV						m_pDepthStencileView;
 
 	SnctDX11Context					m_pDeferredContext;
-	ComPtr<ID3D11CommandList>		m_pCommandList;
+	SnctDX11Context					m_pCommandList;
 
 	void UpdateObjectBuffer(ID3D11Buffer* pObjectConstant);
 	void UpdateCameraBuffer(ID3D11Buffer* pCameraConstant);
@@ -54,4 +53,6 @@ private:
 
 	void TEST_CODE_CreateCameraConstantBuffer();
 	void TEST_CODE_CreateVSAndPS();
+
+	//SnctDX11Object object;
 };

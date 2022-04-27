@@ -80,7 +80,7 @@ bool SnctApplication::Initialize()
 
 
 
-	pRender = new SnctDX12Render;
+	pRender = new SnctDX11Render;
 	pScene	= new Scene01;
 
 	pScene->SetRender(pRender);

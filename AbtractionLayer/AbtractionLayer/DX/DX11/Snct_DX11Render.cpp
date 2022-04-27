@@ -1,5 +1,3 @@
-#include "../../Snct_Utility.h"
-#include "../Snct_DXShaderLibrary.h"
 #include "Snct_DX11Render.h"
 
 void SnctDX11Render::Build(HWND hWnd)
@@ -245,7 +243,7 @@ void SnctDX11Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 	m_pDeferredContext.GetContext()->IASetInputLayout(TEST_CODE_m_pInputLayout.Get());
 	m_pDeferredContext.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	m_pDeferredContext.GetContext()->DrawIndexedInstanced(TEST_CODE_nIndexSize, 100, 0, 0, 0);
+	m_pDeferredContext.GetContext()->DrawIndexedInstanced(TEST_CODE_nIndexSize, 1, 0, 0, 0);
 }
 
 void SnctDX11Render::CreateObject(HashKey key, Vertices* vertices, Indices* indices)
@@ -319,9 +317,6 @@ void SnctDX11Render::CreateObject(HashKey key, Vertices* vertices, Indices* indi
 	{
 		SnctRuntimeError(e);
 	}
-
-
-
 }
 
 void SnctDX11Render::UpdateCameraBuffer(ID3D11Buffer* pCameraConstant)

@@ -1,9 +1,9 @@
 #pragma once
 #include "Snct_DXResource.h"
 #include "Snct_DXConstantParameter.h"
-#include "../Snct_DXShaderLibrary.h"
+#include "Snct_DXShaderLibrary.h"
 #include "Interface/ISnct_DXDevice.h"
-#include "Snct_DX12Context.h"
+#include "Interface/ISnct_DXContext.h"
 #include <memory>
 
 class SnctDXObject

@@ -1,12 +1,12 @@
-// DirectX12 Management file...
 #pragma once
 #include "../Snct_DXRender.h"
 #include "Snct_DX12.h"
+
 #include "Snct_Dx12Context.h"
 #include "Snct_Dx12Device.h"
 #include "Snct_DX12CmdQueue.h"
-#include "../Snct_DXResource.h"
-#include "../Snct_DXConstantParameter.h"
+
+#include "SnctDX12_Object.h"
 
 // A class that manages DirectX12 render core
 class SnctDX12Render : public SnctDXRender
@@ -61,7 +61,7 @@ private:
 	UINT	TEST_CODE_m_nDescSize;
 
 	SnctDX12Buffer								TEST_CODE_m_pVertexBuffer;
-	SnctDX12Buffer						TEST_CODE_m_pIndexBuffer;
+	SnctDX12Buffer								TEST_CODE_m_pIndexBuffer;
 	ComPtr<ID3D12DescriptorHeap>				TEST_CODE_m_pObjectHeap;
 	std::vector<ComPtr<ID3D12Resource>>			TEST_CODE_m_pConstantObject;
 	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>	TEST_CODE_m_objectCBV;

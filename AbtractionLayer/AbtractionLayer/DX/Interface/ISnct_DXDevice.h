@@ -12,3 +12,5 @@ public:
 	virtual HRESULT CreateDevice(D3D_FEATURE_LEVEL Level) = 0;
 private:
 };
+
+

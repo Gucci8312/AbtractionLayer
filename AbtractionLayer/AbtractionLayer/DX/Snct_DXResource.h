@@ -13,7 +13,6 @@ typedef enum SNCT_USAGE
 	USAGE_STAGING = 3
 } 	SNCT_USAGE;
 
-
 // Texture settings
 typedef struct SNCT_TEXTURE2D_DESC
 {
@@ -60,6 +59,16 @@ typedef enum SNCT_RESOURCE_DIMENSION
 	RESOURCE_DIMENSION_TEXTURE2D = 3,
 	RESOURCE_DIMENSION_TEXTURE3D = 4
 } 	RESOURCE_DIMENSION;
+
+template<typename T>
+struct ConstantBufferView
+{
+	D3D12_CONSTANT_BUFFER_VIEW_DESC Desc;
+	D3D12_CPU_DESCRIPTOR_HANDLE     HandleCPU;
+	D3D12_GPU_DESCRIPTOR_HANDLE     HandleGPU;
+	T* pBuffer;
+};
+
 #pragma endregion
 
 

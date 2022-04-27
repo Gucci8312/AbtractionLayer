@@ -4,9 +4,6 @@
     <ClInclude Include="DX\DX11\Snct_DX11.h">
       <Filter>DX\DX11</Filter>
     </ClInclude>
-    <ClInclude Include="DX\DX11\Snct_DX11Render.h">
-      <Filter>DX\DX11</Filter>
-    </ClInclude>
     <ClInclude Include="DX\DX12\Snct_DX12.h">
       <Filter>DX\DX12</Filter>
     </ClInclude>
@@ -58,9 +55,6 @@
     <ClInclude Include="DX\DX12\Snct_DX12Device.h">
       <Filter>RenderCore\DX12</Filter>
     </ClInclude>
-    <ClInclude Include="DX\DX11\Snct_DX11Device.h">
-      <Filter>RenderCore\DX11</Filter>
-    </ClInclude>
     <ClInclude Include="DX\DX11\Snct_DX11Context.h">
       <Filter>RenderCore\DX11</Filter>
     </ClInclude>
@@ -76,18 +70,21 @@
     <ClInclude Include="DX\Interface\ISnct_DXContext.h">
       <Filter>RenderCore\Inerface</Filter>
     </ClInclude>
-    <ClInclude Include="DX\DX11\Snct_DX11Objects.h">
+    <ClInclude Include="DX\DX12\Snct_DX12FrameResource.h">
+      <Filter>RenderCore\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX12\SnctDX12_Object.h" />
+    <ClInclude Include="DX\Interface\Snct_DXObject.h" />
+    <ClInclude Include="DX\DX11\Snct_DX11Render.h">
       <Filter>DX\DX11</Filter>
     </ClInclude>
-    <ClInclude Include="DX\Interface\ISnct_DXObject.h">
-      <Filter>RenderCore\Inerface</Filter>
+    <ClInclude Include="DX\DX11\Snct_DX11Device.h">
+      <Filter>RenderCore\DX11</Filter>
     </ClInclude>
     <ClInclude Include="DX\Snct_DXObject.h">
       <Filter>DX</Filter>
     </ClInclude>
-    <ClInclude Include="DX\DX12\Snct_DX12FrameResource.h">
-      <Filter>RenderCore\DX12</Filter>
-    </ClInclude>
+    <ClInclude Include="DX\DX11\Snct_DX11Object.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DX\DX11\Snct_DX11Render.cpp">
@@ -126,13 +123,9 @@
     <ClCompile Include="DX\DX12\Snct_DX12Render.cpp">
       <Filter>DX\DX12</Filter>
     </ClCompile>
-    <ClCompile Include="DX\DX11\Snct_DX11Objects.cpp">
-      <Filter>DX\DX11</Filter>
-    </ClCompile>
-    <ClCompile Include="DX\Snct_DXObject.cpp">
-      <Filter>DX</Filter>
-    </ClCompile>
     <ClCompile Include="DX\DX12\Snct_DX12FrameResource.cpp" />
+    <ClCompile Include="DX\DX12\SnctDX12_Object.cpp" />
+    <ClCompile Include="DX\DX11\Snct_DX11Object.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="DX">

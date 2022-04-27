@@ -9,10 +9,10 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	~SnctDX11Context() { m_pCmdList.Reset(), m_pContext.Reset(); }
+	~SnctDX11Context() {  m_pContext.Reset(); }
 
 	// Getter
-	ID3D12GraphicsCommandList* Get() { return m_pCmdList.Get(); }
+	//ID3D12GraphicsCommandList* Get() { return m_pCmdList.Get(); }
 	ID3D11DeviceContext* GetContext() { return m_pContext.Get(); }
 	ID3D11DeviceContext** GetContextAddress() { return m_pContext.GetAddressOf(); }
 
@@ -37,6 +37,6 @@ private:
 	//---------------------------------------------------------------------------
 	// private variables.
 	//---------------------------------------------------------------------------	
-	ComPtr<ID3D12GraphicsCommandList>	m_pCmdList;
+	//ComPtr<ID3D12GraphicsCommandList>	m_pCmdList;
 	ComPtr<ID3D11DeviceContext>			m_pContext;
 };

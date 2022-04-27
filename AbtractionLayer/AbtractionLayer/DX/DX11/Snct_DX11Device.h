@@ -1,3 +1,4 @@
+#include "Snct_DX11.h"
 #include "../Interface/ISnct_DXDevice.h"
 
 // A class that manages DirectX11 device 

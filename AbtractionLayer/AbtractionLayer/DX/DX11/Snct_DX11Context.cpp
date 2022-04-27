@@ -57,6 +57,22 @@ void SnctDX11Context::Close(bool RestoreDeferredContextState, ID3D11CommandList*
 
 }
 
+void SnctDX11Context::SetVertexBuffer(UINT bufferNum, ISnctDXBuffer* pBuffer, UINT stride, UINT num)
+{
+}
+
+void SnctDX11Context::SetIndexBuffer(ISnctDXBuffer* pBuffer, DXGI_FORMAT format, UINT size)
+{
+}
+
+void SnctDX11Context::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)
+{
+}
+
+void SnctDX11Context::DrawIndexedInstanced(UINT indexCount, UINT startIndexLocation, UINT instanceLocation)
+{
+}
+
 void SnctDX11Context::RegisterCmdList(ID3D11CommandList** cmdList)
 {
 	m_pContext->FinishCommandList(true, cmdList);
