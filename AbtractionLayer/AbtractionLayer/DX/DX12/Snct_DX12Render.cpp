@@ -867,6 +867,22 @@ void SnctDX12Render::TEST_CODE_CreatePipelineState()
 	}
 }
 
+void SnctDX12Render::TEST_CODE_LoadContext()
+{
+	struct threadWrapper
+	{
+		static unsigned int WINAPI thunk(LPVOID lpParameter)
+		{
+			ThreadParameter* prameter = reinterpret_cast<ThreadParameter*>(lpParameter);
+
+			return 0;
+		}
+	};
+
+
+
+}
+
 void SnctDX12Render::TEST_CODE_WorkerThread(int threadIndex)
 {
 	while (threadIndex >= 0 && threadIndex < NumContexts)

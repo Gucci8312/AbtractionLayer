@@ -95,6 +95,7 @@ private:
 	void TEST_CODE_CreateRootSignature();
 	void TEST_CODE_CreatePipelineState();
 
+	void TEST_CODE_LoadContext();
 	void TEST_CODE_WorkerThread(int threadIndex);
 };
 
