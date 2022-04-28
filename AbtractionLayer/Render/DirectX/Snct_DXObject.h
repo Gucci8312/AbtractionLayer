@@ -17,6 +17,9 @@ protected:
 
 	ISnctDXBuffer* m_pVBuffer;
 	ISnctDXBuffer* m_pIBuffer;
+	ISnctDXBuffer* m_pOBuffer;
+	ISnctDXBuffer* m_pCBuffer;
+
 private:
 
 };

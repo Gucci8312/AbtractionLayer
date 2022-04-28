@@ -1,5 +1,8 @@
 #include "Snct_DX12Object.h"
 
+#include <d3dcompiler.h>
+#pragma comment(lib, "d3dcompiler.lib")
+
 bool SnctDX12Object::Create(ISnctDXDevice* pDevice)
 {
 	SnctDX12Device* pTempDevice = static_cast<SnctDX12Device*>(pDevice);
@@ -73,22 +76,58 @@ bool SnctDX12Object::Create(ISnctDXDevice* pDevice)
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC descPipeline{};
 	descPipeline.pRootSignature	= m_pRootSignature.Get();
 
+	UINT debugFlag = 0;
+	#if defined(_DEBUG)
+	debugFlag = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
+	#endif
+
 	// vertex
 	{
-		DX12VertexShader* vertex = pShaderCompiler->LoadShader<DX12VertexShader>(DX12_SHADER_TYPE::VERTEX, L"vertex.hlsl");
+		ComPtr<ID3DBlob> vs;
+
+		D3DCompileFromFile(
+			L"",
+			nullptr,
+			nullptr,
+			"main",
+			"vs_5_0",
+			debugFlag,
+			0,
+			vs.GetAddressOf(),
+			nullptr
+		);
 
 		D3D12_SHADER_BYTECODE shaderBytecode{};
 		shaderBytecode.pShaderBytecode	= vs->GetBufferPointer();
 		shaderBytecode.BytecodeLength	= vs->GetBufferSize();
+		descPipeline.VS					= shaderBytecode;
 
-		descPipeline.InputLayout.pInputElementDescs		= vertex->layout.data();
-		descPipeline.InputLayout.NumElements			= (UINT)vertex->layout.size();
-		descPipeline.VS									= shaderBytecode;
+		D3D12_INPUT_ELEMENT_DESC descInputLayout[] = {
+			{"POSITION"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"NORMAL"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"COLOR"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0},
+			{"TEXCOORD"		, 0, DXGI_FORMAT_R32G32_FLOAT		, 0, D3D12_APPEND_ALIGNED_ELEMENT, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0}
+		};
+		
+		descPipeline.InputLayout.pInputElementDescs		= descInputLayout;
+		descPipeline.InputLayout.NumElements			= _countof(descInputLayout);
 	}
 
 	// pixe
 	{
-		DX12PixelShader* pixel = pShaderCompiler->LoadShader<DX12PixelShader>(DX12_SHADER_TYPE::PIXEL, L"pixel.hlsl");
+		ComPtr<ID3DBlob> ps;
+
+		D3DCompileFromFile(
+			L"",
+			nullptr,
+			nullptr,
+			"main",
+			"vs_5_0",
+			debugFlag,
+			0,
+			ps.GetAddressOf(),
+			nullptr
+		);
 
 		D3D12_SHADER_BYTECODE shaderBytecode{};
 		shaderBytecode.pShaderBytecode	= ps->GetBufferPointer();
@@ -171,6 +210,136 @@ bool SnctDX12Object::Create(ISnctDXDevice* pDevice)
 		IID_PPV_ARGS(m_pPipelineState.GetAddressOf())
 	);
 
+
+	D3D12_HEAP_PROPERTIES heapProperties{};
+	heapProperties.Type					= D3D12_HEAP_TYPE_UPLOAD;
+	heapProperties.CPUPageProperty		= D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+	heapProperties.CreationNodeMask		= 1;
+	heapProperties.VisibleNodeMask		= 1;
+
+	D3D12_RESOURCE_DESC descResource{};
+	descResource.Dimension			= D3D12_RESOURCE_DIMENSION_BUFFER;
+	descResource.Alignment			= 0;
+	descResource.Height				= 1;
+	descResource.DepthOrArraySize	= 1;
+	descResource.MipLevels			= 1;
+	descResource.Format				= DXGI_FORMAT_UNKNOWN;
+	descResource.SampleDesc			= { 1, 0 };
+	descResource.Layout				= D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+	descResource.Flags				= D3D12_RESOURCE_FLAG_NONE;
+
+	D3D12_RANGE readRange{ 0,0 };
+
+	// vertex
+	{
+		descResource.Width = (UINT)sizeof(Vertex) * m_Vertices.size();
+
+		if (FAILED(pTempDevice->GetDevice()->CreateCommittedResource(
+			&heapProperties,
+			D3D12_HEAP_FLAG_NONE,
+			&descResource,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(pTempVBuffer->GetBufferAddress())
+		)))
+			throw "!Failed to crate vertex buffer";
+
+
+		UINT8* pVertexDataBegin;
+
+		if (FAILED(pTempVBuffer->GetBuffer()->Map(
+			0,
+			&readRange,
+			reinterpret_cast<void**>(&pVertexDataBegin)
+		)))
+			throw "!Failed to copy vertex";
+
+		memcpy(pVertexDataBegin, m_Vertices.data(), descResource.Width);
+		pTempVBuffer->GetBuffer()->Unmap(0, nullptr);
+	}
+
+	// index
+	{
+		descResource.Width = (UINT)sizeof(UINT) * m_Indices.size();
+
+		if (FAILED(pTempDevice->GetDevice()->CreateCommittedResource(
+			&heapProperties,
+			D3D12_HEAP_FLAG_NONE,
+			&descResource,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(pTempIBuffer->GetBufferAddress())
+		)))
+			throw "!Failed to crate index buffer";
+
+		UINT8* pIndexDataBegin;
+
+		if (FAILED(pTempIBuffer->GetBuffer()->Map(
+			0,
+			&readRange,
+			reinterpret_cast<void**>(&pIndexDataBegin)
+		)))
+			throw "!Failed to copy index";
+
+		memcpy(pIndexDataBegin, m_Indices.data(), descResource.Width);
+		pTempIBuffer->GetBuffer()->Unmap(0, nullptr);
+	}
+
+	{
+		D3D12_HEAP_PROPERTIES heapProperties{};
+		heapProperties.Type					= D3D12_HEAP_TYPE_UPLOAD;
+		heapProperties.CPUPageProperty		= D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+		heapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+		heapProperties.CreationNodeMask		= 1;
+		heapProperties.VisibleNodeMask		= 1;
+
+		D3D12_RESOURCE_DESC descResource{};
+		descResource.Dimension				= D3D12_RESOURCE_DIMENSION_BUFFER;
+		descResource.Alignment				= 0;
+		descResource.Width					= (UINT)((sizeof(XMConstantObject) + 0xff) & ~0xff);
+		descResource.Height					= 1;
+		descResource.DepthOrArraySize		= 1;
+		descResource.MipLevels				= 1;
+		descResource.Format					= DXGI_FORMAT_UNKNOWN;
+		descResource.SampleDesc				= { 1, 0 };
+		descResource.Layout					= D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+		descResource.Flags					= D3D12_RESOURCE_FLAG_NONE;
+
+		D3D12_DESCRIPTOR_HEAP_DESC	descDescriptorHeap{};
+		descDescriptorHeap.NumDescriptors	= 2;
+		descDescriptorHeap.Type				= D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+		descDescriptorHeap.Flags			= D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		descDescriptorHeap.NodeMask			= 0;
+		
+		pTempDevice->GetDevice()->CreateDescriptorHeap(&descDescriptorHeap, IID_PPV_ARGS(object.pObjectHeap.GetAddressOf()));
+		object.nDescSize = pTempDevice->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+		if (FAILED(pTempDevice->GetDevice()->CreateCommittedResource(
+			&heapProperties,
+			D3D12_HEAP_FLAG_NONE,
+			&descResource,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(object.pConstantObject[i].GetAddressOf())
+		)))
+			throw "!Failed to create constant buffer";
+
+
+		D3D12_CONSTANT_BUFFER_VIEW_DESC descConstant{};
+		D3D12_CPU_DESCRIPTOR_HANDLE		cbvCpuHandle{};
+
+		descConstant.BufferLocation		= object.pConstantObject[i]->GetGPUVirtualAddress();
+		descConstant.SizeInBytes		= (UINT)((sizeof(XMConstantObject) + 0xff) & ~0xff);
+		cbvCpuHandle.ptr				= object.pObjectHeap->GetCPUDescriptorHandleForHeapStart().ptr + i * object.nDescSize;
+
+		pTempDevice->GetDevice()->CreateConstantBufferView(&descConstant, cbvCpuHandle);
+
+		D3D12_GPU_DESCRIPTOR_HANDLE cbvGpuHandle{};
+		cbvGpuHandle.ptr = object.pObjectHeap->GetGPUDescriptorHandleForHeapStart().ptr + i * object.nDescSize;
+		object.objectCBV[i] = cbvGpuHandle;
+	}
+
 	return false;
 }
 
@@ -185,5 +354,4 @@ void SnctDX12Object::Draw(ISnctDXContext* pCmdList)
 	pTempCmdList->SetViewPort				(g_screenWidth, g_screenHeight, 0.0f, 1.0f);
 	pTempCmdList->SetScissorRects			(g_screenWidth, g_screenHeight);
 	pTempCmdList->SetGraphicsRootSignature	(m_pRootSignature.Get());
-	
 }
