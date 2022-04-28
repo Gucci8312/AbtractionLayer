@@ -1,5 +1,7 @@
 #include "Snct_Application.h"
 
+#include "Snct_Scene01_Impl.h"
+
 //------------------------------------------------------------------------------
 /// Window Procedure
 /// \param[in]      Window handle
@@ -60,10 +62,14 @@ bool SnctApplication::Initialize()
 	FreeConsole();
 
 	m_pRender = std::make_unique<SnctDX12Render>();
+	m_pScene = std::make_unique<SnctScene01>();
 
 	if (!m_pRender->Build(m_hWnd)) return false;
 	m_deferredContext = new SnctDX12Context;
 	m_pRender->CreateCommandList(&m_deferredContext);
+
+	m_pScene->SetRender(m_pRender.get());
+	m_pScene->Initialize();
 
 	return true;
 }
@@ -191,6 +197,9 @@ void SnctApplication::MainLoop()
 		{
 			// Process
 			m_pRender->BeforeRender(m_deferredContext);
+
+			m_pScene->Draw(m_deferredContext);
+
 			m_pRender->AfterRender(m_deferredContext);
 		}
 	}
