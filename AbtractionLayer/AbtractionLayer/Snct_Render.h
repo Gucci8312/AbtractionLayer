@@ -11,7 +11,10 @@ enum class SNCT_DRAW_FLAG {
 class ISnctRender
 {
 public:
-	virtual void Build(HWND* hWnd) = 0;
+
+	virtual ~ISnctRender() {};
+
+	virtual void Build(HWND hWnd) = 0;
 	virtual void RenderBegin() = 0;
 	virtual void RenderEnd() = 0;
 

@@ -1,4 +1,4 @@
-#include "Snct_Dx12CmdList.h"
+#include "Snct_Dx12Context.h"
 
 //------------------------------------------------------------------------------
 /// Create a command list
@@ -7,10 +7,10 @@
 /// \param[in]		CommndAllocator
 /// \return			HRESULT
 //------------------------------------------------------------------------------
-HRESULT SnctDX12CmdList::Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Device, ID3D12CommandAllocator* CmdAllocator)
+HRESULT SnctDX12Context::Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Device, ID3D12PipelineState* pipelineState, ID3D12CommandAllocator* CmdAllocator)
 {
 	return Device->CreateCommandList(0, Type,
-		CmdAllocator, nullptr, IID_PPV_ARGS(m_pCmdList.ReleaseAndGetAddressOf()));
+		CmdAllocator, pipelineState, IID_PPV_ARGS(m_pCmdList.ReleaseAndGetAddressOf()));
 }
 
 
@@ -21,11 +21,10 @@ HRESULT SnctDX12CmdList::Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Devi
 /// \param[in]		Rect
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::ClearRTV(ISnctDxRTV* DescriptorHandle, UINT NumRects, D3D12_RECT* pRects)
+void SnctDX12Context::ClearRTV(ISnctDXRTV* DescriptorHandle, float clearColor[4], UINT NumRects, RECT* pRects)
 {
-	float clearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
-	SnctDx12RTV* TempRTV = static_cast<SnctDx12RTV*>(DescriptorHandle);
-	m_pCmdList->ClearRenderTargetView(TempRTV->GetRTV(), clearColor, 0, pRects);
+	SnctDX12RTV* TempRTV = static_cast<SnctDX12RTV*>(DescriptorHandle);
+	m_pCmdList->ClearRenderTargetView(TempRTV->GetHandle(), clearColor, NumRects, pRects);
 }
 
 
@@ -39,10 +38,10 @@ void SnctDX12CmdList::ClearRTV(ISnctDxRTV* DescriptorHandle, UINT NumRects, D3D1
 /// \param[in]		Rects
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::ClearDSV(ISnctDxDSV* DescriptorHandle, D3D12_CLEAR_FLAGS Flag, float Depth, UINT8 Stencil, UINT NumRects, D3D12_RECT* pRects)
+void SnctDX12Context::ClearDSV(ISnctDXDSV* DescriptorHandle, UINT Flag, float Depth, UINT8 Stencil, UINT NumRects, RECT* pRects)
 {
-	SnctDx12DSV* TempDSV = static_cast<SnctDx12DSV*>(DescriptorHandle);
-	m_pCmdList.Get()->ClearDepthStencilView(*TempDSV->GetpHandle(), Flag, Depth, Stencil, NumRects, pRects);
+	SnctDX12DSV* TempDSV = static_cast<SnctDX12DSV*>(DescriptorHandle);
+	m_pCmdList.Get()->ClearDepthStencilView(*TempDSV->GetpHandle(), static_cast<D3D12_CLEAR_FLAGS>(Flag), Depth, Stencil, NumRects, pRects);
 }
 
 
@@ -52,7 +51,7 @@ void SnctDX12CmdList::ClearDSV(ISnctDxDSV* DescriptorHandle, D3D12_CLEAR_FLAGS F
 /// \param[in]		Pipeline state
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::Reset(ID3D12CommandAllocator* CmdAllocator, ID3D12PipelineState* PipelineState)
+void SnctDX12Context::Reset(ID3D12CommandAllocator* CmdAllocator, ID3D12PipelineState* PipelineState)
 {
 	m_pCmdList->Reset(CmdAllocator, PipelineState);
 }
@@ -64,10 +63,10 @@ void SnctDX12CmdList::Reset(ID3D12CommandAllocator* CmdAllocator, ID3D12Pipeline
 /// \param[in]		Descriptor handle
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::SetRTV(UINT NumDescriptors, ISnctDxRTV* DescriptorHandle, bool SingleHandleToDescriptorRange, ISnctDxDSV* DSHandle)
+void SnctDX12Context::SetRTV(UINT NumDescriptors, ISnctDXRTV* DescriptorHandle, ISnctDXDSV* DSHandle, bool SingleHandleToDescriptorRange)
 {
-	SnctDx12RTV* TempRTV = static_cast<SnctDx12RTV*>(DescriptorHandle);
-	SnctDx12DSV* TempDSV = static_cast<SnctDx12DSV*>(DSHandle);
+	SnctDX12RTV* TempRTV = static_cast<SnctDX12RTV*>(DescriptorHandle);
+	SnctDX12DSV* TempDSV = static_cast<SnctDX12DSV*>(DSHandle);
 	m_pCmdList.Get()->OMSetRenderTargets(NumDescriptors, TempRTV->GetpHandle(), SingleHandleToDescriptorRange, TempDSV->GetpHandle());
 }
 
@@ -80,7 +79,7 @@ void SnctDX12CmdList::SetRTV(UINT NumDescriptors, ISnctDxRTV* DescriptorHandle, 
 /// \param[in]		Max depth
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::SetViewPort(float Width, float Height, float MinDepth, float MaxDepth)
+void SnctDX12Context::SetViewPort(float Width, float Height, float MinDepth, float MaxDepth)
 {
 	// View port settings
 	D3D12_VIEWPORT	viewPort = {};
@@ -101,7 +100,7 @@ void SnctDX12CmdList::SetViewPort(float Width, float Height, float MinDepth, flo
 /// \param[in]		Screen height
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::SetScissorRects(float Width, float Height)
+void SnctDX12Context::SetScissorRects(float Width, float Height)
 {
 	// Scissor rectangle settings
 	D3D12_RECT	scissor = {};
@@ -112,13 +111,56 @@ void SnctDX12CmdList::SetScissorRects(float Width, float Height)
 	m_pCmdList->RSSetScissorRects(1, &scissor);
 }
 
+void SnctDX12Context::SetPipelineState(ID3D12PipelineState* pPipelineState)
+{
+	m_pCmdList->SetPipelineState(pPipelineState);
+}
+
+void SnctDX12Context::SetGraphicsRootSignature(ID3D12RootSignature* pRootsignature)
+{
+	m_pCmdList->SetGraphicsRootSignature(pRootsignature);
+}
+
+void SnctDX12Context::SetVertexBuffer(UINT bufferNum, ISnctDXBuffer* pBuffer, UINT stride, UINT vertexNum)
+{
+	ID3D12Resource* tempBuffer = static_cast<SnctDX12Buffer*>(pBuffer)->GetBuffer();
+
+	D3D12_VERTEX_BUFFER_VIEW		vertexBufferView{};
+	vertexBufferView.BufferLocation = tempBuffer->GetGPUVirtualAddress();
+	vertexBufferView.StrideInBytes = stride;
+	vertexBufferView.SizeInBytes = vertexNum * stride;
+
+	m_pCmdList->IASetVertexBuffers(0, 1, &vertexBufferView);
+}
+
+void SnctDX12Context::SetIndexBuffer(ISnctDXBuffer* pBuffer, DXGI_FORMAT format, UINT size)
+{
+	D3D12_INDEX_BUFFER_VIEW			indexBufferView{};
+	ID3D12Resource* tempBuffer = static_cast<SnctDX12Buffer*>(pBuffer)->GetBuffer();
+	indexBufferView.BufferLocation = tempBuffer->GetGPUVirtualAddress();
+	indexBufferView.Format = format;
+	indexBufferView.SizeInBytes = size;
+
+	m_pCmdList->IASetIndexBuffer(&indexBufferView);
+}
+
+void SnctDX12Context::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)
+{
+	m_pCmdList->IASetPrimitiveTopology(topology);
+}
+
+void SnctDX12Context::DrawIndexedInstanced(UINT indexCount,UINT startIndexLocation,UINT instanceLocation)
+{
+	m_pCmdList->DrawIndexedInstanced(indexCount,1,0,0,0);
+}
+
 
 //------------------------------------------------------------------------------
 /// Close command list
 /// \param			none
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::Close()
+void SnctDX12Context::Close()
 {
 	m_pCmdList->Close();
 }
@@ -132,13 +174,15 @@ void SnctDX12CmdList::Close()
 /// \param[in]		After state
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12CmdList::SetResourceBarrier(ID3D12Resource* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After)
+void SnctDX12Context::SetResourceBarrier(ISnctDXBuffer* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After)
 {
+	SnctDX12Buffer* tempResource = static_cast<SnctDX12Buffer*>(Resource);
+
 	// Resource barrier settings
 	D3D12_RESOURCE_BARRIER BarrierDesc;
 	ZeroMemory(&BarrierDesc, sizeof(BarrierDesc));
 	BarrierDesc.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-	BarrierDesc.Transition.pResource = Resource;
+	BarrierDesc.Transition.pResource = tempResource->GetBuffer();
 	BarrierDesc.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
 	BarrierDesc.Transition.StateBefore = Before;
 	BarrierDesc.Transition.StateAfter = After;

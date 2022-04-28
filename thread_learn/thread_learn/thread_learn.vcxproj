@@ -18,90 +18,11 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\resource\box.h" />
-    <ClInclude Include="..\resource\camera.h" />
-    <ClInclude Include="..\resource\scene01.h" />
-    <ClInclude Include="DX\DX11\Snct_DX11.h" />
-    <ClInclude Include="DX\DX11\Snct_DX11Context.h" />
-    <ClInclude Include="DX\DX11\Snct_DX11Device.h" />
-    <ClInclude Include="DX\DX11\Snct_DX11Object.h" />
-    <ClInclude Include="DX\DX11\Snct_DX11Render.h" />
-    <ClInclude Include="DX\DX12\SnctDX12_Object.h" />
-    <ClInclude Include="DX\DX12\Snct_DX12.h" />
-    <ClInclude Include="DX\DX12\Snct_DX12Context.h" />
-    <ClInclude Include="DX\DX12\Snct_DX12CmdQueue.h" />
-    <ClInclude Include="DX\DX12\Snct_DX12Device.h" />
-    <ClInclude Include="DX\DX12\Snct_DX12FrameResource.h" />
-    <ClInclude Include="DX\DX12\Snct_DX12Render.h" />
-    <ClInclude Include="DX\Interface\ISnct_DXCmdQueue.h" />
-    <ClInclude Include="DX\Interface\ISnct_DXContext.h" />
-    <ClInclude Include="DX\Interface\ISnct_DXDevice.h" />
-    <ClInclude Include="DX\Interface\Snct_DXObject.h" />
-    <ClInclude Include="DX\Snct_DXConstantParameter.h" />
-    <ClInclude Include="DX\Snct_DXObject.h" />
-    <ClInclude Include="DX\Snct_DXRender.h" />
-    <ClInclude Include="DX\Snct_DXResource.h" />
-    <ClInclude Include="DX\Snct_DXShaderLibrary.h" />
-    <ClInclude Include="Snct_Application.h" />
-    <ClInclude Include="Snct_DXFrameResource.h" />
-    <ClInclude Include="Snct_Math.h" />
-    <ClInclude Include="Snct_Object.h" />
-    <ClInclude Include="Snct_Render.h" />
-    <ClInclude Include="Snct_ResouceLibary.h" />
-    <ClInclude Include="Snct_Scene.h" />
-    <ClInclude Include="Snct_Utility.h" />
-    <ClInclude Include="Snct_Windows.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="DX\DX11\Snct_DX11Context.cpp" />
-    <ClCompile Include="DX\DX11\Snct_DX11Device.cpp" />
-    <ClCompile Include="DX\DX11\Snct_DX11Object.cpp" />
-    <ClCompile Include="DX\DX11\Snct_DX11Render.cpp" />
-    <ClCompile Include="DX\DX12\SnctDX12_Object.cpp" />
-    <ClCompile Include="DX\DX12\Snct_DX12Context.cpp" />
-    <ClCompile Include="DX\DX12\Snct_DX12CmdQueue.cpp" />
-    <ClCompile Include="DX\DX12\Snct_DX12Device.cpp" />
-    <ClCompile Include="DX\DX12\Snct_DX12FrameResource.cpp" />
-    <ClCompile Include="DX\DX12\Snct_DX12Render.cpp" />
-    <ClCompile Include="DX\Snct_DXRender.cpp" />
-    <ClCompile Include="DX\Snct_DXResource.cpp" />
-    <ClCompile Include="DX\Snct_DXShaderLibrary.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="Snct_Application.cpp" />
-    <ClCompile Include="Snct_DXFrameResource.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="DX\Shader\n_pixel.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-    <FxCompile Include="DX\Shader\n_vertex.hlsl">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </FxCompile>
-  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{6d0e61c8-0b01-4ba1-a42c-136fffd6f48a}</ProjectGuid>
-    <RootNamespace>AbtractionLayer</RootNamespace>
+    <ProjectGuid>{73c19cba-432c-4d77-accb-b44b63382a74}</ProjectGuid>
+    <RootNamespace>threadlearn</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -109,27 +30,27 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -167,7 +88,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -196,7 +116,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -219,6 +138,12 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="main.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

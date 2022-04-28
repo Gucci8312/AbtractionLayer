@@ -1,24 +1,26 @@
 #pragma once
 #include "Snct_DX12.h"
-#include "../ISnct_DxDevice.h"
-#include "../../Snct_Windows.h"
-#include "../Snct_DXResource.h"
+#include "../Interface/ISnct_DxDevice.h"
 
-class SnctDX12Device :
-	public ISnctDxDevice
+// A class that manages DirectX12 devices
+class SnctDX12Device : public ISnctDxDevice
 {
 public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	HRESULT Create(D3D_FEATURE_LEVEL Level);
-	HRESULT CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE commandListType,
-		ID3D12CommandAllocator** cmdAllocator);
-	ID3D12Device* GetDevice() { return m_pDevice.Get(); }
+	// Getter
 	SnctDX12Device* Get() { return this; }
-	HRESULT CreateCommandQueue(D3D12_COMMAND_QUEUE_DESC queueDesc, ID3D12CommandQueue** commandqueue);
+	ID3D12Device* GetDevice() { return m_pDevice.Get(); }
+
+	// Create
+	HRESULT CreateDevice(D3D_FEATURE_LEVEL Level)override final;
+	HRESULT CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE commandListType,
+		ID3D12CommandAllocator** ppCmdAllocator);
+	HRESULT CreateCommandQueue(D3D12_COMMAND_QUEUE_DESC CmdQueueDesc, ID3D12CommandQueue** ppCommandQueue);
 	unsigned int GetIncrementHandleSize(D3D12_DESCRIPTOR_HEAP_TYPE type);
-	void CreateRTV(ID3D12Resource* buffer, D3D12_RENDER_TARGET_VIEW_DESC rtvDesc, D3D12_CPU_DESCRIPTOR_HANDLE rtvHandle);
+	HRESULT CreateRTV(ISnctDXBuffer* pBuckBuffer, ISnctDXRTV* pRTV) override final;
+	HRESULT CreateDSV(ISnctDXBuffer* pDepthTexture, ISnctDXDSV* pDSV) override final;
 private:
 	//---------------------------------------------------------------------------
 	// private variables.

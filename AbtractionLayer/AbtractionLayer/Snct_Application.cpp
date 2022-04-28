@@ -1,10 +1,23 @@
 #include "Snct_Utility.h"
 #include "Snct_Application.h"
 
-//----後で消す--------
+#include "Snct_Render.h"
+#include "Snct_Scene.h"
+#include "DX/DX11/Snct_DX11Render.h"
 #include "DX/DX12/Snct_DX12Render.h"
-SnctDX12Render Dx12;
-//------------------------
+
+#include "../resource/scene01.h"
+
+//std::unique_ptr<ISnctRender>	pRender;
+ISnctRender*	pRender;
+//std::unique_ptr<ISnctScene>		pScene;
+ISnctScene*		pScene;
+
+// デバッグのために追加-----------------------
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+//----------------------------------------
 
 //------------------------------------------------------------------------------
 /// Window Procedure
@@ -64,7 +77,16 @@ bool SnctApplication::Initialize()
 
 	// Console window destroy
 	FreeConsole();
-	Dx12.Build(&m_hwnd);
+
+
+
+	pRender = new SnctDX11Render;
+	pScene	= new Scene01;
+
+	pScene->SetRender(pRender);
+	pRender->Build(m_hwnd);
+	pScene->Initialize();
+
 	return true;
 }
 
@@ -76,6 +98,14 @@ bool SnctApplication::Initialize()
 //------------------------------------------------------------------------------
 void SnctApplication::Finalize()
 {
+	
+	delete pScene;
+	delete pRender;
+
+	// デバッグのために追加-----------------------
+	_CrtDumpMemoryLeaks();
+	//----------------------------------------
+
 }
 
 
@@ -181,15 +211,14 @@ void SnctApplication::MainLoop()
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
-
-				//-----------------
-				Dx12.RenderBegin();
-				Dx12.RenderEnd();
 			}
 		}
 		else
 		{
-			Sleep(5);
+			pScene->Update();
+			pRender->RenderBegin();
+			pScene->Draw();
+			pRender->RenderEnd();
 		}
 	}
 }

@@ -1,5 +1,11 @@
 #include "Snct_DXRender.h"
 
+
+//------------------------------------------------------------------------------
+/// Set object onstant param(world matrix etc...) 
+/// \param			object transform (pos, rot, scl)
+/// \return			none
+//------------------------------------------------------------------------------
 void SnctDXRender::SetObject(Transform* pTransform)
 {
 	XMVECTOR vecPosition;
@@ -19,6 +25,11 @@ void SnctDXRender::SetObject(Transform* pTransform)
 	XMStoreFloat4x4	(&m_pConstantObject->world, XMMatrixTranspose(mtxWorld));
 }
 
+//------------------------------------------------------------------------------
+/// Set camera onstant param(view matrix etc...) 
+/// \param			camera transform (pos, at, up, far, near, hfov)
+/// \return			none
+//------------------------------------------------------------------------------
 void SnctDXRender::SetCamera(Camera* pCamera)
 {
 	XMVECTOR position;
@@ -31,11 +42,15 @@ void SnctDXRender::SetCamera(Camera* pCamera)
 		XMVectorSet(pCamera->up.x, pCamera->up.y, pCamera->up.z, 0.0f)
 	);
 
-	mtxProjection	= XMMatrixPerspectiveFovLH(XMConvertToRadians(pCamera->fFovY), 16.0f / 9.0f, pCamera->fNear, pCamera->fFar);
+	mtxProjection	= XMMatrixPerspectiveFovLH(XMConvertToRadians(pCamera->fFovY), (float)g_screenWidth / (float)g_screenHeight, pCamera->fNear, pCamera->fFar);
 	mtxVP			= XMMatrixMultiply(mtxView, mtxProjection);
 
 	XMStoreFloat4	(&m_pConstantCamera->cameraPosition	, position);
 	XMStoreFloat4x4	(&m_pConstantCamera->view, XMMatrixTranspose(mtxView));
 	XMStoreFloat4x4	(&m_pConstantCamera->projection, XMMatrixTranspose(mtxProjection));
 	XMStoreFloat4x4	(&m_pConstantCamera->vp, XMMatrixTranspose(mtxVP));
+	XMStoreFloat4x4	(&m_pConstantCamera->inversView, XMMatrixInverse(nullptr, XMMatrixTranspose(mtxView)));
+	XMStoreFloat4x4	(&m_pConstantCamera->inversProjection, XMMatrixInverse(nullptr, XMMatrixTranspose(mtxProjection)));
+	XMStoreFloat4x4	(&m_pConstantCamera->inversVp, XMMatrixInverse(nullptr, XMMatrixTranspose(mtxVP)));
+	
 }

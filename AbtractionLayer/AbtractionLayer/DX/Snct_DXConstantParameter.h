@@ -13,7 +13,6 @@ struct XMConstantParam
 struct XMConstantCamera
 {
 	XMFLOAT4	cameraPosition;
-	XMFLOAT4X3	dummy;
 
 	XMFLOAT4X4	view;
 	XMFLOAT4X4	projection;
@@ -26,8 +25,6 @@ struct XMConstantCamera
 struct XMConstantObject
 {
 	XMFLOAT4	objectPosition;
-	XMFLOAT4X3	dummy;
-
 	XMFLOAT4X4	world;
 };
 
