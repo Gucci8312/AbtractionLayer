@@ -52,7 +52,7 @@ private:
 
 public:
 	// RTV と DSV をバインド
-	void Bind(ID3D12GraphicsCommandList* pCommandList, D3D12_CPU_DESCRIPTOR_HANDLE* pRtvHandle, D3D12_CPU_DESCRIPTOR_HANDLE* pDsvHandle);
+	void Bind(ID3D12GraphicsCommandList* pCommandList, const D3D12_CPU_DESCRIPTOR_HANDLE* pRtvHandle, const D3D12_CPU_DESCRIPTOR_HANDLE* pDsvHandle);
 	
 	// コマンドリストのリセット
 	void CmdReset();

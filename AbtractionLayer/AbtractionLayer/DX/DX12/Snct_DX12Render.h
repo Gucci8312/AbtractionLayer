@@ -8,6 +8,8 @@
 
 #include "SnctDX12_Object.h"
 
+#include "Snct_DX12FrameResource.h"
+
 // A class that manages DirectX12 render core
 class SnctDX12Render : public SnctDXRender
 {
@@ -28,24 +30,26 @@ private:
 	//---------------------------------------------------------------------------
 	// private variables
 	//---------------------------------------------------------------------------	
-	static const uint32_t				   m_frameCount = 2;
-	SnctDX12Device						   m_device;
-	SnctDX12CmdQueue			           m_cmdQueue;
-	ComPtr<IDXGISwapChain3>                m_swapChain;
-	ComPtr<ID3D12CommandAllocator>         m_cmdAllocator[m_frameCount];
-	SnctDX12Context						   m_cmdList;
-	ComPtr<ID3D12DescriptorHeap>           m_heapRTV;
-	ComPtr<ID3D12DescriptorHeap>           m_heapDSV;
-	SnctDX12Buffer						   m_colorBuffer[m_frameCount];
-	ComPtr<ID3D12Fence>                    m_fence;
-	SnctDX12Buffer						   m_depthBuffer;
-	HANDLE								   m_fenceEvent = {};
-	uint64_t							   m_fenceCounter[m_frameCount];
-	uint32_t                               m_frameIndex = 0;
-	SnctDX12RTV					           m_handleRTV[m_frameCount];
-	SnctDX12DSV				               m_handleDSV = {};
-	D3D12_VIEWPORT                         m_viewPort = {};
-	D3D12_RECT                             m_scissor = {};
+	static const uint32_t				m_frameCount = 2;
+	SnctDX12Device						m_device;
+	SnctDX12CmdQueue			        m_cmdQueue;
+	ComPtr<IDXGISwapChain3>             m_swapChain;
+	ComPtr<ID3D12CommandAllocator>      m_cmdAllocator[m_frameCount];
+	SnctDX12Context						m_cmdList;
+	ComPtr<ID3D12DescriptorHeap>        m_heapRTV;
+	ComPtr<ID3D12DescriptorHeap>        m_heapDSV;
+	SnctDX12Buffer						m_colorBuffer[m_frameCount];
+	ComPtr<ID3D12Fence>                 m_fence;
+	SnctDX12Buffer						m_depthBuffer;
+	HANDLE								m_fenceEvent = {};
+	uint64_t							m_fenceCounter[m_frameCount];
+	uint32_t                            m_frameIndex = 0;
+	SnctDX12RTV					        m_handleRTV[m_frameCount];
+	SnctDX12DSV				            m_handleDSV = {};
+	D3D12_VIEWPORT                      m_viewPort = {};
+	D3D12_RECT                          m_scissor = {};
+
+
 
 	//---------------------------------------------------------------------------
 	// private methods
@@ -70,11 +74,27 @@ private:
 	std::vector<ComPtr<ID3D12Resource>>			TEST_CODE_m_pCameraConstant;
 	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>	TEST_CODE_m_cameraCBV;
 
-	ComPtr<ID3D12RootSignature> TEST_CODE_m_pRootSignature;
-	ComPtr<ID3D12PipelineState> TEST_CODE_m_pPipelineState;
+	ComPtr<ID3D12RootSignature>					TEST_CODE_m_pRootSignature;
+	ComPtr<ID3D12PipelineState>					TEST_CODE_m_pPipelineState;
+
+	SnctDX12FrameResource*						TEST_CODE_m_frameResource[m_frameCount];
+	SnctDX12FrameResource*						TEST_CODE_m_currentResource;
+
+	int m_currentFrameResourceIndex;
+	HANDLE m_workerBeginRenderFrame		[NumContexts];
+	HANDLE m_workerFinishedRenderFrame	[NumContexts];
+	HANDLE m_threadHandles				[NumContexts];
+
+	struct ThreadParameter 
+	{
+		int threadIndex;
+	};
+	ThreadParameter m_threadParameters[NumContexts];
 
 	void TEST_CODE_CreateCameraConstantBuffer();
 	void TEST_CODE_CreateRootSignature();
 	void TEST_CODE_CreatePipelineState();
+
+	void TEST_CODE_WorkerThread(int threadIndex);
 };
 

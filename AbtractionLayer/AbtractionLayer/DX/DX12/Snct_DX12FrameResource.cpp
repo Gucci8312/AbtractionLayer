@@ -155,7 +155,7 @@ SnctDX12FrameResource::SnctDX12FrameResource(ID3D12Device* pDevice, ID3D12Pipeli
 	}
 }
 
-void SnctDX12FrameResource::Bind(ID3D12GraphicsCommandList* pCommandList, D3D12_CPU_DESCRIPTOR_HANDLE* pRtvHandle, D3D12_CPU_DESCRIPTOR_HANDLE* pDsvHandle)
+void SnctDX12FrameResource::Bind(ID3D12GraphicsCommandList* pCommandList, const  D3D12_CPU_DESCRIPTOR_HANDLE* pRtvHandle, const  D3D12_CPU_DESCRIPTOR_HANDLE* pDsvHandle)
 {
 	// コマンドリストに対してRTVとDSVをバインド
 	pCommandList->SetGraphicsRootDescriptorTable(1, m_objectCbvHandle);

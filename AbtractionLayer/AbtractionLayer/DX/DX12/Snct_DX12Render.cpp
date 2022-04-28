@@ -866,3 +866,43 @@ void SnctDX12Render::TEST_CODE_CreatePipelineState()
 		SnctRuntimeError(e);
 	}
 }
+
+void SnctDX12Render::TEST_CODE_WorkerThread(int threadIndex)
+{
+	while (threadIndex >= 0 && threadIndex < NumContexts)
+	{
+		WaitForSingleObject(m_workerBeginRenderFrame[threadIndex], INFINITE);
+
+
+		ID3D12GraphicsCommandList* pObjectCommand = TEST_CODE_m_currentResource->m_pObjectCommandLists[threadIndex].Get();
+
+		TEST_CODE_m_currentResource->Bind(pObjectCommand, m_handleRTV[m_frameIndex].GetpHandle(), m_handleDSV.GetpHandle());
+		TEST_CODE_m_currentResource->UpdateConstantBuffers(m_pConstantCamera.get(), m_pConstantObject.get());
+
+
+		D3D12_VERTEX_BUFFER_VIEW		vertexBufferView{};
+		vertexBufferView.BufferLocation = TEST_CODE_m_pVertexBuffer.GetBuffer()->GetGPUVirtualAddress();
+		vertexBufferView.StrideInBytes	= sizeof(Vertex);
+		vertexBufferView.SizeInBytes	= (UINT)sizeof(Vertex) * TEST_CODE_m_nVertexSize;
+
+		D3D12_INDEX_BUFFER_VIEW			indexBufferView{};
+		indexBufferView.BufferLocation	= TEST_CODE_m_pIndexBuffer.GetBuffer()->GetGPUVirtualAddress();
+		indexBufferView.Format			= DXGI_FORMAT_R32_UINT;
+		indexBufferView.SizeInBytes		= (UINT)sizeof(UINT) * TEST_CODE_m_nIndexSize;
+
+
+		pObjectCommand->SetGraphicsRootSignature		(TEST_CODE_m_pRootSignature.Get());
+		pObjectCommand->RSSetScissorRects				(1, &m_scissor);
+		pObjectCommand->RSSetViewports					(1, &m_viewPort);
+		pObjectCommand->IASetVertexBuffers				(0, 1, &vertexBufferView);
+		pObjectCommand->IASetIndexBuffer				(&indexBufferView);
+		pObjectCommand->IASetPrimitiveTopology			(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+
+		pObjectCommand->DrawIndexedInstanced(TEST_CODE_m_nIndexSize, 1, 0, 0, 0);
+		pObjectCommand->Close();
+
+
+		SetEvent(m_workerFinishedRenderFrame[threadIndex]);
+	}
+}
