@@ -26,10 +26,10 @@ public:
 
 	// Context command
 	void SetViewPort(float Width, float Height, float MinDepth, float MaxDepth);
-	void ClearRTV(ISnctDXRTV* Descriptors, float clearColor[4], UINT NumRects = 1, RECT* pRects = 0);
-	void ClearDSV(ISnctDXDSV* Descriptors, UINT Flag, float Depth,
+	void ClearRTV(ISnctDXRTV* pRenderTargetView, float clearColor[4], UINT NumRects = 1, RECT* pRects = 0);
+	void ClearDSV(ISnctDXDSV* pDepthStencilView, UINT Flag, float Depth,
 		UINT8 Stencil, UINT NumRects = 0, RECT* pRects = 0);
-	void SetRTV(UINT NumDescriptors, ISnctDXRTV* Descriptors, ISnctDXDSV* DSHandle = nullptr,
+	void SetRTV(UINT viewNum, ISnctDXRTV* Descriptors, ISnctDXDSV* DSHandle = nullptr,
 		bool SingleHandleToDescriptorRange = 0);
 	void SetRasterizerState(ID3D11RasterizerState* rasterizerState);
 private:

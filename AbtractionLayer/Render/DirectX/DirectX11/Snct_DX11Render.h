@@ -6,8 +6,8 @@
 class SnctDX11Render : public SnctDXRender
 {
 public:
-	SnctDX11Render() {}
-	~SnctDX11Render() {}
+	SnctDX11Render();
+	~SnctDX11Render();
 
 	inline ISnctDXDevice* GetDevice() override final
 	{
@@ -28,7 +28,7 @@ private:
 	SnctDX11RTV						m_backBufferView;
 	ComPtr<ID3D11DepthStencilState>	m_pDepthState;
 	SnctDX11DSV						m_depthStencileView;
-	ComPtr<ID3D11RasterizerState> rasterizerState;
+	ComPtr<ID3D11RasterizerState>	rasterizerState;
 
 	//SnctDX11Context					m_deferredContext;
 };

@@ -7,6 +7,20 @@
 //------------------------------------------------------------------------------
 HRESULT SnctDX12Device::CreateDevice(D3D_FEATURE_LEVEL Level)
 {
+	// Debug option
+#if defined(DEBUG) || defined(_DEBUG)
+	{
+		ComPtr<ID3D12Debug> Debug;
+		auto hr = D3D12GetDebugInterface(IID_PPV_ARGS(Debug.ReleaseAndGetAddressOf()));
+
+		// Debuh layer enabled
+		if (SUCCEEDED(hr))
+		{
+			Debug->EnableDebugLayer();
+		}
+	}
+#endif
+
 	return D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0,
 		IID_PPV_ARGS(m_pDevice.ReleaseAndGetAddressOf()));
 }

@@ -7,10 +7,16 @@
 //------------------------------------------------------------------------------
 HRESULT SnctDX11Device::CreateDevice(D3D_FEATURE_LEVEL Level)
 {
+	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+#if defined(_DEBUG)
+	// If the project is in a debug build, enable the debug layer.
+	creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
 	return D3D11CreateDevice(nullptr,
 		D3D_DRIVER_TYPE_HARDWARE,
 		nullptr,
-		D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+		creationFlags,
 		&Level,
 		1,
 		D3D11_SDK_VERSION,
@@ -34,7 +40,8 @@ HRESULT SnctDX11Device::CreateCmdList(ISnctDXContext** pCmdList)
 
 //------------------------------------------------------------------------------
 /// Create DirectX11 render target view
-/// \param[out]		Back buffer pointer
+/// \param[in]		Back buffer pointer
+/// \param[out]		Render target view pointer
 /// \return			Whether it was created
 //------------------------------------------------------------------------------
 HRESULT SnctDX11Device::CreateRTV(ISnctDXBuffer* pBuckBuffer, ISnctDXRTV* pRTV)
@@ -45,13 +52,15 @@ HRESULT SnctDX11Device::CreateRTV(ISnctDXBuffer* pBuckBuffer, ISnctDXRTV* pRTV)
 	//ID3D11RenderTargetView* TempCreateRTV;
 	return m_pDevice->CreateRenderTargetView(tempResource,
 		nullptr, tempRTV->GetRTVAddress());
-
-	//if (tempRTV->GetRTVAddress() == nullptr)	 hr = E_FAIL;
-
-
-	//return hr;
 }
 
+
+//------------------------------------------------------------------------------
+/// Create DirectX11 depth stencil view
+/// \param[in]		Back buffer pointer
+/// \param[out]		Depth stencil view pointer
+/// \return			Whether it was created
+//------------------------------------------------------------------------------
 HRESULT SnctDX11Device::CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* dsv)
 {
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDepthStencilView{};
@@ -65,19 +74,28 @@ HRESULT SnctDX11Device::CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* dsv)
 	//ID3D11DepthStencilView* tempCreateDSV = {};
 	return m_pDevice->CreateDepthStencilView(tempBuffer->GetBuffer(),
 		&descDepthStencilView, tempDSV->GetDSVAddress());
-
-	//if (tempCreateDSV)return	E_FAIL;
-
-	//tempDSV->SetDSV(tempCreateDSV);
-
-	//return S_OK;
 }
 
+
+//------------------------------------------------------------------------------
+/// Execution command list
+/// \param[in]		Command list pointer
+/// \return			none
+//------------------------------------------------------------------------------
 void SnctDX11Device::ExecuteCmdList(ID3D11CommandList* cmdList)
 {
 	m_pDeviceContext->ExecuteCommandList(cmdList, false);
 }
 
+
+//------------------------------------------------------------------------------
+/// Set view port
+/// \param[in]		Window width
+/// \param[in]		Window heiht
+/// \param[in]		Maximum depth
+/// \param[in]		Command list pointer
+/// \return			none
+//------------------------------------------------------------------------------
 void SnctDX11Device::SetViewPort(float Width, float Height, float MinDepth, float MaxDepth)
 {
 	D3D11_VIEWPORT viewPort;
@@ -91,23 +109,49 @@ void SnctDX11Device::SetViewPort(float Width, float Height, float MinDepth, floa
 	m_pDeviceContext->RSSetViewports(1, &viewPort);
 }
 
-void SnctDX11Device::ClearRTV(ISnctDXRTV* Descriptors, float clearColor[4], UINT NumRects, RECT* pRects)
+
+//------------------------------------------------------------------------------
+/// Clear render target view
+/// \param[in]		Render target view pointer
+/// \param[in]		Clear color
+/// \param[in]		Rects num
+/// \param[in]		Rects poiner
+/// \return			none
+//------------------------------------------------------------------------------
+void SnctDX11Device::ClearRTV(ISnctDXRTV* pRenderTargetView, float clearColor[4], UINT NumRects, RECT* pRects)
 {
-	SnctDX11RTV* TempRTV = static_cast<SnctDX11RTV*>(Descriptors);
+	SnctDX11RTV* TempRTV = static_cast<SnctDX11RTV*>(pRenderTargetView);
 	m_pDeviceContext->ClearRenderTargetView(TempRTV->GetRTV(), clearColor);
 }
 
-void SnctDX11Device::ClearDSV(ISnctDXDSV* Descriptors, UINT Flag, float Depth, UINT8 Stencil, UINT NumRects, RECT* pRects)
+
+//------------------------------------------------------------------------------
+/// Clear depth stencil view
+/// \param[in]		Descriptor handle
+/// \param[in]		Clear flag
+/// \param[in]		Depth
+/// \param[in]		Stencil
+/// \param[in]		Num
+/// \param[in]		Rects
+/// \return			none
+//------------------------------------------------------------------------------
+void SnctDX11Device::ClearDSV(ISnctDXDSV* pDepthStencilView, UINT Flag, float Depth, UINT8 Stencil, UINT NumRects, RECT* pRects)
 {
-	SnctDX11DSV* TempDSV = static_cast<SnctDX11DSV*>(Descriptors);
+	SnctDX11DSV* TempDSV = static_cast<SnctDX11DSV*>(pDepthStencilView);
 	m_pDeviceContext->ClearDepthStencilView(TempDSV->GetDSV(), static_cast<UINT>(Flag), Depth, Stencil);
 }
 
-void SnctDX11Device::SetRTV(UINT NumDescriptors, ISnctDXRTV* Descriptors, ISnctDXDSV* DSHandle, bool SingleHandleToDescriptorRange)
+//------------------------------------------------------------------------------
+/// Set render target view
+/// \param[in]		Num
+/// \param[in]		Descriptor handle
+/// \return			none
+//------------------------------------------------------------------------------
+void SnctDX11Device::SetRTV(UINT viewNum, ISnctDXRTV* Descriptors, ISnctDXDSV* DSHandle, bool SingleHandleToDescriptorRange)
 {
 	SnctDX11RTV* TempRTV = static_cast<SnctDX11RTV*>(Descriptors);
 	SnctDX11DSV* TempDSV = static_cast<SnctDX11DSV*>(DSHandle);
-	m_pDeviceContext->OMSetRenderTargets(1, TempRTV->GetRTVAddress(), TempDSV->GetDSV());
+	m_pDeviceContext->OMSetRenderTargets(viewNum, TempRTV->GetRTVAddress(), TempDSV->GetDSV());
 }
 
 void SnctDX11Device::SetRasterizerState(ID3D11RasterizerState* rasterizerState)

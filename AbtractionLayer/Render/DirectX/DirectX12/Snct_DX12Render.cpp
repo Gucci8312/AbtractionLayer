@@ -48,20 +48,6 @@ SnctDX12Render::~SnctDX12Render()
 //------------------------------------------------------------------------------
 bool SnctDX12Render::Build(HWND hWnd)
 {
-	// Debug option
-#if defined(DEBUG) || defined(_DEBUG)
-	{
-		ComPtr<ID3D12Debug> Debug;
-		auto hr = D3D12GetDebugInterface(IID_PPV_ARGS(Debug.ReleaseAndGetAddressOf()));
-
-		// Debuh layer enabled
-		if (SUCCEEDED(hr))
-		{
-			Debug->EnableDebugLayer();
-		}
-	}
-#endif
-
 	try
 	{
 		// Device 
@@ -112,18 +98,6 @@ bool SnctDX12Render::Build(HWND hWnd)
 
 		// Get buckbuffer idx
 		m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
-
-		// Create commandallocator
-	/*	for (auto i = 0; i < m_frameCount; ++i)
-		{
-			hr = m_device.CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-				m_cmdAllocator[i].ReleaseAndGetAddressOf());
-			if (FAILED(hr)) throw std::runtime_error("DirectX12 command allocator create error");
-		}*/
-
-		// Create commandlist
-		//hr = m_cmdList.Create(D3D12_COMMAND_LIST_TYPE_DIRECT, m_device.GetDevice(), nullptr, m_cmdAllocator[m_frameIndex].Get());
-		//if (FAILED(hr)) throw std::runtime_error("DirectX12 command list create error");
 
 		// Render target view settings
 		D3D12_DESCRIPTOR_HEAP_DESC RTVHeapDesc = {};

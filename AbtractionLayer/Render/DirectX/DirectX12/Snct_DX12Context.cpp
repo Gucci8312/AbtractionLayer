@@ -60,10 +60,10 @@ void SnctDX12Context::SetRTV(UINT NumDescriptors, ISnctDXRTV* DescriptorHandle, 
 
 //------------------------------------------------------------------------------
 /// Set view port
-/// \param[in]		Screen width
-/// \param[in]		Screen height
-/// \param[in]		Min depth
-/// \param[in]		Max depth
+/// \param[in]		Window width
+/// \param[in]		Window heiht
+/// \param[in]		Maximum depth
+/// \param[in]		Command list pointer
 /// \return			none
 //------------------------------------------------------------------------------
 void SnctDX12Context::SetViewPort(float Width, float Height, float MinDepth, float MaxDepth)

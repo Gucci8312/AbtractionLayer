@@ -1,5 +1,26 @@
 #include "Snct_DX11Render.h"
 
+//------------------------------------------------------------------------------
+/// Constructor
+/// \param		none
+//------------------------------------------------------------------------------
+SnctDX11Render::SnctDX11Render()
+{
+	// Nothing //
+}
+
+
+//------------------------------------------------------------------------------
+/// Destructor
+/// \param		none
+//------------------------------------------------------------------------------
+SnctDX11Render::~SnctDX11Render()
+{
+	m_swapChain.Reset();
+	m_pDepthState.Reset();
+	rasterizerState.Reset();
+}
+
 bool SnctDX11Render::Build(HWND hWnd)
 {
 	try
