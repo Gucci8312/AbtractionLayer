@@ -41,11 +41,10 @@ bool SnctDX11Render::Build(HWND hWnd)
 
 		{
 			DXGI_SWAP_CHAIN_DESC descSwapChain{};
-
 			descSwapChain.BufferCount = 1;
 			descSwapChain.BufferDesc.Width = g_screenWidth;
 			descSwapChain.BufferDesc.Height = g_screenHeight;
-			descSwapChain.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+			descSwapChain.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 			descSwapChain.BufferDesc.RefreshRate.Numerator = 60;
 			descSwapChain.BufferDesc.RefreshRate.Denominator = 1;
 			descSwapChain.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -53,6 +52,7 @@ bool SnctDX11Render::Build(HWND hWnd)
 			descSwapChain.SampleDesc.Count = 1;
 			descSwapChain.SampleDesc.Quality = 0;
 			descSwapChain.Windowed = true;
+			descSwapChain.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 			if (FAILED(factory->CreateSwapChain(
 				m_device.GetDevice(),

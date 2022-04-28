@@ -62,14 +62,14 @@ bool SnctApplication::Initialize()
 	FreeConsole();
 
 	m_pRender = std::make_unique<SnctDX11Render>();
-	m_pScene = std::make_unique<SnctScene01>();
+	//m_pScene = std::make_unique<SnctScene01>();
 
 	if (!m_pRender->Build(m_hWnd)) return false;
 	m_deferredContext = new SnctDX11Context;
 	m_pRender->CreateCommandList(&m_deferredContext);
 
-	m_pScene->SetRender(m_pRender.get());
-	m_pScene->Initialize();
+	//m_pScene->SetRender(m_pRender.get());
+	//m_pScene->Initialize();
 
 	return true;
 }
@@ -83,7 +83,7 @@ bool SnctApplication::Initialize()
 void SnctApplication::Finalize()
 {
 	m_pRender.reset();
-	m_pScene.reset();
+	//m_pScene.reset();
 	delete m_deferredContext;
 	m_deferredContext = nullptr;
 }
@@ -198,7 +198,7 @@ void SnctApplication::MainLoop()
 			// Process
 			m_pRender->BeforeRender(m_deferredContext);
 
-			m_pScene->Draw(m_deferredContext);
+			//m_pScene->Draw(m_deferredContext);
 
 			m_pRender->AfterRender(m_deferredContext);
 		}

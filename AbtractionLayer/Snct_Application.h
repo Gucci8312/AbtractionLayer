@@ -42,7 +42,7 @@ private:
 	LONG		m_height;
 
 	std::unique_ptr<SnctDXRender>	m_pRender = nullptr;
-	std::unique_ptr<ISnctScene>		m_pScene = nullptr;
+	//std::unique_ptr<ISnctScene>		m_pScene = nullptr;
 	ISnctDXContext*					m_deferredContext=nullptr;
 };
 

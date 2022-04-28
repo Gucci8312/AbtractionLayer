@@ -63,6 +63,9 @@
     <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Render.cpp">
       <Filter>RenderCore\DirectX\DirectX11Render</Filter>
     </ClCompile>
+    <ClCompile Include="Snct_Camera.cpp">
+      <Filter>ApplicationCore</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Snct_Application.h">
@@ -130,6 +133,9 @@
     </ClInclude>
     <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Render.h">
       <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Camera.h">
+      <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
