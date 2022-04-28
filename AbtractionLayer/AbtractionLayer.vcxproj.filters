@@ -36,15 +36,6 @@
     <ClCompile Include="Snct_Application.cpp">
       <Filter>ApplicationCore</Filter>
     </ClCompile>
-    <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Render.cpp">
-      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
-    </ClCompile>
-    <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Device.cpp">
-      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
-    </ClCompile>
-    <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Context.cpp">
-      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
-    </ClCompile>
     <ClCompile Include="Render\DirectX\DirectX12\Snct_DX12Render.cpp">
       <Filter>RenderCore\DirectX\DirectX12Render</Filter>
     </ClCompile>
@@ -57,17 +48,23 @@
     <ClCompile Include="Render\DirectX\DirectX12\Snct_DX12CmdQueue.cpp">
       <Filter>RenderCore\DirectX\DirectX12Render</Filter>
     </ClCompile>
-    <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Object.cpp">
-      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
-    </ClCompile>
     <ClCompile Include="Render\DirectX\DirectX12\Snct_DX12Object.cpp">
       <Filter>RenderCore\DirectX\DirectX12Render</Filter>
     </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Context.cpp">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Device.cpp">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Object.cpp">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Render.cpp">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Render\DirectX\ISnct_DXDevice.h">
-      <Filter>RenderCore\DirectX\Interface</Filter>
-    </ClInclude>
     <ClInclude Include="Snct_Application.h">
       <Filter>ApplicationCore</Filter>
     </ClInclude>
@@ -79,18 +76,6 @@
     </ClInclude>
     <ClInclude Include="Render\DirectX\Interface\ISnct_DXContext.h">
       <Filter>RenderCore\DirectX\Interface</Filter>
-    </ClInclude>
-    <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Render.h">
-      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
-    </ClInclude>
-    <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Device.h">
-      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
-    </ClInclude>
-    <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Context.h">
-      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
-    </ClInclude>
-    <ClInclude Include="Render\ISnct_Render.h">
-      <Filter>RenderCore</Filter>
     </ClInclude>
     <ClInclude Include="Render\DirectX\DirectX12\Snct_DX12Render.h">
       <Filter>RenderCore\DirectX\DirectX12Render</Filter>
@@ -110,9 +95,6 @@
     <ClInclude Include="Render\DirectX\Snct_DXObject.h">
       <Filter>RenderCore\DirectX</Filter>
     </ClInclude>
-    <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Object.h">
-      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
-    </ClInclude>
     <ClInclude Include="Render\DirectX\DirectX12\Snct_DX12Object.h">
       <Filter>RenderCore\DirectX\DirectX12Render</Filter>
     </ClInclude>
@@ -121,6 +103,33 @@
     </ClInclude>
     <ClInclude Include="Snct_Utility.h">
       <Filter>ApplicationCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\ISnct_Render.h">
+      <Filter>ApplicationCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Math.h">
+      <Filter>ApplicationCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Scene.h">
+      <Filter>ApplicationCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Scene01_Impl.h">
+      <Filter>ApplicationCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\Interface\ISnct_DXDevice.h">
+      <Filter>RenderCore\DirectX\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Context.h">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Device.h">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Object.h">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Render.h">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

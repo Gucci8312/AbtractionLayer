@@ -7,6 +7,10 @@
 class SnctDX12CmdQueue : public ISnctDXCmdQueue
 {
 public:
+	~SnctDX12CmdQueue()
+	{
+		m_pCmdQueue.Reset();
+	}
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	

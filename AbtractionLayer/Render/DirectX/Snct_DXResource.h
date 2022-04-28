@@ -113,7 +113,7 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	virtual ~ISnctDXDSV() {}
+	virtual ~ISnctDXDSV(){};
 	const virtual ISnctDXDSV* Get() = 0;
 };
 
@@ -124,6 +124,7 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
+	~SnctDX11RTV() { m_pRTV.Reset(); }
 	// Getter
 	const ISnctDXRTV* Get() override final { return this; }
 	ID3D11RenderTargetView* GetRTV() { return m_pRTV.Get(); }
@@ -176,6 +177,8 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
+	~SnctDX11DSV() { m_pDSV.Reset(); }
+
 	const SnctDX11DSV* Get() override final { return this; }
 	ID3D11DepthStencilView* GetDSV() { return m_pDSV.Get(); }
 	ID3D11DepthStencilView** GetDSVAddress() { return m_pDSV.GetAddressOf(); }
@@ -231,6 +234,7 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
+	~SnctDX11Buffer() { m_pBuffer.Reset(); }
 	// Getter
 	const SnctDX11Buffer* Get() override final { return this; }
 	ID3D11Buffer* GetBuffer() { return m_pBuffer.Get(); }
@@ -254,6 +258,8 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
+	~SnctDX12Buffer() { m_pBuffer.Reset(); }
+
 	// Getter
 	const SnctDX12Buffer* Get() override final { return this; }
 	ID3D12Resource* GetBuffer() { return m_pBuffer.Get(); }
@@ -285,6 +291,8 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
+	~SnctDX11Texture() { m_pTexture.Reset(); }
+
 	// Getter
 	const SnctDX11Texture* Get() override final { return this; }
 	ID3D11Texture2D* GetTexture() { return m_pTexture.Get(); }
@@ -315,6 +323,8 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
+	~SnctDX12Texture() { m_pResouce.Reset(); }
+
 	// Getter
 	const SnctDX12Texture* Get() override final { return this; }
 	ID3D12Resource* GetTexture() { return m_pResouce.Get(); }

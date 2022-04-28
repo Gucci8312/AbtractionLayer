@@ -6,6 +6,7 @@
 class ISnctDXDevice
 {
 public:
+	virtual ~ISnctDXDevice() {}
 	virtual ISnctDXDevice* Get() = 0;
 	virtual HRESULT CreateRTV(ISnctDXBuffer* buffer, ISnctDXRTV* rtvHandle) = 0;
 	virtual HRESULT CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* rtvHandle) = 0;

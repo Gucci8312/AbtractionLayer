@@ -86,6 +86,7 @@ bool SnctDX11Render::Build(HWND hWnd)
 			{
 				throw std::runtime_error("!Failed to create render target buffer");
 			}
+			TempRTVBuffer->Release();
 		}
 
 		{
@@ -149,8 +150,6 @@ bool SnctDX11Render::Build(HWND hWnd)
 				throw std::runtime_error("!Failed to Create Rasterizer State");
 			}
 
-			/*m_device.SetRasterizerState(rasterizerState.Get());
-			m_deferredContext.SetRasterizerState(rasterizerState.Get());*/
 		}
 
 		{

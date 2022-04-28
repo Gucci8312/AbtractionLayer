@@ -9,6 +9,13 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
+	
+	~SnctDX11Device()
+	{
+		m_pDevice.Reset();
+		m_pDeviceContext.Reset();
+	}
+
 	// Getter
 	SnctDX11Device* Get() { return this; }
 	ID3D11Device* GetDevice() { return m_pDevice.Get(); }

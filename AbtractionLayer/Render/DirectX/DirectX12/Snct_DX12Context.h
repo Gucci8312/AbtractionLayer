@@ -6,6 +6,11 @@
 class SnctDX12Context : public ISnctDXContext
 {
 public:
+	~SnctDX12Context() override
+	{
+		m_pCmdList.Reset();
+		m_pCmdAllocator.Reset();
+	}
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	

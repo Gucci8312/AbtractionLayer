@@ -23,7 +23,6 @@ public:
 
 private:
 	ComPtr<IDXGISwapChain>			m_swapChain;
-
 	SnctDX11Device					m_device;
 	SnctDX11RTV						m_backBufferView;
 	ComPtr<ID3D11DepthStencilState>	m_pDepthState;
