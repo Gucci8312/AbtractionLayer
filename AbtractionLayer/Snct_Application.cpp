@@ -79,7 +79,6 @@ void SnctApplication::Finalize()
 	m_pRender.reset();
 	delete m_deferredContext;
 	m_deferredContext = nullptr;
-	_CrtDumpMemoryLeaks();
 }
 
 

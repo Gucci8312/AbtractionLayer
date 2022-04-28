@@ -147,13 +147,19 @@ void SnctDX11Device::ClearDSV(ISnctDXDSV* pDepthStencilView, UINT Flag, float De
 /// \param[in]		Descriptor handle
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX11Device::SetRTV(UINT viewNum, ISnctDXRTV* Descriptors, ISnctDXDSV* DSHandle, bool SingleHandleToDescriptorRange)
+void SnctDX11Device::SetRTV(UINT viewNum, ISnctDXRTV* pRTV, ISnctDXDSV* pDSV, bool SingleHandleToDescriptorRange)
 {
-	SnctDX11RTV* TempRTV = static_cast<SnctDX11RTV*>(Descriptors);
-	SnctDX11DSV* TempDSV = static_cast<SnctDX11DSV*>(DSHandle);
+	SnctDX11RTV* TempRTV = static_cast<SnctDX11RTV*>(pRTV);
+	SnctDX11DSV* TempDSV = static_cast<SnctDX11DSV*>(pDSV);
 	m_pDeviceContext->OMSetRenderTargets(viewNum, TempRTV->GetRTVAddress(), TempDSV->GetDSV());
 }
 
+
+//------------------------------------------------------------------------------
+/// Set rasterizer state
+/// \param[in]		Rasterizer state pointer
+/// \return			none
+//------------------------------------------------------------------------------
 void SnctDX11Device::SetRasterizerState(ID3D11RasterizerState* rasterizerState)
 {
 	m_pDeviceContext->RSSetState(rasterizerState);

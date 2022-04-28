@@ -29,7 +29,7 @@ public:
 	void ClearRTV(ISnctDXRTV* pRenderTargetView, float clearColor[4], UINT NumRects = 1, RECT* pRects = 0);
 	void ClearDSV(ISnctDXDSV* pDepthStencilView, UINT Flag, float Depth,
 		UINT8 Stencil, UINT NumRects = 0, RECT* pRects = 0);
-	void SetRTV(UINT viewNum, ISnctDXRTV* Descriptors, ISnctDXDSV* DSHandle = nullptr,
+	void SetRTV(UINT viewNum, ISnctDXRTV* pRTV, ISnctDXDSV* pDSV = nullptr,
 		bool SingleHandleToDescriptorRange = 0);
 	void SetRasterizerState(ID3D11RasterizerState* rasterizerState);
 private:
