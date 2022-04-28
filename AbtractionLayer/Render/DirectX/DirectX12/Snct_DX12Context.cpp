@@ -136,9 +136,9 @@ void SnctDX12Context::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)
 	m_pCmdList->IASetPrimitiveTopology(topology);
 }
 
-void SnctDX12Context::DrawIndexedInstanced(UINT indexCount, UINT startIndexLocation, UINT instanceLocation)
+void SnctDX12Context::DrawIndexed(UINT indexCount, UINT startIndexLocation, UINT instanceLocation)
 {
-	m_pCmdList->DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
+	m_pCmdList->DrawIndexedInstanced(indexCount, 1, startIndexLocation, 0, instanceLocation);
 }
 
 

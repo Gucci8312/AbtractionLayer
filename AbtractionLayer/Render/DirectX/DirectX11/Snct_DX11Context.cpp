@@ -54,23 +54,28 @@ void SnctDX11Context::SetRTV(UINT NumDescriptors, ISnctDXRTV* Descriptors, ISnct
 void SnctDX11Context::Close(bool RestoreDeferredContextState, ID3D11CommandList** cmdList)
 {
 	m_pContext->FinishCommandList(true, cmdList);
-
 }
 
 void SnctDX11Context::SetVertexBuffer(UINT bufferNum, ISnctDXBuffer* pBuffer, UINT stride, UINT num)
 {
+	SnctDX11Buffer* pTempBuffer = static_cast<SnctDX11Buffer*>(pBuffer);
+	m_pContext->IASetVertexBuffers(0, 1, pTempBuffer->GetBufferAddress(), &stride, &num);
 }
 
 void SnctDX11Context::SetIndexBuffer(ISnctDXBuffer* pBuffer, DXGI_FORMAT format, UINT size)
 {
+	SnctDX11Buffer* pTempBuffer = static_cast<SnctDX11Buffer*>(pBuffer);
+	m_pContext->IASetIndexBuffer( pTempBuffer->GetBuffer(), format, size);
 }
 
 void SnctDX11Context::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)
 {
+	m_pContext->IASetPrimitiveTopology(topology);
 }
 
-void SnctDX11Context::DrawIndexedInstanced(UINT indexCount, UINT startIndexLocation, UINT instanceLocation)
+void SnctDX11Context::DrawIndexed(UINT indexCount, UINT startIndexLocation, UINT instanceLocation)
 {
+	m_pContext->DrawIndexed(indexCount, startIndexLocation, instanceLocation);
 }
 
 void SnctDX11Context::RegisterCmdList(ID3D11CommandList** cmdList)

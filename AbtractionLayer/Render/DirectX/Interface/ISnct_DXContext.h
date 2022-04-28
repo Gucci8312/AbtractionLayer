@@ -16,5 +16,5 @@ public:
 	virtual void SetVertexBuffer(UINT bufferNum, ISnctDXBuffer* pBuffer, UINT stride, UINT num) = 0;
 	virtual void SetIndexBuffer(ISnctDXBuffer* pBuffer, DXGI_FORMAT format, UINT size) = 0;
 	virtual void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) = 0;
-	virtual void DrawIndexedInstanced(UINT indexCount, UINT startIndexLocation, UINT instanceLocation) = 0;
+	virtual void DrawIndexed(UINT indexCount, UINT startIndexLocation, UINT instanceLocation) = 0;
 };

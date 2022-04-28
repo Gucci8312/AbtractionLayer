@@ -7,6 +7,7 @@
 #define _CRTDBG_MAP_ALLOC
 
 #include "Snct_Utility.h"
+#include "Snct_Scene.h"
 #include "Render/DirectX/Snct_DXRender.h"
 #include "Render/DirectX/Interface/ISnct_DXContext.h"
 #include "Render/DirectX/DirectX11/Snct_DX11Render.h"
@@ -41,6 +42,7 @@ private:
 	LONG		m_height;
 
 	std::unique_ptr<SnctDXRender>	m_pRender = nullptr;
+	std::unique_ptr<ISnctScene>		m_pScene = nullptr;
 	ISnctDXContext*					m_deferredContext=nullptr;
 };
 
