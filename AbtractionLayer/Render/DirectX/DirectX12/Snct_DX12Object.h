@@ -10,5 +10,8 @@ public:
 	void Draw(ISnctDXContext* pCmdList)override final;
 
 private:
+	ComPtr<ID3D12RootSignature> m_pRootSignature;
+	ComPtr<ID3D12PipelineState> m_pPipelineState;
+
 };
 

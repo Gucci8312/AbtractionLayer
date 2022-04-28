@@ -15,6 +15,8 @@ protected:
 	Vertices m_Vertices;
 	Indices	m_Indices;
 
+	ISnctDXBuffer* m_pVBuffer;
+	ISnctDXBuffer* m_pIBuffer;
 private:
 
 };
