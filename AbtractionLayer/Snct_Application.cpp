@@ -83,6 +83,7 @@ bool SnctApplication::Initialize()
 void SnctApplication::Finalize()
 {
 	m_pRender.reset();
+	m_pScene.reset();
 	delete m_deferredContext;
 	m_deferredContext = nullptr;
 }
