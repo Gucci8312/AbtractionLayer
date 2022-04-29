@@ -1,7 +1,8 @@
 #pragma once
 #include "../Snct_Render.h"
 #include "Snct_DXConstantParameter.h"
-#include "Snct_DXShaderLibrary.h"
+//#include "Snct_DXShaderLibrary.h"
+#include "Snct_DXResource.h"
 
 class SnctDXRender : public ISnctRender 
 {

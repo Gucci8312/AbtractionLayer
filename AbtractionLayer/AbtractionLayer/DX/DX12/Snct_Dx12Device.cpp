@@ -7,20 +7,22 @@
 //------------------------------------------------------------------------------
 HRESULT SnctDX12Device::CreateDevice(D3D_FEATURE_LEVEL Level)
 {
+	// Debug option
+#if defined(DEBUG) || defined(_DEBUG)
+	{
+		ComPtr<ID3D12Debug> Debug;
+		auto hr = D3D12GetDebugInterface(IID_PPV_ARGS(Debug.ReleaseAndGetAddressOf()));
+
+		// Debuh layer enabled
+		if (SUCCEEDED(hr))
+		{
+			Debug->EnableDebugLayer();
+		}
+	}
+#endif
+
 	return D3D12CreateDevice(nullptr, D3D_FEATURE_LEVEL_11_0,
 		IID_PPV_ARGS(m_pDevice.ReleaseAndGetAddressOf()));
-}
-
-
-//------------------------------------------------------------------------------
-/// Create Directx12 command allocator
-/// \param[in]		Command allocator double pointer
-/// \return			Whether it was created
-//------------------------------------------------------------------------------
-HRESULT SnctDX12Device::CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE commandListType, ID3D12CommandAllocator** ppCmdAllocator)
-{
-	return m_pDevice->CreateCommandAllocator(commandListType,
-		IID_PPV_ARGS(ppCmdAllocator));
 }
 
 
@@ -104,4 +106,17 @@ HRESULT SnctDX12Device::CreateDSV(ISnctDXBuffer* pDepthTexture, ISnctDXDSV* pDSV
 	// Error checking
 	if (tempDSV->GetHandle().ptr) return S_OK;
 	return E_FAIL;
+}
+
+HRESULT SnctDX12Device::CreateCmdList(ISnctDXContext** pCmdList)
+{
+	SnctDX12Context* tempCmdList = static_cast<SnctDX12Context*>(*pCmdList);
+	auto hr = m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+		IID_PPV_ARGS(tempCmdList->GetCmdAllocatorAddress()));
+
+	hr = m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
+		tempCmdList->GetCmdAllocator(), nullptr, IID_PPV_ARGS(tempCmdList->GetContextAddress()));
+	tempCmdList->Close();
+
+	return hr;
 }

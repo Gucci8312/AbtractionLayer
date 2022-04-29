@@ -27,7 +27,7 @@ void SnctDX11Objects::AddSceneObject(ID3D11Device* device, HashKey key, Vertices
 			dataVBuffer.SysMemPitch = 0;
 			dataVBuffer.SysMemSlicePitch = 0;
 
-			if (FAILED(device->CreateBuffer(&descVBuffer, &dataVBuffer, itr->pVertexBuffer.GetAddressOf())))
+			if (FAILED(device->CreateBuffer(&descVBuffer, &dataVBuffer, itr->pVertexBuffer.GetBufferAddress())))
 				throw  std::runtime_error("!Failed to Create Vertex Buffer");
 		}
 
@@ -48,7 +48,7 @@ void SnctDX11Objects::AddSceneObject(ID3D11Device* device, HashKey key, Vertices
 			dataIndex.SysMemPitch = 0;
 			dataIndex.SysMemSlicePitch = 0;
 
-			if (FAILED(device->CreateBuffer(&descIndex, &dataIndex, itr->pIndexBuffer.GetAddressOf())))
+			if (FAILED(device->CreateBuffer(&descIndex, &dataIndex, itr->pIndexBuffer.GetBufferAddress())))
 				throw std::runtime_error("!Failed to Create Index Buffer");
 		}
 
@@ -66,7 +66,7 @@ void SnctDX11Objects::AddSceneObject(ID3D11Device* device, HashKey key, Vertices
 			if (FAILED(device->CreateBuffer(
 				&descConstantBuffer,
 				nullptr,
-				itr->pConstantObject.GetAddressOf()
+				itr->pConstantObject.GetBufferAddress()
 			)))
 				throw std::runtime_error("!Failed to Create Constant Matrix Buffer");
 		}

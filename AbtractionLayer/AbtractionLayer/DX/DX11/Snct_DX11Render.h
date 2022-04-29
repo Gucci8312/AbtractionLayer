@@ -1,5 +1,4 @@
 #pragma once
-#include "../Snct_DXResource.h"
 #include "../Snct_DXRender.h"
 
 #include "Snct_DX11.h"
@@ -33,24 +32,16 @@ private:
 	SnctDX11Context					m_pDeferredContext;
 	ComPtr<ID3D11CommandList>		m_pCommandList;
 
-	void UpdateObjectBuffer(ID3D11Buffer* pObjectConstant);
-	void UpdateCameraBuffer(ID3D11Buffer* pCameraConstant);
+	std::unique_ptr<SnctDX11Objects> m_pSceneObjects;
 
-	// << TEST CODE >>
-	// box用 頂点バッファ等　
+	void UpdateObjectBuffer(ISnctDXBuffer* pObjectConstant);
+	void UpdateCameraBuffer(ISnctDXBuffer* pCameraConstant);
 
-	UINT TEST_CODE_nVertexSize	= 0;
-	UINT TEST_CODE_nIndexSize	= 0;
+	SnctDXVertexShader		m_pVertexShader;
+	SnctDXPixelShader		m_pPixelShader;
 
-	ComPtr<ID3D11Buffer>			TEST_CODE_m_pVertexBuffer;
-	ComPtr<ID3D11Buffer>			TEST_CODE_m_pIndexBuffer;
-	ComPtr<ID3D11Buffer>			TEST_CODE_m_pConstantObject;
-
-	ComPtr<ID3D11VertexShader>		TEST_CODE_m_pVertexShader;
-	ComPtr<ID3D11PixelShader>		TEST_CODE_m_pPixelShader;
-
-	ComPtr<ID3D11Buffer>			TEST_CODE_m_pCameraConstant;
-	ComPtr<ID3D11InputLayout>		TEST_CODE_m_pInputLayout;
+	SnctDX11Buffer					m_pCameraConstant;
+	ComPtr<ID3D11InputLayout>		m_pInputLayout;
 
 	void TEST_CODE_CreateCameraConstantBuffer();
 	void TEST_CODE_CreateVSAndPS();

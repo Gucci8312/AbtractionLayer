@@ -1,5 +1,4 @@
 #pragma once
-#include "Snct_DX12.h"
 #include "../Interface/ISnct_DXCmdQueue.h"
 #include "Snct_DX12Context.h"
 #include <vector>
@@ -8,6 +7,10 @@
 class SnctDX12CmdQueue : public ISnctDXCmdQueue
 {
 public:
+	~SnctDX12CmdQueue()
+	{
+		m_pCmdQueue.Reset();
+	}
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	

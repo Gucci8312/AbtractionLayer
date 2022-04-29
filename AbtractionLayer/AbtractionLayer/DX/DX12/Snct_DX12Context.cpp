@@ -1,18 +1,4 @@
-#include "Snct_Dx12Context.h"
-
-//------------------------------------------------------------------------------
-/// Create a command list
-/// \param[in]		Command list type
-/// \param[in]		Device
-/// \param[in]		CommndAllocator
-/// \return			HRESULT
-//------------------------------------------------------------------------------
-HRESULT SnctDX12Context::Create(D3D12_COMMAND_LIST_TYPE Type, ID3D12Device* Device, ID3D12PipelineState* pipelineState, ID3D12CommandAllocator* CmdAllocator)
-{
-	return Device->CreateCommandList(0, Type,
-		CmdAllocator, pipelineState, IID_PPV_ARGS(m_pCmdList.ReleaseAndGetAddressOf()));
-}
-
+#include "Snct_DX12Context.h"
 
 //------------------------------------------------------------------------------
 /// Clear render target view
@@ -51,9 +37,10 @@ void SnctDX12Context::ClearDSV(ISnctDXDSV* DescriptorHandle, UINT Flag, float De
 /// \param[in]		Pipeline state
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12Context::Reset(ID3D12CommandAllocator* CmdAllocator, ID3D12PipelineState* PipelineState)
+void SnctDX12Context::Reset(ID3D12PipelineState* PipelineState)
 {
-	m_pCmdList->Reset(CmdAllocator, PipelineState);
+	m_pCmdAllocator->Reset();
+	m_pCmdList->Reset(m_pCmdAllocator.Get(), PipelineState);
 }
 
 
@@ -73,10 +60,10 @@ void SnctDX12Context::SetRTV(UINT NumDescriptors, ISnctDXRTV* DescriptorHandle, 
 
 //------------------------------------------------------------------------------
 /// Set view port
-/// \param[in]		Screen width
-/// \param[in]		Screen height
-/// \param[in]		Min depth
-/// \param[in]		Max depth
+/// \param[in]		Window width
+/// \param[in]		Window heiht
+/// \param[in]		Maximum depth
+/// \param[in]		Command list pointer
 /// \return			none
 //------------------------------------------------------------------------------
 void SnctDX12Context::SetViewPort(float Width, float Height, float MinDepth, float MaxDepth)
@@ -149,9 +136,9 @@ void SnctDX12Context::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)
 	m_pCmdList->IASetPrimitiveTopology(topology);
 }
 
-void SnctDX12Context::DrawIndexedInstanced(UINT indexCount,UINT startIndexLocation,UINT instanceLocation)
+void SnctDX12Context::DrawIndexed(UINT indexCount, UINT startIndexLocation, UINT instanceLocation)
 {
-	m_pCmdList->DrawIndexedInstanced(indexCount,1,0,0,0);
+	m_pCmdList->DrawIndexedInstanced(indexCount, 1, startIndexLocation, 0, instanceLocation);
 }
 
 

@@ -2,6 +2,7 @@
 #include "Snct_DX11.h"
 #include "../../Snct_Utility.h"
 #include "../../Snct_Windows.h"
+#include "../Snct_DXResource.h"
 
 struct SnctDX11ObjectBuffer
 {
@@ -9,9 +10,9 @@ struct SnctDX11ObjectBuffer
 	UINT					nIndexSize;
 	UINT					nDescSize;
 
-	ComPtr<ID3D11Buffer>	pVertexBuffer;
-	ComPtr<ID3D11Buffer>	pIndexBuffer;
-	ComPtr<ID3D11Buffer>	pConstantObject;
+	SnctDX11Buffer	pVertexBuffer;
+	SnctDX11Buffer	pIndexBuffer;
+	SnctDX11Buffer	pConstantObject;
 
 	//std::vector<ComPtr<ID3D11Buffer>>			pConstantObject;
 };

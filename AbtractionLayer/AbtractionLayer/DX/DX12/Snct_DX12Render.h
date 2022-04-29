@@ -5,7 +5,7 @@
 #include "Snct_Dx12Context.h"
 #include "Snct_Dx12Device.h"
 #include "Snct_DX12CmdQueue.h"
-#include "../Snct_DXResource.h"
+#include "../../Snct_DX12Objects.h"
 #include "../Snct_DXConstantParameter.h"
 
 // A class that manages DirectX12 render core
@@ -32,7 +32,7 @@ private:
 	SnctDX12Device						   m_device;
 	SnctDX12CmdQueue			           m_cmdQueue;
 	ComPtr<IDXGISwapChain3>                m_swapChain;
-	ComPtr<ID3D12CommandAllocator>         m_cmdAllocator[m_frameCount];
+	//ComPtr<ID3D12CommandAllocator>         m_cmdAllocator[m_frameCount];
 	SnctDX12Context						   m_cmdList;
 	ComPtr<ID3D12DescriptorHeap>           m_heapRTV;
 	ComPtr<ID3D12DescriptorHeap>           m_heapDSV;
@@ -47,25 +47,17 @@ private:
 	D3D12_VIEWPORT                         m_viewPort = {};
 	D3D12_RECT                             m_scissor = {};
 
+	std::unique_ptr<SnctDX12Objects>		m_pSceneObjects;
+
 	//---------------------------------------------------------------------------
 	// private methods
 	//---------------------------------------------------------------------------	
+	void DrawIndexed(SnctDX12ObjectBuffer* pObject);
 	void UpdateCameraBuffer(ID3D12Resource* pCameraConstant);
 	void UpdateObjectBuffer(ID3D12Resource* pObjectConstant);
 
 
 	// << TEST CODE >>
-	// box object buffer
-	UINT	TEST_CODE_m_nVertexSize;
-	UINT	TEST_CODE_m_nIndexSize;
-	UINT	TEST_CODE_m_nDescSize;
-
-	SnctDX12Buffer								TEST_CODE_m_pVertexBuffer;
-	SnctDX12Buffer						TEST_CODE_m_pIndexBuffer;
-	ComPtr<ID3D12DescriptorHeap>				TEST_CODE_m_pObjectHeap;
-	std::vector<ComPtr<ID3D12Resource>>			TEST_CODE_m_pConstantObject;
-	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>	TEST_CODE_m_objectCBV;
-
 	ComPtr<ID3D12DescriptorHeap>				TEST_CODE_m_pCameraHeap;
 	std::vector<ComPtr<ID3D12Resource>>			TEST_CODE_m_pCameraConstant;
 	std::vector<D3D12_GPU_DESCRIPTOR_HANDLE>	TEST_CODE_m_cameraCBV;

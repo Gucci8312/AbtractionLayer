@@ -16,7 +16,7 @@ void SnctDX12CmdQueue::Execute(int Num, ISnctDXContext** cmdList)
 	for (int Idx = 0; Idx < Num; Idx++)
 	{
 		SnctDX12Context* CmdList = static_cast<SnctDX12Context*>(*cmdList);
-		ppCmdLists.push_back(CmdList->Get());
+		ppCmdLists.push_back(CmdList->GetContext());
 	}
 
 	m_pCmdQueue->ExecuteCommandLists(1, ppCmdLists.data());

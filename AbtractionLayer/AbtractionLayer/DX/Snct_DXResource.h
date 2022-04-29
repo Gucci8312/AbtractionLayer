@@ -2,6 +2,9 @@
 #include "../Snct_Windows.h"
 #include <d3d11.h>
 #include <d3d12.h>
+#include <memory>
+#include "Snct_DXShaderLibrary.h"
+
 
 #pragma region Parameter
 // How to use texture
@@ -29,37 +32,15 @@ typedef struct SNCT_TEXTURE2D_DESC
 	UINT MiscFlags;
 } 	SNCT_TEXTURE2D_DESC;
 
-typedef enum SNCT_HEAP_TYPE
+typedef struct D3D_BOX
 {
-	HEAP_TYPE_DEFAULT = 1,
-	HEAP_TYPE_UPLOAD = 2,
-	HEAP_TYPE_READBACK = 3,
-	HEAP_TYPE_CUSTOM = 4
-} 	SNCT_HEAP_TYPE;
-
-typedef enum SNCT_CPU_PAGE_PROPERTY
-{
-	CPU_PAGE_PROPERTY_UNKNOWN = 0,
-	CPU_PAGE_PROPERTY_NOT_AVAILABLE = 1,
-	CPU_PAGE_PROPERTY_WRITE_COMBINE = 2,
-	CPU_PAGE_PROPERTY_WRITE_BACK = 3
-} 	SNCT_CPU_PAGE_PROPERTY;
-
-typedef enum SNCT_MEMORY_POOL
-{
-	MEMORY_POOL_UNKNOWN = 0,
-	MEMORY_POOL_L0 = 1,
-	MEMORY_POOL_L1 = 2
-} 	MEMORY_POOL;
-
-typedef enum SNCT_RESOURCE_DIMENSION
-{
-	RESOURCE_DIMENSION_UNKNOWN = 0,
-	RESOURCE_DIMENSION_BUFFER = 1,
-	RESOURCE_DIMENSION_TEXTURE1D = 2,
-	RESOURCE_DIMENSION_TEXTURE2D = 3,
-	RESOURCE_DIMENSION_TEXTURE3D = 4
-} 	RESOURCE_DIMENSION;
+	UINT left;
+	UINT top;
+	UINT front;
+	UINT right;
+	UINT bottom;
+	UINT back;
+} 	D3D_BOX;
 #pragma endregion
 
 
@@ -315,32 +296,145 @@ private:
 
 
 #pragma region Shader
-class SnctDXShader : public ISnctDXResource
+
+
+class SnctDXShader
 {
 public:
+	virtual HRESULT Create(HashKey key, ID3D11Device* pDevice, std::wstring filePath, DX_SHADER_TYPE type) = 0;
+	virtual HRESULT Create(HashKey key, ID3D12Device* pDevice, std::wstring filePath, DX_SHADER_TYPE type) = 0;
+
+	virtual ID3DBlob* GetBlob() = 0;
+	virtual ID3DBlob** GetBlobAddress() = 0;
+
+	virtual LPVOID GetBlobPointer() = 0;
+	virtual size_t GetBlobSize() = 0;
+
 protected:
 	ComPtr<ID3DBlob> m_pShaderBlob;
+	std::unique_ptr<SnctShaderLibrary> m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
+
 };
 
-
-class SnctDX11Shader : public SnctDXShader
-{
-	virtual HRESULT Create(const void* pShaderBytecode, SIZE_T BytecodeLength) = 0;
-};
-
-
-class SnctDX12Shader : public SnctDXShader
+class SnctDXVertexShader : SnctDXShader
 {
 public:
-	void Set(const void* pByteCode, SIZE_T size)
+	HRESULT Create(HashKey key, ID3D11Device* pDevice, std::wstring filePath, DX_SHADER_TYPE type) override final
 	{
-		m_shaderData.pShaderBytecode = pByteCode;
-		m_shaderData.BytecodeLength = size;
+		m_pShaderLibrary->CreateShaderFromFile(key, filePath, type);
+		m_pShaderBlob = m_pShaderLibrary->GetShaderBlob(key);
+
+		return 	pDevice->CreateVertexShader(
+			m_pShaderBlob->GetBufferPointer(),
+			m_pShaderBlob->GetBufferSize(),
+			nullptr,
+			m_pVertexShader.ReleaseAndGetAddressOf());
+	}
+	HRESULT Create(HashKey key, ID3D12Device* pDevice, std::wstring filePath, DX_SHADER_TYPE type)
+	{
+		m_pShaderLibrary->CreateShaderFromFile(key, filePath, type);
+		m_pShaderBlob = m_pShaderLibrary->GetShaderBlob(key);
+		if (m_pShaderBlob != nullptr) return E_FAIL;
+		return S_OK;
 	}
 
-	const D3D12_SHADER_BYTECODE GetShaderDesc() { return m_shaderData; }
+	ID3DBlob* GetBlob() { return m_pShaderBlob.Get(); }
+	ID3DBlob** GetBlobAddress() { return m_pShaderBlob.GetAddressOf(); }
+	LPVOID GetBlobPointer() { return m_pShaderBlob->GetBufferPointer(); }
+	size_t GetBlobSize() { return m_pShaderBlob->GetBufferSize(); }
+	ID3D11VertexShader* GetShader() { return m_pVertexShader.Get(); }
+	ID3D11VertexShader** GetShaderPointer() { return m_pVertexShader.GetAddressOf(); }
 
-protected:
-	D3D12_SHADER_BYTECODE m_shaderData;
+
+private:
+	ComPtr<ID3D11VertexShader> m_pVertexShader;
 };
+
+class SnctDXPixelShader : SnctDXShader
+{
+public:
+	HRESULT Create(HashKey key, ID3D11Device* pDevice, std::wstring filePath, DX_SHADER_TYPE type) override final
+	{
+		m_pShaderLibrary->CreateShaderFromFile(key, filePath, type);
+		m_pShaderBlob = m_pShaderLibrary->GetShaderBlob(key);
+
+		return 	pDevice->CreatePixelShader(
+			m_pShaderBlob->GetBufferPointer(),
+			m_pShaderBlob->GetBufferSize(),
+			nullptr,
+			m_pPixelShader.ReleaseAndGetAddressOf());
+	}
+
+	HRESULT Create(HashKey key, ID3D12Device* pDevice, std::wstring filePath, DX_SHADER_TYPE type)
+	{
+		m_pShaderLibrary->CreateShaderFromFile(key, filePath, type);
+		m_pShaderBlob = m_pShaderLibrary->GetShaderBlob(key);
+		if (m_pShaderBlob != nullptr) return E_FAIL;
+		return S_OK;
+	}
+
+	ID3DBlob* GetBlob() { return m_pShaderBlob.Get(); }
+	ID3DBlob** GetBlobAddress() { return m_pShaderBlob.GetAddressOf(); }
+	LPVOID GetBlobPointer() { return m_pShaderBlob->GetBufferPointer(); }
+	size_t GetBlobSize() { return m_pShaderBlob->GetBufferSize(); }
+	ID3D11PixelShader* GetShader() { return m_pPixelShader.Get(); }
+	ID3D11PixelShader** GetShaderPointer() { return m_pPixelShader.GetAddressOf(); }
+private:
+	ComPtr<ID3D11PixelShader> m_pPixelShader;
+};
+
+#pragma endregion
+
+#pragma region StaticSampler
+
+class ISnctDXStaticSampler : public ISnctDXResource
+{
+};
+
+class SnctDX11Sampler : public ISnctDXStaticSampler
+{
+public:
+	const SnctDX11Sampler* Get() override final { return this; }
+	ID3D11SamplerState** GetSamplerAddress() { return m_pSamplerState.GetAddressOf(); }
+	ID3D11SamplerState* GetSampler() { return m_pSamplerState.Get(); }
+private:
+	ComPtr<ID3D11SamplerState> m_pSamplerState;
+};
+//
+//class SnctDX12Sampler : public SnctDXStaticSampler
+//{
+//public:
+//	const SnctDX11Sampler* Get() override final { return this; }
+//	ID3D11SamplerState* GetSampler() { return m_pSamplerState.Get(); }
+//private:
+//	ComPtr<> m_pSamplerState;
+//};
+
+#pragma endregion
+
+#pragma region RasterizerState
+
+class ISnctDXRasterizerState : public ISnctDXResource
+{
+	// Nothing //
+	const ISnctDXRasterizerState* Get() override  { return this; }
+};
+
+class SnctDX11RasterizerState : public ISnctDXRasterizerState
+{
+public:
+	const SnctDX11RasterizerState* Get() override final { return this; }
+
+	ID3D11RasterizerState* GetRasterizerState() { return m_pRasterizerState.Get(); }
+	ID3D11RasterizerState** GetRasterizerStatePointer() { return m_pRasterizerState.GetAddressOf(); }
+private:
+	ComPtr<ID3D11RasterizerState> m_pRasterizerState;
+};
+
+class SnctDX12RasterizerState : public ISnctDXRasterizerState
+{
+public:
+private:
+};
+
 #pragma endregion

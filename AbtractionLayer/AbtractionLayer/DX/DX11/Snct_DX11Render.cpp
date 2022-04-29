@@ -46,8 +46,9 @@ void SnctDX11Render::Build(HWND hWnd)
 		}
 
 		{
+			ISnctDXContext* pCmdLists = { static_cast<ISnctDXContext*>(&m_pDeferredContext) };
 			// デファードコンテクストの作成
-			m_pDevice.CreateDeferredContext(m_pDeferredContext.GetContextAddress());
+			m_pDevice.CreateCmdList(&pCmdLists);
 
 			// 型自体も　Immadiateと変わらないので　同じ設定ができる。もしくは、する必要がある。
 		}
@@ -67,6 +68,7 @@ void SnctDX11Render::Build(HWND hWnd)
 			{
 				throw std::runtime_error("!Failed to create render target buffer");
 			}
+			TempRTVBuffer->Release();
 		}
 
 		{
@@ -121,18 +123,18 @@ void SnctDX11Render::Build(HWND hWnd)
 			descRasterizer.DepthClipEnable = true;
 			descRasterizer.MultisampleEnable = false;
 
-			ComPtr<ID3D11RasterizerState> rasterizerState;
+		SnctDX11RasterizerState rasterizerState;
 
 			if (FAILED(m_pDevice.GetDevice()->CreateRasterizerState(
 				&descRasterizer,
-				rasterizerState.GetAddressOf()
+				rasterizerState.GetRasterizerStatePointer()
 			)))
 			{
 				throw std::runtime_error("!Failed to Create Rasterizer State");
 			}
 
-			m_pDevice.SetRasterizerState(rasterizerState.Get());
-			m_pDeferredContext.SetRasterizerState(rasterizerState.Get());
+			m_pDevice.SetRasterizerState(&rasterizerState);
+			m_pDeferredContext.SetRasterizerState(&rasterizerState);
 		}
 
 		{
@@ -147,17 +149,21 @@ void SnctDX11Render::Build(HWND hWnd)
 			descSampler.MinLOD = 0;
 			descSampler.MaxLOD = D3D11_FLOAT32_MAX;
 
-			ComPtr<ID3D11SamplerState> samplerState;
+			SnctDX11Sampler samplerState;
 			if (FAILED(m_pDevice.GetDevice()->CreateSamplerState(
 				&descSampler,
-				samplerState.GetAddressOf()
+				samplerState.GetSamplerAddress()
 			)))
 			{
 				throw "!Failed to create sampler state";
 			}
 
-			m_pDevice.GetDeviceContext()->PSSetSamplers(0, 1, samplerState.GetAddressOf());
+			m_pDevice.PSSetSamplers( 1, &samplerState);
 		}
+
+		m_pSceneObjects = std::make_unique<SnctDX11Objects>();
+
+
 	}
 	catch (std::runtime_error& e) {
 		SnctRuntimeError(e);
@@ -168,9 +174,9 @@ void SnctDX11Render::Build(HWND hWnd)
 		m_pDeferredContext.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
 	}
 
-	m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
-	m_pShaderLibrary->CreateShaderFromFile("n_vertex", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
-	m_pShaderLibrary->CreateShaderFromFile("n_pixel", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl", DX_SHADER_TYPE::PS);
+	//m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
+	//m_pShaderLibrary->CreateShaderFromFile("n_vertex", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
+	//m_pShaderLibrary->CreateShaderFromFile("n_pixel", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl", DX_SHADER_TYPE::PS);
 
 	TEST_CODE_CreateCameraConstantBuffer();
 	TEST_CODE_CreateVSAndPS();
@@ -193,7 +199,7 @@ void SnctDX11Render::RenderBegin()
 	m_pDeferredContext.SetRTV(1, &m_pBackBufferView, &m_pDepthStencileView);
 	m_pDeferredContext.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
 
-	UpdateCameraBuffer(TEST_CODE_m_pCameraConstant.Get());
+	UpdateCameraBuffer(&m_pCameraConstant);
 }
 
 void SnctDX11Render::RenderEnd()
@@ -226,112 +232,44 @@ void SnctDX11Render::RenderEnd()
 
 void SnctDX11Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 {
+	SnctDX11ObjectBuffer* object = m_pSceneObjects->GetObjectBuffer(key);
+
 	unsigned int strides = sizeof(Vertex);
 	unsigned int offsets = 0;
 
-	UpdateObjectBuffer(TEST_CODE_m_pConstantObject.Get());
+	m_pDeferredContext.UpdateSubresource(&object->pConstantObject, 0, m_pConstantObject.get(), 0, 0);
+	
+	m_pDeferredContext.GetContext()->VSSetShader(m_pVertexShader.GetShader(), nullptr, 0);
+	m_pDeferredContext.GetContext()->PSSetShader(m_pPixelShader.GetShader(), nullptr, 0);
 
-	m_pDeferredContext.GetContext()->VSSetShader(TEST_CODE_m_pVertexShader.Get(), nullptr, 0);
-	m_pDeferredContext.GetContext()->PSSetShader(TEST_CODE_m_pPixelShader.Get(), nullptr, 0);
+	m_pDeferredContext.VSSetConstantBuffer(0, 1, &m_pCameraConstant);
+	m_pDeferredContext.PSSetConstantBuffer(0, 1, &m_pCameraConstant);
 
-	m_pDeferredContext.GetContext()->VSSetConstantBuffers(0, 1, TEST_CODE_m_pCameraConstant.GetAddressOf());
-	m_pDeferredContext.GetContext()->PSSetConstantBuffers(0, 1, TEST_CODE_m_pCameraConstant.GetAddressOf());
+	m_pDeferredContext.VSSetConstantBuffer(1, 1, &object->pConstantObject);
+	m_pDeferredContext.PSSetConstantBuffer(1, 1, &object->pConstantObject);
 
-	m_pDeferredContext.GetContext()->VSSetConstantBuffers(1, 1, TEST_CODE_m_pConstantObject.GetAddressOf());
-	m_pDeferredContext.GetContext()->PSSetConstantBuffers(1, 1, TEST_CODE_m_pConstantObject.GetAddressOf());
+	m_pDeferredContext.SetVertexBuffer( 1, &object->pVertexBuffer, strides, offsets);
+	m_pDeferredContext.SetIndexBuffer(&object->pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+	m_pDeferredContext.GetContext()->IASetInputLayout(m_pInputLayout.Get());
+	m_pDeferredContext.SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	m_pDeferredContext.GetContext()->IASetVertexBuffers(0, 1, TEST_CODE_m_pVertexBuffer.GetAddressOf(), &strides, &offsets);
-	m_pDeferredContext.GetContext()->IASetIndexBuffer(TEST_CODE_m_pIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-	m_pDeferredContext.GetContext()->IASetInputLayout(TEST_CODE_m_pInputLayout.Get());
-	m_pDeferredContext.GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	m_pDeferredContext.GetContext()->DrawIndexedInstanced(TEST_CODE_nIndexSize, 100, 0, 0, 0);
+	m_pDeferredContext.DrawIndexed(object->nIndexSize, 1,  0);
+	//m_pDeferredContext.GetContext()->DrawIndexedInstanced(object->nIndexSize, 1, 0, 0, 0);
 }
 
-void SnctDX11Render::CreateObject(HashKey key, Vertices* vertices, Indices* indices)
+void SnctDX11Render::CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices)
 {
-	// create vertex & index map
-	try
-	{
-		// vertex
-		{
-			TEST_CODE_nVertexSize = (UINT)vertices->size();
-
-			D3D11_BUFFER_DESC descVBuffer{};
-			descVBuffer.ByteWidth = (UINT)sizeof(Vertex) * (UINT)vertices->size();
-			descVBuffer.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-			descVBuffer.Usage = D3D11_USAGE_DEFAULT;
-			descVBuffer.CPUAccessFlags = 0;
-			descVBuffer.MiscFlags = 0;
-			descVBuffer.StructureByteStride = 0;
-
-			D3D11_SUBRESOURCE_DATA dataVBuffer{};
-			dataVBuffer.pSysMem = vertices->data();
-			dataVBuffer.SysMemPitch = 0;
-			dataVBuffer.SysMemSlicePitch = 0;
-
-			if (FAILED(m_pDevice.GetDevice()->CreateBuffer(&descVBuffer, &dataVBuffer, TEST_CODE_m_pVertexBuffer.GetAddressOf())))
-				throw  std::runtime_error("!Failed to Create Vertex Buffer");
-		}
-
-		// index
-		{
-			TEST_CODE_nIndexSize = (UINT)indices->size();
-
-			D3D11_BUFFER_DESC descIndex{};
-			descIndex.ByteWidth = (UINT)sizeof(UINT) * (UINT)indices->size();
-			descIndex.BindFlags = D3D11_BIND_INDEX_BUFFER;
-			descIndex.Usage = D3D11_USAGE_DEFAULT;
-			descIndex.CPUAccessFlags = 0;
-			descIndex.MiscFlags = 0;
-			descIndex.StructureByteStride = 0;
-
-			D3D11_SUBRESOURCE_DATA dataIndex{};
-			dataIndex.pSysMem = indices->data();
-			dataIndex.SysMemPitch = 0;
-			dataIndex.SysMemSlicePitch = 0;
-
-			if (FAILED(m_pDevice.GetDevice()->CreateBuffer(&descIndex, &dataIndex, TEST_CODE_m_pIndexBuffer.GetAddressOf())))
-				throw std::runtime_error("!Failed to Create Index Buffer");
-		}
-
-		// constant
-		{
-			D3D11_BUFFER_DESC descConstantBuffer{};
-
-			descConstantBuffer.ByteWidth = (UINT)sizeof(XMConstantObject);
-			descConstantBuffer.Usage = D3D11_USAGE_DEFAULT;
-			descConstantBuffer.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-			descConstantBuffer.CPUAccessFlags = 0;
-			descConstantBuffer.MiscFlags = 0;
-			descConstantBuffer.StructureByteStride = 0;
-
-			if (FAILED(m_pDevice.GetDevice()->CreateBuffer(
-				&descConstantBuffer,
-				nullptr,
-				TEST_CODE_m_pConstantObject.GetAddressOf()
-			)))
-				throw std::runtime_error("!Failed to Create Constant Matrix Buffer");
-		}
-
-	}
-	catch (std::runtime_error& e)
-	{
-		SnctRuntimeError(e);
-	}
-
-
-
+	m_pSceneObjects->AddSceneObject(m_pDevice.GetDevice(), key, pVertices, pIndices);
 }
 
-void SnctDX11Render::UpdateCameraBuffer(ID3D11Buffer* pCameraConstant)
+void SnctDX11Render::UpdateCameraBuffer(ISnctDXBuffer* pCameraConstant)
 {
-	m_pDeferredContext.GetContext()->UpdateSubresource(pCameraConstant, 0, nullptr, m_pConstantCamera.get(), 0, 0);
+	m_pDeferredContext.UpdateSubresource(pCameraConstant, 0,  m_pConstantCamera.get(), 0, 0);
 }
 
-void SnctDX11Render::UpdateObjectBuffer(ID3D11Buffer* pObjectConstant)
+void SnctDX11Render::UpdateObjectBuffer(ISnctDXBuffer* pObjectConstant)
 {
-	m_pDeferredContext.GetContext()->UpdateSubresource(pObjectConstant, 0, nullptr, m_pConstantObject.get(), 0, 0);
+	m_pDeferredContext.UpdateSubresource(pObjectConstant, 0,  m_pConstantObject.get(), 0, 0);
 }
 
 void SnctDX11Render::TEST_CODE_CreateCameraConstantBuffer()
@@ -350,7 +288,7 @@ void SnctDX11Render::TEST_CODE_CreateCameraConstantBuffer()
 		if (FAILED(m_pDevice.GetDevice()->CreateBuffer(
 			&descConstantBuffer,
 			nullptr,
-			TEST_CODE_m_pCameraConstant.GetAddressOf()
+			m_pCameraConstant.GetBufferAddress()
 		)))
 			throw std::runtime_error("!Failed to Create Constant Matrix Buffer");
 	}
@@ -362,14 +300,8 @@ void SnctDX11Render::TEST_CODE_CreateCameraConstantBuffer()
 
 void SnctDX11Render::TEST_CODE_CreateVSAndPS()
 {
-	ID3DBlob* vs = m_pShaderLibrary->GetShaderBlob("n_vertex");
+	 m_pVertexShader.Create("n_vertex", m_pDevice.GetDevice(), L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
 
-	m_pDevice.GetDevice()->CreateVertexShader(
-		vs->GetBufferPointer(),
-		vs->GetBufferSize(),
-		nullptr,
-		TEST_CODE_m_pVertexShader.GetAddressOf()
-	);
 
 	D3D11_INPUT_ELEMENT_DESC descInputLayout[] = {
 	{"POSITION"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -381,17 +313,11 @@ void SnctDX11Render::TEST_CODE_CreateVSAndPS()
 	m_pDevice.GetDevice()->CreateInputLayout(
 		descInputLayout,
 		_countof(descInputLayout),
-		vs->GetBufferPointer(),
-		vs->GetBufferSize(),
-		TEST_CODE_m_pInputLayout.GetAddressOf()
+		m_pVertexShader.GetBlobPointer(),
+		m_pVertexShader.GetBlobSize(),
+		m_pInputLayout.GetAddressOf()
 	);
 
-	ID3DBlob* ps = m_pShaderLibrary->GetShaderBlob("n_pixel");
+	m_pPixelShader.Create("n_pixel", m_pDevice.GetDevice(), L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl", DX_SHADER_TYPE::PS);
 
-	m_pDevice.GetDevice()->CreatePixelShader(
-		ps->GetBufferPointer(),
-		ps->GetBufferSize(),
-		nullptr,
-		TEST_CODE_m_pPixelShader.GetAddressOf()
-	);
 }

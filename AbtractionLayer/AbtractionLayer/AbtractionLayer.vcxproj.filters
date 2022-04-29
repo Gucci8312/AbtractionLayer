@@ -43,9 +43,6 @@
     <ClInclude Include="DX\Snct_DXRender.h">
       <Filter>DX</Filter>
     </ClInclude>
-    <ClInclude Include="DX\Snct_DXResource.h">
-      <Filter>DX</Filter>
-    </ClInclude>
     <ClInclude Include="DX\Snct_DXShaderLibrary.h">
       <Filter>DX</Filter>
     </ClInclude>
@@ -67,6 +64,7 @@
     <ClInclude Include="..\resource\box.h" />
     <ClInclude Include="..\resource\camera.h" />
     <ClInclude Include="..\resource\scene01.h" />
+    <ClInclude Include="Snct_DX12Objects.h" />
     <ClInclude Include="DX\Interface\ISnct_DXDevice.h">
       <Filter>RenderCore\Inerface</Filter>
     </ClInclude>
@@ -79,14 +77,8 @@
     <ClInclude Include="DX\DX11\Snct_DX11Objects.h">
       <Filter>DX\DX11</Filter>
     </ClInclude>
-    <ClInclude Include="DX\Interface\Snct_DXObject.h">
-      <Filter>RenderCore\Inerface</Filter>
-    </ClInclude>
-    <ClInclude Include="DX\Snct_DXObject.h">
+    <ClInclude Include="DX\Snct_DXResource.h">
       <Filter>DX</Filter>
-    </ClInclude>
-    <ClInclude Include="DX\DX12\SnctDX12_Object.h">
-      <Filter>DX\DX12</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -123,17 +115,12 @@
     <ClCompile Include="DX\DX11\Snct_DX11Context.cpp">
       <Filter>RenderCore\DX11</Filter>
     </ClCompile>
+    <ClCompile Include="Snct_DX12Objects.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12Render.cpp">
       <Filter>DX\DX12</Filter>
     </ClCompile>
     <ClCompile Include="DX\DX11\Snct_DX11Objects.cpp">
       <Filter>DX\DX11</Filter>
-    </ClCompile>
-    <ClCompile Include="DX\Snct_DXObject.cpp">
-      <Filter>DX</Filter>
-    </ClCompile>
-    <ClCompile Include="DX\DX12\SnctDX12_Object.cpp">
-      <Filter>DX\DX12</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
