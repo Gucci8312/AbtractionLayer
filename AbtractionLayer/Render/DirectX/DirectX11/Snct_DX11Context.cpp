@@ -5,9 +5,10 @@
 /// \param[in]		Rasterize state
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX11Context::SetRasterizerState(ID3D11RasterizerState* pRaseterizeState)
+void SnctDX11Context::SetRasterizerState(ISnctDXRasterizerState* pRaseterizeState)
 {
-	m_pContext->RSSetState(pRaseterizeState);
+	SnctDX11RasterizerState* pTempRasterizerState = static_cast<SnctDX11RasterizerState*>(pRaseterizeState);
+	m_pContext->RSSetState(pTempRasterizerState->GetRasterizerState());
 }
 
 
@@ -65,7 +66,7 @@ void SnctDX11Context::SetVertexBuffer(UINT bufferNum, ISnctDXBuffer* pBuffer, UI
 void SnctDX11Context::SetIndexBuffer(ISnctDXBuffer* pBuffer, DXGI_FORMAT format, UINT size)
 {
 	SnctDX11Buffer* pTempBuffer = static_cast<SnctDX11Buffer*>(pBuffer);
-	m_pContext->IASetIndexBuffer( pTempBuffer->GetBuffer(), format, size);
+	m_pContext->IASetIndexBuffer(pTempBuffer->GetBuffer(), format, size);
 }
 
 void SnctDX11Context::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)
@@ -75,7 +76,25 @@ void SnctDX11Context::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)
 
 void SnctDX11Context::DrawIndexed(UINT indexCount, UINT startIndexLocation, UINT instanceLocation)
 {
-	m_pContext->DrawIndexed(indexCount, startIndexLocation, instanceLocation);
+	m_pContext->DrawIndexedInstanced(indexCount, startIndexLocation, 0, 0, instanceLocation);
+}
+
+void SnctDX11Context::VSSetConstantBuffer(UINT startSlot, UINT bufferNum, ISnctDXBuffer* pBuffer)
+{
+	SnctDX11Buffer* pTempBuffer = static_cast<SnctDX11Buffer*>(pBuffer);
+	m_pContext->VSSetConstantBuffers(startSlot, bufferNum, pTempBuffer->GetBufferAddress());
+}
+
+void SnctDX11Context::PSSetConstantBuffer(UINT startSlot, UINT bufferNum, ISnctDXBuffer* pBuffer)
+{
+	SnctDX11Buffer* pTempBuffer = static_cast<SnctDX11Buffer*>(pBuffer);
+	m_pContext->PSSetConstantBuffers(startSlot, bufferNum, pTempBuffer->GetBufferAddress());
+}
+
+void SnctDX11Context::UpdateSubresource(ISnctDXBuffer* pBuffer, UINT dstSubResource, const void* pData, UINT srcRowPitch, UINT srcDepthPitch)
+{
+	SnctDX11Buffer* pTempBuffer = static_cast<SnctDX11Buffer*>(pBuffer);
+	m_pContext->UpdateSubresource(pTempBuffer->GetBuffer(), dstSubResource, nullptr, pData, srcRowPitch, srcDepthPitch);
 }
 
 void SnctDX11Context::RegisterCmdList(ID3D11CommandList** cmdList)

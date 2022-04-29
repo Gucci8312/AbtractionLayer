@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="DX\DX11\Snct_DX11.h">
+      <Filter>DX\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX11\Snct_DX11Render.h">
+      <Filter>DX\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX12\Snct_DX12.h">
+      <Filter>DX\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX12\Snct_DX12Render.h">
+      <Filter>DX\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Application.h">
+      <Filter>Sorce</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Math.h">
+      <Filter>Sorce</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Object.h">
+      <Filter>Sorce</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Render.h">
+      <Filter>Sorce</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_ResouceLibary.h">
+      <Filter>Sorce</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Scene.h">
+      <Filter>Sorce</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Utility.h">
+      <Filter>Sorce</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Windows.h">
+      <Filter>Sorce</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\Snct_DXConstantParameter.h">
+      <Filter>DX</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\Snct_DXRender.h">
+      <Filter>DX</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\Snct_DXShaderLibrary.h">
+      <Filter>DX</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX12\Snct_DX12Context.h">
+      <Filter>RenderCore\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX12\Snct_DX12CmdQueue.h">
+      <Filter>RenderCore\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX12\Snct_DX12Device.h">
+      <Filter>RenderCore\DX12</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX11\Snct_DX11Device.h">
+      <Filter>RenderCore\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX11\Snct_DX11Context.h">
+      <Filter>RenderCore\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\resource\box.h" />
+    <ClInclude Include="..\resource\camera.h" />
+    <ClInclude Include="..\resource\scene01.h" />
+    <ClInclude Include="Snct_DX12Objects.h" />
+    <ClInclude Include="DX\Interface\ISnct_DXDevice.h">
+      <Filter>RenderCore\Inerface</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\Interface\ISnct_DXCmdQueue.h">
+      <Filter>RenderCore\Inerface</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\Interface\ISnct_DXContext.h">
+      <Filter>RenderCore\Inerface</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\DX11\Snct_DX11Objects.h">
+      <Filter>DX\DX11</Filter>
+    </ClInclude>
+    <ClInclude Include="DX\Snct_DXResource.h">
+      <Filter>DX</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="DX\DX11\Snct_DX11Render.cpp">
+      <Filter>DX\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\Snct_DXResource.cpp">
+      <Filter>DX</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\Snct_DXRender.cpp">
+      <Filter>DX</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Sorce</Filter>
+    </ClCompile>
+    <ClCompile Include="Snct_Application.cpp">
+      <Filter>Sorce</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\Snct_DXShaderLibrary.cpp">
+      <Filter>DX</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX12\Snct_DX12Context.cpp">
+      <Filter>RenderCore\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX12\Snct_DX12CmdQueue.cpp">
+      <Filter>RenderCore\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX12\Snct_DX12Device.cpp">
+      <Filter>RenderCore\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX11\Snct_DX11Device.cpp">
+      <Filter>RenderCore\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX11\Snct_DX11Context.cpp">
+      <Filter>RenderCore\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="Snct_DX12Objects.cpp" />
+    <ClCompile Include="DX\DX12\Snct_DX12Render.cpp">
+      <Filter>DX\DX12</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX11\Snct_DX11Objects.cpp">
+      <Filter>DX\DX11</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="DX">
+      <UniqueIdentifier>{6905cc63-187d-4341-bf25-e73b618754ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DX\DX11">
+      <UniqueIdentifier>{2e4f52cc-8ef0-4c55-b4e4-0da63991d964}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DX\DX12">
+      <UniqueIdentifier>{3cba6991-2bb5-4b75-8f2a-761e5d0c5f42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderCore">
+      <UniqueIdentifier>{41989333-e5c8-4b11-aec1-49ddcc45bf86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{ba200857-0fa6-441d-bca4-4ae330bf891b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Sorce">
+      <UniqueIdentifier>{f6d5651a-3e16-431e-a748-05850dae9651}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource\hlsl">
+      <UniqueIdentifier>{9096fcc5-3b23-4d35-9b97-738279583b9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderCore\DX11">
+      <UniqueIdentifier>{a0cc6171-bcba-4ed7-955b-d7807e5da226}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderCore\DX12">
+      <UniqueIdentifier>{ff21fc86-92e2-4f32-9df4-d454665980cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderCore\Inerface">
+      <UniqueIdentifier>{3cb0b5ab-1b0e-4f77-8554-e386e648337c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="DX\Shader\n_pixel.hlsl">
+      <Filter>Resource\hlsl</Filter>
+    </FxCompile>
+    <FxCompile Include="DX\Shader\n_vertex.hlsl">
+      <Filter>Resource\hlsl</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

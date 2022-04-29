@@ -1,6 +1,23 @@
+#include "Snct_Utility.h"
 #include "Snct_Application.h"
 
-#include "Snct_Scene01_Impl.h"
+#include "Snct_Render.h"
+#include "Snct_Scene.h"
+#include "DX/DX11/Snct_DX11Render.h"
+#include "DX/DX12/Snct_DX12Render.h"
+
+#include "../resource/scene01.h"
+
+//std::unique_ptr<ISnctRender>	pRender;
+ISnctRender*	pRender;
+//std::unique_ptr<ISnctScene>		pScene;
+ISnctScene*		pScene;
+
+// デバッグのために追加-----------------------
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+//----------------------------------------
 
 //------------------------------------------------------------------------------
 /// Window Procedure
@@ -61,15 +78,14 @@ bool SnctApplication::Initialize()
 	// Console window destroy
 	FreeConsole();
 
-	m_pRender = std::make_unique<SnctDX11Render>();
-	//m_pScene = std::make_unique<SnctScene01>();
+	pRender = new SnctDX11Render;
+	//pRender = std::make_unique<SnctDX12Render>();
+	//pScene = std::make_unique<Scene01>();
+	pScene = new Scene01;
+	pScene->SetRender(pRender);
 
-	if (!m_pRender->Build(m_hWnd)) return false;
-	m_deferredContext = new SnctDX11Context;
-	m_pRender->CreateCommandList(&m_deferredContext);
-
-	//m_pScene->SetRender(m_pRender.get());
-	//m_pScene->Initialize();
+	pRender->Build(m_hwnd);
+	pScene->Initialize();
 
 	return true;
 }
@@ -82,10 +98,14 @@ bool SnctApplication::Initialize()
 //------------------------------------------------------------------------------
 void SnctApplication::Finalize()
 {
-	m_pRender.reset();
-	//m_pScene.reset();
-	delete m_deferredContext;
-	m_deferredContext = nullptr;
+	
+	delete pScene;
+	delete pRender;
+
+	// デバッグのために追加-----------------------
+	_CrtDumpMemoryLeaks();
+	//----------------------------------------
+
 }
 
 
@@ -134,19 +154,19 @@ bool SnctApplication::InitWnd()
 	AdjustWindowRect(&rc, style, FALSE);
 
 	// Create window
-	m_hWnd = CreateWindow(g_className, m_windowName, WS_CAPTION | WS_SYSMENU, 0,
+	m_hwnd = CreateWindow(g_className, m_windowName, WS_CAPTION | WS_SYSMENU, 0,
 		0, rc.right - rc.left, rc.bottom - rc.top, HWND_DESKTOP,
 		(HMENU)NULL, m_hInst, (LPVOID)NULL);
 
 	// Check window handle
-	if (!m_hWnd) return false;
+	if (!m_hwnd) return false;
 
 	// Update window
-	ShowWindow(m_hWnd, SW_SHOWNORMAL);
-	UpdateWindow(m_hWnd);
+	ShowWindow(m_hwnd, SW_SHOWNORMAL);
+	UpdateWindow(m_hwnd);
 
 	// Set window focus
-	SetFocus(m_hWnd);
+	SetFocus(m_hwnd);
 
 	// Success
 	return true;
@@ -195,12 +215,10 @@ void SnctApplication::MainLoop()
 		}
 		else
 		{
-			// Process
-			m_pRender->BeforeRender(m_deferredContext);
-
-			//m_pScene->Draw(m_deferredContext);
-
-			m_pRender->AfterRender(m_deferredContext);
+			pScene->Update();
+			pRender->RenderBegin();
+			pScene->Draw();
+			pRender->RenderEnd();
 		}
 	}
 }

@@ -37,7 +37,7 @@ void SnctDX12Context::ClearDSV(ISnctDXDSV* DescriptorHandle, UINT Flag, float De
 /// \param[in]		Pipeline state
 /// \return			none
 //------------------------------------------------------------------------------
-void SnctDX12Context::Reset( ID3D12PipelineState* PipelineState)
+void SnctDX12Context::Reset(ID3D12PipelineState* PipelineState)
 {
 	m_pCmdAllocator->Reset();
 	m_pCmdList->Reset(m_pCmdAllocator.Get(), PipelineState);

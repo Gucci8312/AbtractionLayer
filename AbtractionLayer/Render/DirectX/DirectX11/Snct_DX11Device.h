@@ -9,7 +9,7 @@ public:
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
-	
+
 	~SnctDX11Device()
 	{
 		m_pDevice.Reset();
@@ -38,7 +38,9 @@ public:
 		UINT8 Stencil, UINT NumRects = 0, RECT* pRects = 0);
 	void SetRTV(UINT viewNum, ISnctDXRTV* pRTV, ISnctDXDSV* pDSV = nullptr,
 		bool SingleHandleToDescriptorRange = 0);
-	void SetRasterizerState(ID3D11RasterizerState* rasterizerState);
+	void SetRasterizerState(ISnctDXRasterizerState* rasterizerState);
+	void PSSetSamplers(UINT SamplerNum,ISnctDXStaticSampler* pSampler);
+
 private:
 	//---------------------------------------------------------------------------
 	// private variables.

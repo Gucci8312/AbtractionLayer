@@ -111,10 +111,10 @@ HRESULT SnctDX12Device::CreateDSV(ISnctDXBuffer* pDepthTexture, ISnctDXDSV* pDSV
 HRESULT SnctDX12Device::CreateCmdList(ISnctDXContext** pCmdList)
 {
 	SnctDX12Context* tempCmdList = static_cast<SnctDX12Context*>(*pCmdList);
-	auto hr= m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+	auto hr = m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
 		IID_PPV_ARGS(tempCmdList->GetCmdAllocatorAddress()));
 
-	hr= m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
+	hr = m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
 		tempCmdList->GetCmdAllocator(), nullptr, IID_PPV_ARGS(tempCmdList->GetContextAddress()));
 	tempCmdList->Close();
 
