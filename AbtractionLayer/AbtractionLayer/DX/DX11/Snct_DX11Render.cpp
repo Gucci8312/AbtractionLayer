@@ -178,9 +178,48 @@ void SnctDX11Render::Build(HWND hWnd)
 	//m_pShaderLibrary->CreateShaderFromFile("n_vertex", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
 	//m_pShaderLibrary->CreateShaderFromFile("n_pixel", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl", DX_SHADER_TYPE::PS);
 
-	TEST_CODE_CreateCameraConstantBuffer();
-	TEST_CODE_CreateVSAndPS();
-}
+	try
+	{
+		D3D11_BUFFER_DESC descConstantBuffer{};
+
+		descConstantBuffer.ByteWidth = (UINT)sizeof(XMConstantCamera);
+		descConstantBuffer.Usage = D3D11_USAGE_DEFAULT;
+		descConstantBuffer.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		descConstantBuffer.CPUAccessFlags = 0;
+		descConstantBuffer.MiscFlags = 0;
+		descConstantBuffer.StructureByteStride = 0;
+
+		if (FAILED(m_pDevice.GetDevice()->CreateBuffer(
+			&descConstantBuffer,
+			nullptr,
+			m_pCameraConstant.GetBufferAddress()
+		)))
+			throw std::runtime_error("!Failed to Create Constant Matrix Buffer");
+	}
+	catch (std::runtime_error& e)
+	{
+		SnctRuntimeError(e);
+	}
+
+	m_pVertexShader.Create("n_vertex", m_pDevice.GetDevice(), L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
+
+
+	D3D11_INPUT_ELEMENT_DESC descInputLayout[] = {
+	{"POSITION"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	{"NORMAL"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	{"COLOR"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	{"TEXCOORD"		, 0, DXGI_FORMAT_R32G32_FLOAT		, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+	m_pDevice.GetDevice()->CreateInputLayout(
+		descInputLayout,
+		_countof(descInputLayout),
+		m_pVertexShader.GetBlobPointer(),
+		m_pVertexShader.GetBlobSize(),
+		m_pInputLayout.GetAddressOf()
+	);
+
+	m_pPixelShader.Create("n_pixel", m_pDevice.GetDevice(), L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl", DX_SHADER_TYPE::PS); }
 
 void SnctDX11Render::RenderBegin()
 {
@@ -254,7 +293,6 @@ void SnctDX11Render::Draw(HashKey key, SNCT_DRAW_FLAG drawFlag)
 	m_pDeferredContext.SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	m_pDeferredContext.DrawIndexed(object->nIndexSize, 1,  0);
-	//m_pDeferredContext.GetContext()->DrawIndexedInstanced(object->nIndexSize, 1, 0, 0, 0);
 }
 
 void SnctDX11Render::CreateObject(HashKey key, Vertices* pVertices, Indices* pIndices)
@@ -272,52 +310,3 @@ void SnctDX11Render::UpdateObjectBuffer(ISnctDXBuffer* pObjectConstant)
 	m_pDeferredContext.UpdateSubresource(pObjectConstant, 0,  m_pConstantObject.get(), 0, 0);
 }
 
-void SnctDX11Render::TEST_CODE_CreateCameraConstantBuffer()
-{
-	try 
-	{
-		D3D11_BUFFER_DESC descConstantBuffer{};
-
-		descConstantBuffer.ByteWidth = (UINT)sizeof(XMConstantCamera);
-		descConstantBuffer.Usage = D3D11_USAGE_DEFAULT;
-		descConstantBuffer.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-		descConstantBuffer.CPUAccessFlags = 0;
-		descConstantBuffer.MiscFlags = 0;
-		descConstantBuffer.StructureByteStride = 0;
-
-		if (FAILED(m_pDevice.GetDevice()->CreateBuffer(
-			&descConstantBuffer,
-			nullptr,
-			m_pCameraConstant.GetBufferAddress()
-		)))
-			throw std::runtime_error("!Failed to Create Constant Matrix Buffer");
-	}
-	catch (std::runtime_error& e)
-	{
-		SnctRuntimeError(e);
-	}
-}
-
-void SnctDX11Render::TEST_CODE_CreateVSAndPS()
-{
-	 m_pVertexShader.Create("n_vertex", m_pDevice.GetDevice(), L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
-
-
-	D3D11_INPUT_ELEMENT_DESC descInputLayout[] = {
-	{"POSITION"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	{"NORMAL"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	{"COLOR"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	{"TEXCOORD"		, 0, DXGI_FORMAT_R32G32_FLOAT		, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-	};
-
-	m_pDevice.GetDevice()->CreateInputLayout(
-		descInputLayout,
-		_countof(descInputLayout),
-		m_pVertexShader.GetBlobPointer(),
-		m_pVertexShader.GetBlobSize(),
-		m_pInputLayout.GetAddressOf()
-	);
-
-	m_pPixelShader.Create("n_pixel", m_pDevice.GetDevice(), L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl", DX_SHADER_TYPE::PS);
-
-}

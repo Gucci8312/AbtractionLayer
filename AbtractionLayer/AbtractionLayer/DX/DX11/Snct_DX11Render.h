@@ -37,12 +37,9 @@ private:
 	void UpdateObjectBuffer(ISnctDXBuffer* pObjectConstant);
 	void UpdateCameraBuffer(ISnctDXBuffer* pCameraConstant);
 
-	SnctDXVertexShader		m_pVertexShader;
-	SnctDXPixelShader		m_pPixelShader;
+	SnctDXVertexShader				m_pVertexShader;
+	SnctDXPixelShader				m_pPixelShader;
 
 	SnctDX11Buffer					m_pCameraConstant;
 	ComPtr<ID3D11InputLayout>		m_pInputLayout;
-
-	void TEST_CODE_CreateCameraConstantBuffer();
-	void TEST_CODE_CreateVSAndPS();
 };
