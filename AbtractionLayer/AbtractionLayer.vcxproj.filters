@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="ヘッダー ファイル">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="リソース ファイル">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ApplicationCore">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="RenderCore">
+      <UniqueIdentifier>{b18833ad-0941-4ddb-9d64-3931e01ec88d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderCore\DirectX">
+      <UniqueIdentifier>{696397e9-c545-4088-8c93-3dd9d2a1c173}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderCore\DirectX\Interface">
+      <UniqueIdentifier>{f472ab60-b416-486f-ab3f-ff33875a85ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderCore\DirectX\DirectX11Render">
+      <UniqueIdentifier>{1c8aea17-0caf-4dcb-ac0e-be612bb0392e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RenderCore\DirectX\DirectX12Render">
+      <UniqueIdentifier>{18595b30-812a-4e76-82f0-a9f5b4a9b1e6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>ApplicationCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Snct_Application.cpp">
+      <Filter>ApplicationCore</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX12\Snct_DX12Render.cpp">
+      <Filter>RenderCore\DirectX\DirectX12Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX12\Snct_DX12Device.cpp">
+      <Filter>RenderCore\DirectX\DirectX12Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX12\Snct_DX12Context.cpp">
+      <Filter>RenderCore\DirectX\DirectX12Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX12\Snct_DX12CmdQueue.cpp">
+      <Filter>RenderCore\DirectX\DirectX12Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX12\Snct_DX12Object.cpp">
+      <Filter>RenderCore\DirectX\DirectX12Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Context.cpp">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Device.cpp">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Object.cpp">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\DirectX\DirectX11\Snct_DX11Render.cpp">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Snct_Camera.cpp">
+      <Filter>ApplicationCore</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Snct_Application.h">
+      <Filter>ApplicationCore</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>ApplicationCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\Snct_DXResource.h">
+      <Filter>RenderCore\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\Interface\ISnct_DXContext.h">
+      <Filter>RenderCore\DirectX\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX12\Snct_DX12Render.h">
+      <Filter>RenderCore\DirectX\DirectX12Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX12\Snct_DX12Device.h">
+      <Filter>RenderCore\DirectX\DirectX12Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX12\Snct_DX12Context.h">
+      <Filter>RenderCore\DirectX\DirectX12Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\Interface\ISnct_DXCmdQueue.h">
+      <Filter>RenderCore\DirectX\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX12\Snct_DX12CmdQueue.h">
+      <Filter>RenderCore\DirectX\DirectX12Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\Snct_DXObject.h">
+      <Filter>RenderCore\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX12\Snct_DX12Object.h">
+      <Filter>RenderCore\DirectX\DirectX12Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\Snct_DXRender.h">
+      <Filter>RenderCore\DirectX</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Utility.h">
+      <Filter>ApplicationCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\ISnct_Render.h">
+      <Filter>ApplicationCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Math.h">
+      <Filter>ApplicationCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Scene.h">
+      <Filter>ApplicationCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Scene01_Impl.h">
+      <Filter>ApplicationCore</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\Interface\ISnct_DXDevice.h">
+      <Filter>RenderCore\DirectX\Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Context.h">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Device.h">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Object.h">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\DirectX\DirectX11\Snct_DX11Render.h">
+      <Filter>RenderCore\DirectX\DirectX11Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Snct_Camera.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

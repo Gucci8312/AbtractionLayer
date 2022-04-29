@@ -1,30 +1,31 @@
 #pragma once
 #include "Snct_Utility.h"
+#include "Render/DirectX/Snct_DXRender.h"
+#include "Render/DirectX/Snct_DXObject.h"
 
 class ISnctRender;
-#include "Snct_Object.h"
 
 class ISnctScene {
 
 public:
-	void SetRender(ISnctRender* pRender) { m_pRender = pRender; };
+	void SetRender(SnctDXRender* pRender) { m_pRender = pRender; };
 
 	void Initialize()
 	{
 		SceneObjects();
-		for (const auto& object : m_pObjects) object.second->Initialize();
+		for (const auto& object : m_pObjects) object.second->Create(m_pRender->GetDevice());
 	}
 	void Update() 
 	{
-		for (const auto& object : m_pObjects) object.second->Update();
+		//for (const auto& object : m_pObjects) object.second->Update();
 	}
-	void Draw() 
+	void Draw(ISnctDXContext* pContext)
 	{
-		for (const auto& object : m_pObjects) object.second->Draw();
+		for (const auto& object : m_pObjects) object.second->Draw(pContext);
 	}
 	void Finalize()
 	{
-		for (const auto& object : m_pObjects) object.second->Finalize();
+		//for (const auto& object : m_pObjects) object.second->Finalize();
 	}
 
 protected:	
@@ -47,8 +48,8 @@ protected:
 	void ReleaseObject(HashKey key);
 
 private:
-	ISnctRender* m_pRender = nullptr;
-	std::unordered_map<HashKey, std::unique_ptr<ISnctObject>> m_pObjects;
+	SnctDXRender*	m_pRender	= nullptr;
+	std::unordered_map<HashKey, std::unique_ptr<SnctDXObject>> m_pObjects;
 };
 
 template<class T>
