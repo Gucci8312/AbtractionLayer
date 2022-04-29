@@ -1,4 +1,5 @@
 #include "Snct_Application.h"
+#include "Snct_Utility.h"
 
 //------------------------------------------------------------------------------
 /// Main function
@@ -9,8 +10,6 @@ int main()
 
 	//execution
 	app.Run();
-
-	_CrtDumpMemoryLeaks();
 
 	return 0;
 }

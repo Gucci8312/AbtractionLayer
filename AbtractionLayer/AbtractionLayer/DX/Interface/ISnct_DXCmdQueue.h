@@ -1,5 +1,6 @@
 // Interface class for DirectX command queue Management...
 #pragma once
+#include "../../Snct_Windows.h"
 #include "../Snct_DXResource.h"
 #include "ISnct_DxContext.h"
 
@@ -7,7 +8,6 @@
 class ISnctDXCmdQueue
 {
 public:
-	virtual ~ISnctDXCmdQueue() {}
 	//---------------------------------------------------------------------------
 	// public methods
 	//---------------------------------------------------------------------------	
