@@ -5,7 +5,6 @@
 #include <memory>
 #include "Snct_DXShaderLibrary.h"
 
-
 #pragma region Parameter
 // How to use texture
 typedef enum SNCT_USAGE
@@ -127,9 +126,6 @@ private:
 	//---------------------------------------------------------------------------	
 	D3D12_CPU_DESCRIPTOR_HANDLE m_rtvHandle = {};
 };
-
-
-
 
 
 // DirectX11 render target view management class
@@ -397,8 +393,11 @@ public:
 	const SnctDX11Sampler* Get() override final { return this; }
 	ID3D11SamplerState** GetSamplerAddress() { return m_pSamplerState.GetAddressOf(); }
 	ID3D11SamplerState* GetSampler() { return m_pSamplerState.Get(); }
+	D3D11_SAMPLER_DESC* GetSamplerDesc() { return &m_samplerDesc; }
+	void SetSamplerDesc(D3D11_SAMPLER_DESC samplerDesc) { m_samplerDesc = samplerDesc; }
 private:
 	ComPtr<ID3D11SamplerState> m_pSamplerState;
+	D3D11_SAMPLER_DESC m_samplerDesc = {};
 };
 //
 //class SnctDX12Sampler : public SnctDXStaticSampler

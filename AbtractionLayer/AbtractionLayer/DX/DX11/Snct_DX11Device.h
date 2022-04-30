@@ -26,6 +26,7 @@ public:
 	HRESULT CreateRTV(ISnctDXBuffer* pBuckBuffer, ISnctDXRTV* pRTV) override final;
 	HRESULT CreateDSV(ISnctDXBuffer* buffer, ISnctDXDSV* pDSVHandle) override final;
 	HRESULT CreateCmdList(ISnctDXContext** pCmdList)override final;
+	HRESULT CreateSamplerState(ISnctDXStaticSampler* pSampler);
 
 	// Device
 	void ExecuteCmdList(ID3D11CommandList* cmdList);
@@ -40,7 +41,6 @@ public:
 		bool SingleHandleToDescriptorRange = 0);
 	void SetRasterizerState(ISnctDXRasterizerState* rasterizerState);
 	void PSSetSamplers(UINT SamplerNum,ISnctDXStaticSampler* pSampler);
-
 private:
 	//---------------------------------------------------------------------------
 	// private variables.

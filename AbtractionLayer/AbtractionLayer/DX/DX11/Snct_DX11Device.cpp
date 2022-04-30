@@ -38,6 +38,15 @@ HRESULT SnctDX11Device::CreateCmdList(ISnctDXContext** pCmdList)
 }
 
 
+HRESULT SnctDX11Device::CreateSamplerState(ISnctDXStaticSampler* pSampler)
+{
+	SnctDX11Sampler* tempSampler = static_cast<SnctDX11Sampler*>(pSampler);
+	return m_pDevice->CreateSamplerState(
+		tempSampler->GetSamplerDesc(),
+		tempSampler->GetSamplerAddress());
+}
+
+
 //------------------------------------------------------------------------------
 /// Create DirectX11 render target view
 /// \param[in]		Back buffer pointer

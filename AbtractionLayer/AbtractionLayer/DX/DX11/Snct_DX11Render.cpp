@@ -38,8 +38,7 @@ void SnctDX11Render::Build(HWND hWnd)
 			if (FAILED(factory->CreateSwapChain(
 				m_pDevice.GetDevice(),
 				&descSwapChain,
-				m_pSwapChain.GetAddressOf()
-			)))
+				m_pSwapChain.GetAddressOf())))
 			{
 				throw std::runtime_error("!Failed to create swapchain");
 			}
@@ -47,10 +46,9 @@ void SnctDX11Render::Build(HWND hWnd)
 
 		{
 			ISnctDXContext* pCmdLists = { static_cast<ISnctDXContext*>(&m_pDeferredContext) };
-			// デファードコンテクストの作成
-			m_pDevice.CreateCmdList(&pCmdLists);
 
-			// 型自体も　Immadiateと変わらないので　同じ設定ができる。もしくは、する必要がある。
+			// Create deffered context
+			m_pDevice.CreateCmdList(&pCmdLists);
 		}
 
 		{
@@ -152,8 +150,7 @@ void SnctDX11Render::Build(HWND hWnd)
 			SnctDX11Sampler samplerState;
 			if (FAILED(m_pDevice.GetDevice()->CreateSamplerState(
 				&descSampler,
-				samplerState.GetSamplerAddress()
-			)))
+				samplerState.GetSamplerAddress())))
 			{
 				throw "!Failed to create sampler state";
 			}
@@ -173,10 +170,6 @@ void SnctDX11Render::Build(HWND hWnd)
 		m_pDevice.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
 		m_pDeferredContext.SetViewPort((FLOAT)g_screenWidth, (FLOAT)g_screenHeight, 0.0f, 1.0f);
 	}
-
-	//m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
-	//m_pShaderLibrary->CreateShaderFromFile("n_vertex", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
-	//m_pShaderLibrary->CreateShaderFromFile("n_pixel", L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl", DX_SHADER_TYPE::PS);
 
 	try
 	{
@@ -203,7 +196,6 @@ void SnctDX11Render::Build(HWND hWnd)
 
 	m_pVertexShader.Create("n_vertex", m_pDevice.GetDevice(), L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_vertex.hlsl", DX_SHADER_TYPE::VS);
 
-
 	D3D11_INPUT_ELEMENT_DESC descInputLayout[] = {
 	{"POSITION"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 	{"NORMAL"		, 0, DXGI_FORMAT_R32G32B32A32_FLOAT	, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
@@ -216,16 +208,15 @@ void SnctDX11Render::Build(HWND hWnd)
 		_countof(descInputLayout),
 		m_pVertexShader.GetBlobPointer(),
 		m_pVertexShader.GetBlobSize(),
-		m_pInputLayout.GetAddressOf()
-	);
+		m_pInputLayout.GetAddressOf());
 
-	m_pPixelShader.Create("n_pixel", m_pDevice.GetDevice(), L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl", DX_SHADER_TYPE::PS); }
+	m_pPixelShader.Create("n_pixel", m_pDevice.GetDevice(), L"../../AbtractionLayer/AbtractionLayer/DX/Shader/n_pixel.hlsl", DX_SHADER_TYPE::PS);
+ }
 
 void SnctDX11Render::RenderBegin()
 {
 	float clearColor[4] = { 0.5f, 0.5f, 0.5f, 1.0f };
 
-	//　Immadiate　と deferred　の双方をクリア
 	// Immadiate context command
 	m_pDevice.ClearRTV(&m_pBackBufferView, clearColor);
 	m_pDevice.ClearDSV(&m_pDepthStencileView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -247,18 +238,10 @@ void SnctDX11Render::RenderEnd()
 	{
 		ComPtr<ID3D11CommandList> pCommandList;
 
-		// !　ここでDeferred contextで設定したものをCommandListとして登録
 		m_pDeferredContext.RegisterCmdList(pCommandList.ReleaseAndGetAddressOf());
 
 		// Immadiate context で　実行命令
 		m_pDevice.ExecuteCmdList(pCommandList.Get());
-
-		//　実質的に運用方法は、Immadiate と変わらない
-		//　commandList も存在するが
-		//
-		//  Deferred から FinishCommandList で受け渡し
-		//　Immadiate で Execute する
-		//  そのため CommandListは一時オブジェクトで問題ないかも?
 
 		if (FAILED(m_pSwapChain->Present(1, 0)))
 			throw std::runtime_error("!Failed to swap chain present");
@@ -309,4 +292,3 @@ void SnctDX11Render::UpdateObjectBuffer(ISnctDXBuffer* pObjectConstant)
 {
 	m_pDeferredContext.UpdateSubresource(pObjectConstant, 0,  m_pConstantObject.get(), 0, 0);
 }
-

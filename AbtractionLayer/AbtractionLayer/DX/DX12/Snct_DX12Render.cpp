@@ -111,13 +111,13 @@ void SnctDX12Render::Build(HWND hWnd)
 		// Get buckbuffer idx
 		m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
 
-		//// Create commandallocator
-		//for (auto i = 0; i < m_frameCount; ++i)
-		//{
-		//	hr = m_device.CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-		//		m_cmdAllocator[i].ReleaseAndGetAddressOf());
-		//	if (FAILED(hr)) throw std::runtime_error("DirectX12 command allocator create error");
-		//}
+		// Create commandallocator
+		for (auto i = 0; i < m_frameCount; ++i)
+		{
+			hr = m_device.GetDevice()->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+				IID_PPV_ARGS(m_cmdList.GetCmdAllocatorAddress()));
+			if (FAILED(hr)) throw std::runtime_error("DirectX12 command allocator create error");
+		}
 
 		m_pShaderLibrary = std::make_unique<SnctShaderLibrary>();
 
