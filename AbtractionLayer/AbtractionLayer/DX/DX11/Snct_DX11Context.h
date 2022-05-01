@@ -23,7 +23,7 @@ public:
 		UINT8 Stencil, UINT NumRects = 0, RECT* pRects = 0) override final;
 	void SetRTV(UINT NumDescriptors, ISnctDXRTV* Descriptors, ISnctDXDSV* DSHandle = nullptr,
 		bool SingleHandleToDescriptorRange = 0)override final;
-	void Close(bool RestoreDeferredContextState, ID3D11CommandList** cmdList);
+	void Close() override final;
 	void SetVertexBuffer(UINT bufferNum, ISnctDXBuffer* pBuffer, UINT stride, UINT num) override final;
 	void SetIndexBuffer(ISnctDXBuffer* pBuffer, DXGI_FORMAT format, UINT size) override final;
 	void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) override final;

@@ -25,7 +25,7 @@ public:
 	void SetResourceBarrier(ISnctDXBuffer* Resource, D3D12_RESOURCE_STATES Before, D3D12_RESOURCE_STATES After);
 
 	// Override function
-	void Close();
+	void Close() override final;
 	void ClearRTV(ISnctDXRTV* Descriptors, float clearColor[4], UINT NumRects = 0, RECT* pRects = 0)override final;
 	void ClearDSV(ISnctDXDSV* Descriptors, UINT Flag, float Depth,
 		UINT8 Stencil, UINT NumRects = 0, RECT* pRects = 0) override final;
@@ -41,7 +41,6 @@ public:
 	void SetIndexBuffer(ISnctDXBuffer* pBuffer, DXGI_FORMAT format, UINT size)	override final;
 	void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology)	override final;
 	void DrawIndexed(UINT indexCount, UINT startIndexLocation, UINT instanceLocation)	override final;
-
 private:
 	//---------------------------------------------------------------------------
 	// private variables.

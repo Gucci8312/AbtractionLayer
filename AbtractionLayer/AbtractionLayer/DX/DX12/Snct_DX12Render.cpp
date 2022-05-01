@@ -132,7 +132,6 @@ void SnctDX12Render::Build(HWND hWnd)
 		//if (FAILED(hr)) throw std::runtime_error("DirectX12 command list create error");
 		ISnctDXContext* pTempCmdList = dynamic_cast<ISnctDXContext*>(&m_cmdList);
 		m_device.CreateCmdList(&pTempCmdList);
-		//m_device.c
 
 		// Render target view settings
 		D3D12_DESCRIPTOR_HEAP_DESC RTVHeapDesc = {};
@@ -185,8 +184,6 @@ void SnctDX12Render::Build(HWND hWnd)
 		m_fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
 		if (m_fenceEvent == nullptr) return;
 
-		// End command recording
-		m_cmdList.Close();
 
 		// Depth stencil buffer settings
 		D3D12_HEAP_PROPERTIES DepthHeapProp = {};
@@ -664,7 +661,7 @@ void SnctDX12Render::TEST_CODE_CreatePipelineState()
 
 			// vertex
 			{
-				ID3DBlob* vertex = m_pShaderLibrary->GetShaderBlob("n_vertex.hlsl");
+				ComPtr<ID3DBlob> vertex = m_pShaderLibrary->GetShaderBlob("n_vertex.hlsl");
 
 				D3D12_SHADER_BYTECODE shaderBytecode{};
 				shaderBytecode.pShaderBytecode	= vertex->GetBufferPointer();
@@ -677,7 +674,7 @@ void SnctDX12Render::TEST_CODE_CreatePipelineState()
 
 			// pixe
 			{
-				ID3DBlob* pixel = m_pShaderLibrary->GetShaderBlob("n_pixel.hlsl");
+				ComPtr<ID3DBlob> pixel = m_pShaderLibrary->GetShaderBlob("n_pixel.hlsl");
 
 				D3D12_SHADER_BYTECODE shaderBytecode{};
 				shaderBytecode.pShaderBytecode	= pixel->GetBufferPointer();

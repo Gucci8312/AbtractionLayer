@@ -18,4 +18,5 @@ public:
 	virtual void SetIndexBuffer(ISnctDXBuffer* pBuffer, DXGI_FORMAT format, UINT size) = 0;
 	virtual void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY topology) = 0;
 	virtual void DrawIndexed(UINT indexCount, UINT startIndexLocation, UINT instanceLocation) = 0;
+	virtual void Close()=0;
 };

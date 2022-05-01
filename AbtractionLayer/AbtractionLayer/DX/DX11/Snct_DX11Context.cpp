@@ -52,9 +52,9 @@ void SnctDX11Context::SetRTV(UINT NumDescriptors, ISnctDXRTV* Descriptors, ISnct
 	m_pContext->OMSetRenderTargets(1, TempRTV->GetRTVAddress(), TempDSV->GetDSV());
 }
 
-void SnctDX11Context::Close(bool RestoreDeferredContextState, ID3D11CommandList** cmdList)
+void SnctDX11Context::Close()
 {
-	m_pContext->FinishCommandList(true, cmdList);
+	//m_pContext->FinishCommandList(true, cmdList);
 }
 
 void SnctDX11Context::SetVertexBuffer(UINT bufferNum, ISnctDXBuffer* pBuffer, UINT stride, UINT num)

@@ -51,7 +51,8 @@ LRESULT WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 /// Contructor
 /// \param		none
 //------------------------------------------------------------------------------
-SnctApplication::SnctApplication() :m_width(g_screenWidth), m_height(g_screenHeight), m_windowName("App")
+SnctApplication::SnctApplication() :m_width(g_screenWidth),
+m_height(g_screenHeight), m_windowName("App"), Process(nullptr)
 {
 	// Nothing //
 }
@@ -131,9 +132,6 @@ bool SnctApplication::Initialize()
 	// Console window destroy
 	FreeConsole();
 
-	
-	//pRender = std::make_unique<SnctDX12Render>();
-	//pScene = std::make_unique<Scene01>();
 	pScene = new Scene01;
 	pScene->SetRender(pRender);
 

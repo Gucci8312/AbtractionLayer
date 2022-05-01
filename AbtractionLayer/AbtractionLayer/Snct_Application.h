@@ -29,6 +29,6 @@ private:
 	HWND        m_hwnd		= nullptr;
 	LONG		m_width;
 	LONG		m_height;
-	void (SnctApplication::* Process)();
+	void (SnctApplication::* Process)() ;
 };
 

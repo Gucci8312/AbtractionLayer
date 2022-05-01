@@ -87,7 +87,7 @@ public:
 	// public methods
 	//---------------------------------------------------------------------------	
 	// Getter
-	const ISnctDXRTV* Get() override final { return this; }
+	const SnctDX11RTV* Get() override final { return this; }
 	ID3D11RenderTargetView* GetRTV() { return m_pRTV.Get(); }
 	ID3D11RenderTargetView** GetRTVAddress() { return m_pRTV.GetAddressOf(); }
 

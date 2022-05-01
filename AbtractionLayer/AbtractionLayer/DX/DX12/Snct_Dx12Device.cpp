@@ -112,6 +112,6 @@ HRESULT SnctDX12Device::CreateCmdList(ISnctDXContext** pCmdList)
 	hr = m_pDevice->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
 		tempCmdList->GetCmdAllocator(), nullptr, IID_PPV_ARGS(tempCmdList->GetContextAddress()));
 	tempCmdList->Close();
-
+	tempCmdList->GetCmdAllocator()->Reset();
 	return hr;
 }
