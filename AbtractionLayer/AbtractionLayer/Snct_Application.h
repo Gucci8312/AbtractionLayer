@@ -15,9 +15,9 @@ public:
 	// Method
 	bool Initialize();
 	void Finalize();
-	bool InitWnd();
+	bool WinInitWnd();
 	void Run();
-	void MainLoop();
+	void WinMainLoop();
 
 private:
 	//---------------------------------------------------------------------------
@@ -29,5 +29,6 @@ private:
 	HWND        m_hwnd		= nullptr;
 	LONG		m_width;
 	LONG		m_height;
+	void (SnctApplication::* Process)();
 };
 

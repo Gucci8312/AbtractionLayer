@@ -100,9 +100,6 @@
     <ClCompile Include="DX\Snct_DXShaderLibrary.cpp">
       <Filter>DX</Filter>
     </ClCompile>
-    <ClCompile Include="DX\DX12\Snct_DX12Context.cpp">
-      <Filter>RenderCore\DX12</Filter>
-    </ClCompile>
     <ClCompile Include="DX\DX12\Snct_DX12CmdQueue.cpp">
       <Filter>RenderCore\DX12</Filter>
     </ClCompile>
@@ -121,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="DX\DX11\Snct_DX11Objects.cpp">
       <Filter>DX\DX11</Filter>
+    </ClCompile>
+    <ClCompile Include="DX\DX12\Snct_DX12Context.cpp">
+      <Filter>RenderCore\DX12</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

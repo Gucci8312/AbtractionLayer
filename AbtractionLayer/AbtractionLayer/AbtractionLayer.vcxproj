@@ -54,8 +54,8 @@
     <ClCompile Include="DX\DX11\Snct_DX11Device.cpp" />
     <ClCompile Include="DX\DX11\Snct_DX11Objects.cpp" />
     <ClCompile Include="DX\DX11\Snct_DX11Render.cpp" />
-    <ClCompile Include="DX\DX12\Snct_DX12Context.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12CmdQueue.cpp" />
+    <ClCompile Include="DX\DX12\Snct_DX12Context.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12Device.cpp" />
     <ClCompile Include="DX\DX12\Snct_DX12Render.cpp" />
     <ClCompile Include="DX\Snct_DXRender.cpp" />

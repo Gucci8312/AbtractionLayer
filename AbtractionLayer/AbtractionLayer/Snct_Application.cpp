@@ -73,12 +73,65 @@ SnctApplication::~SnctApplication()
 //------------------------------------------------------------------------------
 bool SnctApplication::Initialize()
 {
-	if (!InitWnd()) return false;
+	std::cout << "どれでウィンドウを作成しますか？" << std::endl;
+	
+	std::cout << "Windows >> 0" << std::endl;
+	std::cout << "GLFW	>> 1" << std::endl;
+
+	// どのAPIを使用するか選択
+	int ChoiceIdx;
+	while (true)
+	{
+		std::cin >> ChoiceIdx;
+		if (ChoiceIdx == 0)
+		{
+			break;
+		}
+	}
+
+	system("cls");
+	
+	std::cout << "どのAPIを使いますか？" << std::endl;
+	std::cout << "DirectX11 >> 0" << std::endl;
+	std::cout << "DirectX12 >> 1" << std::endl;
+
+	// どのAPIを使用するか選択
+	int ChoiceAPIIdx;
+	while (true)
+	{
+		std::cin >> ChoiceAPIIdx;
+		if (ChoiceAPIIdx <= 1)
+		{
+			break;
+		}
+	}
+	system("cls");
+
+	switch (ChoiceAPIIdx)
+	{
+
+	case 0:													
+		 pRender = new SnctDX11Render;						
+		Process = &SnctApplication::WinMainLoop;			
+		break;
+
+
+	case 1:												
+		pRender = new SnctDX12Render;						
+		Process = &SnctApplication::WinMainLoop;			
+		break;
+
+	default:
+		return false;
+		break;
+	}
+
+	if (!WinInitWnd()) return false;
 
 	// Console window destroy
 	FreeConsole();
 
-	pRender = new SnctDX11Render;
+	
 	//pRender = std::make_unique<SnctDX12Render>();
 	//pScene = std::make_unique<Scene01>();
 	pScene = new Scene01;
@@ -114,7 +167,7 @@ void SnctApplication::Finalize()
 /// \param		none
 /// \return		none
 //------------------------------------------------------------------------------
-bool SnctApplication::InitWnd()
+bool SnctApplication::WinInitWnd()
 {
 	// Get instance handle
 	auto hInst = GetModuleHandle(nullptr);
@@ -182,7 +235,7 @@ void SnctApplication::Run()
 {
 	if (!Initialize())	return;
 
-	MainLoop();
+	(this->*Process)();
 
 	Finalize();
 }
@@ -193,7 +246,7 @@ void SnctApplication::Run()
 /// \param		none
 /// \return		none
 //------------------------------------------------------------------------------
-void SnctApplication::MainLoop()
+void SnctApplication::WinMainLoop()
 {
 	// To receive a message param
 	MSG msg = {};
